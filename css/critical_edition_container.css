@@ -1,0 +1,22 @@
+
+.islandora_versionable_objects dd {
+  margin: 0;
+  padding: 0;
+  text-align: center;
+}
+
+.versionable_object {
+  display: -moz-inline-stack;
+  display: inline-block;
+  margin: 1.5em 1.84%;
+  min-height: 100px;
+  min-width: 100px;
+  vertical-align: bottom;
+  width: 20%;
+}
+
+.islandora_critical_edition_object_thumb img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}

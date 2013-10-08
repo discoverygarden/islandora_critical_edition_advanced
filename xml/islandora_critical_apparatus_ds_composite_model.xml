@@ -1,0 +1,36 @@
+
+<dsCompositeModel xmlns="info:fedora/fedora-system:def/dsCompositeModel#">
+  <dsTypeModel ID="DC" >
+      <form FORMAT_URI="http://www.openarchives.org/OAI/2.0/oai_dc/" MIME="text/xml"></form>
+  </dsTypeModel>
+  <dsTypeModel ID="RELS-EXT" optional="true">
+      <form FORMAT_URI="info:fedora/fedora-system:FedoraRELSExt-1.0" MIME="application/rdf+xml"></form>
+  </dsTypeModel>
+  <dsTypeModel ID="EditionNotice" optional="true">
+    <form MIME="text/html"/>
+  </dsTypeModel>
+    <dsTypeModel ID="Introduction" optional="true">
+    <form MIME="text/html"/>
+  </dsTypeModel>
+    <dsTypeModel ID="Epigraph" optional="true">
+    <form MIME="text/html"/>
+  </dsTypeModel>
+    <dsTypeModel ID="Preface" optional="true">
+    <form MIME="text/html"/>
+  </dsTypeModel>
+    <dsTypeModel ID="Foreword" optional="true">
+    <form MIME="text/html"/>
+  </dsTypeModel>
+    <dsTypeModel ID="Introduction" optional="true">
+    <form MIME="text/html"/>
+  </dsTypeModel>
+    <dsTypeModel ID="IllustrationList" optional="true">
+    <form MIME="text/html"/>
+  </dsTypeModel>
+    <dsTypeModel ID="Acknowledgements" optional="true">
+    <form MIME="text/html"/>
+  </dsTypeModel>
+  <dsTypeModel ID="MODS" optional="true">
+    <form MIME="text/xml"></form>
+  </dsTypeModel>
+</dsCompositeModel>
