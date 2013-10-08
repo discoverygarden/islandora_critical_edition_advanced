@@ -77,7 +77,7 @@ function islandora_critical_edition_build_vo($fedora_object, $label, $tn_datastr
     $tn_datastream->mimetype = 'image/png';
     $tn_datastream->setContentFromFile($tn_path);
   }
-  $versionable_object->ingestDatastream($tn);
+  $versionable_object->ingestDatastream($tn_datastream);
   $mods = $versionable_object->constructDatastream('MODS');
   $mods->label = 'MODS';
   $mods->mimetype = 'text/xml';

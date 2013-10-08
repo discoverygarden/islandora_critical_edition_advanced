@@ -4,8 +4,6 @@
  * islandora_critioca;_edition_container.tpl.php
  */
 $object = $variables['islandora_object'];
-$pid = $object->id;
-$apparatus = $variables['apparatus'][0];
 $versionable_objects = $variables['apparatus'] + $variables['versionable_objects'];
 drupal_set_breadcrumb(islandora_get_breadcrumbs($object));
 drupal_set_title($object->label);
@@ -16,8 +14,6 @@ drupal_set_title($object->label);
     <div class="versionable_object">
       <?php
       $versionable_object = islandora_object_load($versionable);
-      $source = url("/islandora/object/$versionable/TN/view");
-      $path = url("/islandora/object/$versionable");
       $object_url = 'islandora/object/' . $versionable;
       $title = $versionable_object->label;
       $image_variables = array(

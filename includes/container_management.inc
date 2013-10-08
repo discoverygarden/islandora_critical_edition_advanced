@@ -265,6 +265,7 @@ function islandora_get_associated_versionable_objects($critical_edition_pid) {
  */
 function islandora_critical_edition_management_menu(AbstractObject $object) {
   module_load_include('inc', 'islandora', 'includes/breadcrumb');
+  module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/critical_apparatus');
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/manage_rdf_tei_attachment.form');
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/transcriptions');
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/utilities');
@@ -274,9 +275,20 @@ function islandora_critical_edition_management_menu(AbstractObject $object) {
   $members = islandora_critical_edition_get_members($object->id);
   $cwrcwriter = array_search('islandora:criticalEditionCModel', $members);
   $transcriptions = array_keys($members, 'islandora:transcriptionCModel');
-
+  $apparatus = array_keys($members, 'islandora:criticalApparatusCModel');
   $output = array();
   $output['manage_critical_edition'] = array('#type' => 'vertical_tabs');
+
+  $output['manage_critical_edition']['replace_apparatus'] = array(
+    '#access' => user_access(ISLANDORA_ADD_DS) && empty($apparatus),
+    '#title' => t('Replace Apparatus'),
+    '#description' => t('Create Versionable object and associate it with this Critical Edition'),
+    '#type' => 'fieldset',
+    'form' => drupal_get_form('islandora_critical_edition_replace_apparatus', $object),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+  );
+
   $output['manage_critical_edition']['create_vo'] = array(
     '#access' => user_access(ISLANDORA_ADD_DS),
     '#title' => t('Create new Versionable Object'),

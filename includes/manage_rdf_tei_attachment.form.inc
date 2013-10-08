@@ -129,10 +129,29 @@ function islandora_critical_edition_associate_book_form_submit(array $form, arra
  * @param array $form_state
  *   The Drupal form state.
  */
-function islandora_critical_edition_delete_cwrcwriter_form(array $form, array &$form_state, AbstractObject $object, $critical_edition) {
-  $form_state['critical_edition_pid'] = $critical_edition;
-  return confirm_form($form, $object->label, "islandora/object/$object->id", t("Are you sure you want to delete %title? !break This action cannot be undone.", array('%title' => $object->label, '!break' => "<br />")), t('Delete TEI-RDF Object'), t('Cancel')
+function islandora_critical_edition_delete_tei_rdf_form(array $form, array $form_state, AbstractObject $object, $tei_rdf) {
+  $form['unassociate'] = array(
+    '#type' => 'markup',
+    '#prefix' => "<div><p>",
+    '#suffix' => "</p></div>",
+    '#markup' => t("Remove the TEI-RDF editor from this Versionable Object?"),
   );
+
+  $form['tei_rdf'] = array(
+    '#type' => 'hidden',
+    '#value' => $tei_rdf,
+  );
+
+  $form['versionable_object'] = array(
+    '#type' => 'hidden',
+    '#value' => $object->id,
+  );
+
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Remove Association'),
+  );
+  return $form;
 }
 
 /**
@@ -143,17 +162,12 @@ function islandora_critical_edition_delete_cwrcwriter_form(array $form, array &$
  * @param array $form_state
  *   Drupal form state
  */
-function islandora_critical_edition_delete_cwrcwriter_form_submit($form, $form_state) {
-  module_load_include('inc', 'islandora_critical_edition', 'includes/utilities');
-  $critical_edition_pid = $form_state['critical_edition_pid'];
-  $pids_to_delete = islandora_critical_edition_get_members($critical_edition_pid);
-  $pids_to_delete[] = $critical_edition_pid;
-  foreach ($pids_to_delete as $pid) {
-    $temp = islandora_object_load($pid);
-    $temp->state = "D";
-  }
+function islandora_critical_edition_delete_tei_rdf_form_submit($form, $form_state) {
+  $tei_rdf_object = islandora_object_load($form_state['values']['tei_rdf']);
+  $tei_rdf_object->relationships->remove(FEDORA_RELS_EXT_URI, 'isMemberOfCollection', $form_state['values']['versionable_object']);
+  $tei_rdf_object->relationships->remove(FEDORA_RELS_EXT_URI, 'isMemberOf', $form_state['values']['versionable_object']);
+  drupal_set_message(t("@label has been disassociated from the versionable object", array('@label' => $tei_rdf_object->label)));
 }
-
 
 /**
  * Form to associate existing TEI-RDF object.
@@ -171,7 +185,7 @@ function islandora_critical_edition_delete_cwrcwriter_form_submit($form, $form_s
 function islandora_critical_edition_associate_tei_rdf_form($form, $form_state, $object, $content_model = 'islandora:criticalEditionCModel') {
   $object_models = $object->models;
   $system = array_search("fedora-system:FedoraObject-3.0", $object_models);
-  unset ($object_models[$system]);
+  unset($object_models[$system]);
   $object_model = array_shift($object_models);
   $offset = islandora_critical_edition_prep_form($object, $content_model);
   $name_mappings = array(
@@ -270,9 +284,20 @@ function islandora_critical_edition_associate_tei_rdf_form_submit($form, $form_s
   $type = $form_state['values']['container_object_model'];
   $tei_rdf = $form_state['values']['tei_rdf_objects'];
   $tei_rdf_object = islandora_object_load($tei_rdf);
+  $relationships = $tei_rdf_object->relationships->get(ISLANDORA_RELS_EXT_URI, 'isCriticalEditionOf');
+  $tn = NULL;
+  if (!empty($relationships)) {
+    $book_object = islandora_object_load($relationships[0]['object']['value']);
+    $tn = $book_object['TN'];
+    $label = $book_object->label;
+  }
 
   if ($type == 'islandora:criticalEditionContainerCModel') {
     $container_object = islandora_object_load($form_state['values']['container_object_pid']);
-    islandora_critical_edition_build_vo($container_object);
+    $versionable_object_pid = islandora_critical_edition_build_vo($container_object, $label, $tn);
   }
+  else {
+    $versionable_object_pid = $form_state['values']['container_object_pid'];
+  }
+  $tei_rdf_object->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOf', $versionable_object_pid);
 }

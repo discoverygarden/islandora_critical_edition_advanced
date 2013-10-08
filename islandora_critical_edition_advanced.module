@@ -4,11 +4,10 @@
  * @file
  * Add advanced data modeling options to Islandora Critical Editions.
  */
-
 define('ISLANDORA_CRITICAL_EDITION_MANAGE_CONTAINER', 'manage critical edition');
 define('ISLANDORA_CRITICAL_EDITION_CREATE', 'create critical editions');
 define('ISLANDORA_CRITICAL_EDITION_READ', 'read critical editions');
-define('ISLANDORA_CRITICAL_UPDATE', 'update critical editions');
+define('ISLANDORA_CRITICAL_EDITION_UPDATE', 'update critical editions');
 define('ISLANDORA_CRITICAL_EDITION_DELETE', 'delete critical editions');
 
 /**
@@ -42,6 +41,15 @@ function islandora_critical_edition_advanced_menu() {
     'access arguments' => array(2, 'manage_apparatus'),
     'file' => 'includes/critical_apparatus.inc',
   );
+  $items['islandora/object/%islandora_object/manage/versionable_object'] = array(
+    'title' => 'Versionable Object',
+    'page callback' => 'islandora_versionable_object_management_menu',
+    'page arguments' => array(2),
+    'type' => MENU_LOCAL_TASK,
+    'access callback' => 'islandora_critical_edition_advanced_object_management_access',
+    'access arguments' => array(2, 'manage_versionable_object'),
+    'file' => 'includes/versionable_object.inc',
+  );
 
   $items['islandora/critical_edition/%islandora_object/associate'] = array(
     'title' => 'Associate Versionable Object',
@@ -49,19 +57,18 @@ function islandora_critical_edition_advanced_menu() {
     'page arguments' => array('islandora_critical_edition_attach_versionable', 2),
     'type' => MENU_LOCAL_TASK,
     'access callback' => 'user_access',
-    'access arguments' => array(ISLANDORA_CRITICAL_EDITION_ATTACH_VERSIONABLE_OBJECT),
+    'access arguments' => array(ISLANDORA_CRITICAL_EDITION_UPDATE),
     'file' => 'includes/container_management.inc',
   );
   $items['islandora/critical_edition/%islandora_object/mvd'] = array(
     'title' => 'Create MVD',
     'page callback' => 'islandora_critical_create_mvd',
     'page arguments' => array(2),
-    'type' => MENU_LOCAL_TASKs,
+    'type' => MENU_LOCAL_TASK,
     'access callback' => 'user_access',
-    'access arguments' => array(ISLANDORA_CRITICAL_EDITION_CREATE_MVD),
+    'access arguments' => array(ISLANDORA_CRITICAL_EDITION_UPDATE),
     'file' => 'includes/calliope_interaction.inc',
   );
-
   $items['islandora/transcription/edit/%islandora_object'] = array(
     'title' => 'Edit Transcription',
     'page callback' => 'drupal_get_form',
@@ -72,22 +79,13 @@ function islandora_critical_edition_advanced_menu() {
     'file' => 'includes/transcriptions.inc',
   );
 
-  $items['islandora/object/%islandora_object/manage/versionable_object'] = array(
-    'title' => 'Versionable Object',
-    'page callback' => 'islandora_versionable_object_management_menu',
-    'page arguments' => array(2),
-    'type' => MENU_LOCAL_TASK,
-    'access callback' => 'islandora_critical_edition_object_management_access',
-    'access arguments' => array(2, 'manage_versionable_object'),
-    'file' => 'includes/versionable_object.inc',
-  );
   $items['islandora/critical_edition/%islandora_object/create/versionable_object'] = array(
     'title' => 'Versionable Object',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('islandora_critical_edition_create_versionable_object', 2),
     'type' => MENU_CALLBACK,
     'access callback' => 'user_access',
-    'access arguments' => array(ISLANDORA_CRITICAL_EDITION_CREATE_VERSIONABLE_OBJECT),
+    'access arguments' => array(ISLANDORA_CRITICAL_EDITION_CREATE),
     'file' => 'includes/versionable_object_creation.form.inc',
   );
 
@@ -198,8 +196,9 @@ function islandora_critical_edition_advanced_islandora_criticalEditionContainerC
       'type' => 'callback',
       'weight' => 8,
       'module' => 'islandora_critical_edition',
+      'file' => 'includes/critical_apparatus.inc',
       'do_function' => array(
-        'function' => 'islandora_critical_edition_add_apparatus',
+        'function' => 'islandora_critical_edition_advanced_add_apparatus',
         'args' => array($form_state['islandora']['objects'][0]),
       ),
     ),
@@ -361,27 +360,4 @@ function islandora_critical_edition_islandora_xml_form_builder_forms() {
     'Islandora Versionable Object Form' => array('form_file' => "$module_path/data/forms/versionable_object_form_mods.xml"),
     'Islandora Critical Edition Mods Form' => array('form_file' => "$module_path/data/forms/critical_edition_container_form_mods.xml"),
   );
-}
-
-/**
- * Adds Apparatus object to Critical Edition Container.
- *
- * @param array $form_state
- *   Drupal form state
- */
-function islandora_critical_edition_add_apparatus($fedora_object) {
-  $tuque = new IslandoraTuque();
-  $namespace = islandora_get_namespace($fedora_object->id);
-  $apparatus = $tuque->repository->constructObject($namespace);
-  $apparatus->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOf', $fedora_object->id);
-  $apparatus->relationships->add(FEDORA_MODEL_URI, 'hasModel', 'islandora:criticalApparatusCModel');
-  $apparatus->label = t("Critical Apparatus");
-  $apparatus->owner = $fedora_object->owner;
-  $tn_path = drupal_get_path('module', 'islandora_critical_edition_advanced') . '/images/apparatus.jpg';
-  $tn = $apparatus->constructDatastream('TN');
-  $tn->label = 'Thumbnail';
-  $tn->mimetype = 'image/jpg';
-  $tn->setContentFromFile($tn_path);
-  $apparatus->ingestDatastream($tn);
-  $tuque->repository->ingestObject($apparatus);
 }

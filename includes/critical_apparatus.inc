@@ -11,7 +11,7 @@
  * @param array $form
  *   Drupal form
  * @param array $form_state
- *   Drupal form stateu
+ *   Drupal form state
  * @param AbstractObject $apparatus
  *   object representing Critical Apparatus
  *
@@ -112,4 +112,72 @@ function critical_apparatus_form_submit($form, $form_state) {
     $apparatus->ingestDatastream($datastream);
   }
   drupal_set_message(t("Updated @ds", array('@ds' => $datastreams[$chosen])));
+}
+
+/**
+ * Builds Critical Apparatus and associates with Critical Edition.
+ *
+ * @param AbstractObject $fedora_object
+ *   object representing Critical Edition Container
+ */
+function islandora_critical_edition_advanced_add_apparatus($fedora_object) {
+  $tuque = new IslandoraTuque();
+  $namespace = islandora_get_namespace($fedora_object->id);
+  $apparatus = $tuque->repository->constructObject($namespace);
+  $apparatus->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOf', $fedora_object->id);
+  $apparatus->relationships->add(FEDORA_MODEL_URI, 'hasModel', 'islandora:criticalApparatusCModel');
+  $apparatus->label = t("Critical Apparatus");
+  $apparatus->owner = $fedora_object->owner;
+  $tn_path = drupal_get_path('module', 'islandora_critical_edition_advanced') . '/images/apparatus.jpg';
+  $tn = $apparatus->constructDatastream('TN');
+  $tn->label = 'Thumbnail';
+  $tn->mimetype = 'image/jpg';
+  $tn->setContentFromFile($tn_path);
+  $apparatus->ingestDatastream($tn);
+  $tuque->repository->ingestObject($apparatus);
+}
+
+/**
+ * Form to replace Critical Apparatus.
+ *
+ * @param array $form
+ *   Drupal form
+ * @param array $form_state
+ *   Drupal form state
+ * @param AbstractObject $object
+ *   object representing Critical Edition
+ *
+ * @return array
+ *   Drupal form
+ */
+function islandora_critical_edition_replace_apparatus($form, $form_state, $object) {
+  $form['message'] = array(
+    '#type' => 'markup',
+    '#prefix' => '<div><p>',
+    '#suffix' => '</p></div>',
+    '#markup' => t('This Critical Edition does not have an associated Critical Apparatus.  Create one now?'),
+  );
+  $form['container_pid'] = array(
+    '#type' => 'hidden',
+    '#value' => $object->id,
+  );
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Create Critical Apparatus'),
+  );
+  return $form;
+}
+
+/**
+ * Submit handler for replace apparaus form.
+ *
+ * @param array $form
+ *   Drupal form
+ * @param array $form_state
+ *   Drupal from state
+ */
+function islandora_critical_edition_replace_apparatus_submit($form, $form_state) {
+  $container_object = islandora_object_load($form_state['values']['container_pid']);
+  islandora_critical_edition_advanced_add_apparatus($container_object);
+  drupal_set_message(t('Critical Apparatus is now available'));
 }
