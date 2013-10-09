@@ -7,7 +7,7 @@
 define('ISLANDORA_CRITICAL_EDITION_MANAGE_CONTAINER', 'manage critical edition');
 define('ISLANDORA_CRITICAL_EDITION_CREATE', 'create critical editions');
 define('ISLANDORA_CRITICAL_EDITION_READ', 'read critical editions');
-define('ISLANDORA_CRITICAL_EDITION_UPDATE', 'update critical editions');
+define('ISLANDORA_CRITICAL_EDITION_MODIFY', 'modify critical editions');
 define('ISLANDORA_CRITICAL_EDITION_DELETE', 'delete critical editions');
 
 /**
@@ -57,7 +57,7 @@ function islandora_critical_edition_advanced_menu() {
     'page arguments' => array('islandora_critical_edition_attach_versionable', 2),
     'type' => MENU_LOCAL_TASK,
     'access callback' => 'user_access',
-    'access arguments' => array(ISLANDORA_CRITICAL_EDITION_UPDATE),
+    'access arguments' => array(ISLANDORA_CRITICAL_EDITION_MODIFY),
     'file' => 'includes/container_management.inc',
   );
   $items['islandora/critical_edition/%islandora_object/mvd'] = array(
@@ -66,7 +66,7 @@ function islandora_critical_edition_advanced_menu() {
     'page arguments' => array(2),
     'type' => MENU_LOCAL_TASK,
     'access callback' => 'user_access',
-    'access arguments' => array(ISLANDORA_CRITICAL_EDITION_UPDATE),
+    'access arguments' => array(ISLANDORA_CRITICAL_EDITION_MODIFY),
     'file' => 'includes/calliope_interaction.inc',
   );
   $items['islandora/transcription/edit/%islandora_object'] = array(
@@ -74,7 +74,7 @@ function islandora_critical_edition_advanced_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('islandora_critical_transcription_edit_form', 3),
     'type' => MENU_CALLBACK,
-    'access callback' => 'islandora_critical_edition_object_management_access',
+    'access callback' => 'islandora_critical_edition_advanced_object_management_access',
     'access arguments' => array(3, 'edit_transcription'),
     'file' => 'includes/transcriptions.inc',
   );
@@ -87,6 +87,16 @@ function islandora_critical_edition_advanced_menu() {
     'access callback' => 'user_access',
     'access arguments' => array(ISLANDORA_CRITICAL_EDITION_CREATE),
     'file' => 'includes/versionable_object_creation.form.inc',
+  );
+
+  $items['islandora/object/%islandora_object/transcription'] = array(
+    'title' => 'Transcription',
+    'page callback' => 'islandora_critical_edition_display',
+    'page arguments' => array(2),
+    'type' => MENU_LOCAL_TASK,
+    'access callback' => 'islandora_critical_edition_advanced_object_management_access',
+    'access arguments' => array(2, 'view_versionable_object'),
+    'file' => 'includes/islandora_critical_edition_display.inc',
   );
 
   return $items;
@@ -155,7 +165,14 @@ function islandora_critical_edition_islandora_transcriptioncmodel_islandora_view
 function islandora_critical_edition_islandora_versionableobjectcmodel_islandora_view_object($object, $page_number, $page_size) {
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/utilities');
   $members = islandora_critical_edition_get_members($object->id);
-  $output = theme('islandora_versionable_object', array('islandora_object' => $object, 'members' => $members));
+  $critical_edition = array_search('islandora:criticalEditionCModel', $members);
+  $edition_object = islandora_object_load($critical_edition);
+  if ($edition_object) {
+    $output = theme('islandora_critical_edition', array('islandora_object' => $edition_object));
+  }
+  else {
+    $output = theme('islandora_versionable_object', array('islandora_object' => $object, 'members' => $members));
+  }
   return array('' => $output);
 }
 
@@ -172,17 +189,17 @@ function islandora_critical_edition_advanced_permission() {
       'title' => t('Read Critical Edition Objects'),
       'description' => t('Access critical editions and their associated objects.'),
     ),
-    ISLANDORA_CRITICAL_UPDATE => array(
+    ISLANDORA_CRITICAL_EDITION_MODIFY => array(
       'title' => t('Modify Critical Editions'),
       'description' => t('Modify and edit objects assoicated with Critical Editions.'),
     ),
     ISLANDORA_CRITICAL_EDITION_DELETE => array(
-      'title' => t('Modify Critical Editions'),
-      'description' => t('Modify and edit objects assoicated with Critical Editions.'),
+      'title' => t('Delete Critical Editions'),
+      'description' => t('Delete objects assoicated with Critical Editions.'),
     ),
     ISLANDORA_CRITICAL_EDITION_MANAGE_CONTAINER => array(
       'title' => t('Manage Critical Edition '),
-      'description' => t('manage objects within critcal edition.'),
+      'description' => t('Manage objects within critical edition.'),
     ),
   );
 }
@@ -289,7 +306,7 @@ function islandora_critical_edition_advanced_object_management_access($object, $
   switch ($context) {
 
     case 'associate_versionable_object':
-      if (in_array('islandora:criticalEditionContainerCModel', $content_models)) {
+      if (in_array('islandora:criticalEditionContainerCModel', $content_models) && user_access(ISLANDORA_CRITICAL_EDITION_MODIFY)) {
         $access = TRUE;
       }
       break;
@@ -314,6 +331,15 @@ function islandora_critical_edition_advanced_object_management_access($object, $
 
     case 'manage_apparatus':
       if (in_array('islandora:criticalApparatusCModel', $content_models)) {
+        $access = TRUE;
+      }
+      break;
+    case 'view_versionable_object':
+      module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/utilities');
+      $members = islandora_critical_edition_get_members($object->id);
+      $transcription = array_search('islandora:transcriptionCModel', $members);
+      $transcription_object = islandora_object_load($transcription);
+      if ($transcription_object && in_array('islandora:versionableObjectCModel', $content_models)) {
         $access = TRUE;
       }
       break;

@@ -1,8 +1,9 @@
 <?php
 /**
  * @file
- * islandora_critioca;_edition_container.tpl.php
+ * islandora_critical_edition_container.tpl.php
  */
+module_load_include('inc', 'islandora', 'includes/breadcrumb');
 $object = $variables['islandora_object'];
 $versionable_objects = $variables['apparatus'] + $variables['versionable_objects'];
 drupal_set_breadcrumb(islandora_get_breadcrumbs($object));
@@ -22,9 +23,11 @@ drupal_set_title($object->label);
         'title' => $title,
         'attributes' => array('class' => 'versionable_object'),
       );
-  
+
       $thumbnail_img = theme('image', $image_variables);
-      $link = l($thumbnail_img, $object_url, array('html' => TRUE, 'attributes' => array('title' => $title, 'alt' => $title)));
+      $link = l($thumbnail_img, $object_url, array(
+        'html' => TRUE,
+        'attributes' => array('title' => $title, 'alt' => $title)));
       $caption = l($title, $object_url);
       ?>
       <dl class="islandora_critical_edition_object">

@@ -288,7 +288,15 @@ function islandora_critical_edition_management_menu(AbstractObject $object) {
     '#collapsible' => TRUE,
     '#collapsed' => TRUE,
   );
-
+  $output['manage_critical_edition']['attach_tei_rdf'] = array(
+    '#access' => user_access(ISLANDORA_ADD_DS),
+    '#title' => t('Associate TEI-RDF Object'),
+    '#description' => t('Associate existing TEI-RDF Object from repository.'),
+    '#type' => 'fieldset',
+    'form' => drupal_get_form('islandora_critical_edition_associate_tei_rdf_form', $object),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+  );
   $output['manage_critical_edition']['create_vo'] = array(
     '#access' => user_access(ISLANDORA_ADD_DS),
     '#title' => t('Create new Versionable Object'),
@@ -307,24 +315,7 @@ function islandora_critical_edition_management_menu(AbstractObject $object) {
     '#collapsible' => TRUE,
     '#collapsed' => TRUE,
   );
-  $output['manage_critical_edition']['attach_tei_rdf'] = array(
-    '#access' => user_access(ISLANDORA_ADD_DS),
-    '#title' => t('Associate TEI-RDF Object'),
-    '#description' => t('Associate existing TEI-RDF Object from repository'),
-    '#type' => 'fieldset',
-    'form' => drupal_get_form('islandora_critical_edition_associate_tei_rdf_form', $object),
-    '#collapsible' => TRUE,
-    '#collapsed' => TRUE,
-  );
-  $output['manage_critical_edition']['create_tei_rdf'] = array(
-    '#access' => user_access(ISLANDORA_ADD_DS),
-    '#title' => t('Create TEI-RDF Object from existing object'),
-    '#description' => t('Create new RDF-TEI object as a full or partial subset on an existing object.'),
-    '#type' => 'fieldset',
-    'form' => drupal_get_form('islandora_critical_edition_associate_tei_rdf_form', $object, 'islandora:bookCModel'),
-    '#collapsible' => TRUE,
-    '#collapsed' => TRUE,
-  );
+
   if ($cwrcwriter) {
     $output['manage_critical_edition']['add_transcription'] = array(
       '#access' => user_access(ISLANDORA_ADD_DS),

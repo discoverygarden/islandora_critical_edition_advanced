@@ -238,7 +238,8 @@ function islandora_critical_transcription_edit_form($form, $form_state, $transcr
   $form = array();
   $form['transcription'] = array(
     '#title' => t('Current Transcription'),
-    '#type' => 'textarea',
+    '#type' => 'text_format',
+    '#base_type' => 'textarea',
     '#default_value' => $transcription['TRANSCRIPTION']->content,
     '#rows' => 40,
     '#cols' => 20,
@@ -265,11 +266,17 @@ function islandora_critical_transcription_edit_form($form, $form_state, $transcr
  */
 function islandora_critical_transcription_edit_form_submit($form, $form_state) {
   $transcription_object = islandora_object_load($form_state['values']['pid']);
+  if (isset($form_state['values']['transcription']['value'])) {
+    $content = $form_state['values']['transcription']['value'];
+  }
+  else {
+    $content = $form_state['values']['transcription'];
+  }
   try {
-    $success = $transcription_object['TRANSCRIPTION']->content = $form_state['values']['transcription'];
+    $success = $transcription_object['TRANSCRIPTION']->content = $content;
   }
   catch (Exception $exc) {
-    watchdog("islandora critical edition", $exc->getTraceAsString());
+    watchdog("islandora critical edition advanced", $exc->getTraceAsString());
   }
   if ($success) {
     drupal_set_message(t("Transcription updated."));
