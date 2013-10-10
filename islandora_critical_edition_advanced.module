@@ -212,11 +212,10 @@ function islandora_critical_edition_advanced_islandora_criticalEditionContainerC
     'islandora_create_critical_edition' => array(
       'type' => 'callback',
       'weight' => 8,
-      'module' => 'islandora_critical_edition',
-      'file' => 'includes/critical_apparatus.inc',
+      'module' => 'islandora_critical_edition_advanced',  
       'do_function' => array(
         'function' => 'islandora_critical_edition_advanced_add_apparatus',
-        'args' => array($form_state['islandora']['objects'][0]),
+        'file' => 'includes/critical_apparatus.inc',
       ),
     ),
   );

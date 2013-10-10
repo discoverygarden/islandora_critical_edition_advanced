@@ -29,12 +29,12 @@ function islandora_critical_edition_create_transcription_form(array $form, array
   );
 
   $members = islandora_critical_edition_get_members($object->id);
-  $critical_edition = array_search('islandora:criticalEditionCModel', $members);
-  if ($critical_edition) {
-    $input_types['cwrc'] = t('Create transcription from TEI-RDF Object');
+  $tei_rdf = array_search('islandora:criticalEditionCModel', $members);
+  if ($tei_rdf) {
+    $input_types['tei_rdf'] = t('Create transcription from TEI-RDF Object');
     $form['cwrcwriter'] = array(
       '#type' => 'hidden',
-      '#value' => $critical_edition,
+      '#value' => $tei_rdf,
     );
   }
   $input_types['none'] = t('Create born-digital transcription');
@@ -88,22 +88,16 @@ function islandora_critical_edition_create_transcription_form_submit(array $form
   $versionable_object = islandora_object_load($versionable_object_pid);
   $label = $form_state['values']['transcription'];
   $content_source = $form_state['values']['content_source'];
-
-  $tuque = new IslandoraTuque();
-  $namespace = islandora_get_namespace($versionable_object->id);
-  $transcription = $tuque->repository->constructObject($namespace);
-  $transcription->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOf', $versionable_object->id);
-  $transcription->relationships->add(FEDORA_MODEL_URI, 'hasModel', 'islandora:transcriptionCModel');
-  $transcription->label = $label;
-  $transcription->owner = $versionable_object->owner;
+  $transcription = islandora_critical_edition_advanced_build_transcription($versionable_object, $label);
+  // add transcription datastream
   $datastream_id = "TRANSCRIPTION";
   $control_group = "M";
   $transcription_datastream = $transcription->constructDatastream($datastream_id, $control_group);
   $transcription_datastream->mimetype = 'text/plain';
 
-  if ($content_source == 'cwrc') {
-    $cwrcwriter = $form_state['values']['cwrcwriter'];
-    add_cwrc_derived_transcription($cwrcwriter, $versionable_object_pid, $transcription, $transcription_datastream);
+  if ($content_source == 'tei_rdf') {
+    $tei_rdf = islandora_object_load($form_state['values']['cwrcwriter']);
+    add_derived_transcription($tei_rdf, $versionable_object_pid, $transcription, $transcription_datastream);
   }
 
   if ($content_source == 'file') {
@@ -118,7 +112,7 @@ function islandora_critical_edition_create_transcription_form_submit(array $form
   }
 
   $transcription->ingestDatastream($transcription_datastream);
-  $tuque->repository->ingestObject($transcription);
+  drupal_set_message(t("Transaction object created"));
 }
 
 /**
@@ -286,8 +280,8 @@ function islandora_critical_transcription_edit_form_submit($form, $form_state) {
 /**
  * Adds transcription from CWRC datastreams of CWRCWriter page objects.
  *
- * @param String $cwrcwriter
- *   PID of Critical Edition
+ * @param AbstractObject $tei_rdf_object
+ *   Object representing TEI-RDF object
  * @param String $versionable_object_pid
  *   PID of Versionable Object
  * @param AbstractObject $transcription
@@ -295,15 +289,14 @@ function islandora_critical_transcription_edit_form_submit($form, $form_state) {
  * @param IslandoraFedoraDatastream $transcription_datastream
  *   Datastream object to be updated
  */
-function add_cwrc_derived_transcription($cwrcwriter, $versionable_object_pid, $transcription, $transcription_datastream) {
+function add_derived_transcription($tei_rdf_object, $versionable_object_pid, $transcription, $transcription_datastream) {
   module_load_include('inc', 'islandora_paged_content', 'includes/utilities');
   module_load_include('inc', 'islandora', 'includes/utilities');
-  $critical_edition_object = islandora_object_load($cwrcwriter);
-  $pages = array_keys(islandora_paged_content_get_pages($critical_edition_object));
+  $pages = array_keys(islandora_paged_content_get_pages($tei_rdf_object));
   $batch = array(
-    'title' => t('Creating Transcription from CWRCWRiter'),
+    'title' => t('Creating Transcription from TEI-RDF Object'),
     'operations' => array(),
-    'file' => drupal_get_path('module', 'islandora_critical_edition') . '/includes/transcriptions.inc',
+    'file' => drupal_get_path('module', 'islandora_critical_edition_advanced') . '/includes/transcriptions.inc',
     'progress_message' => t('@current of @total pages processed.'),
   );
   $flat_pid = islandora_escape_pid_for_function($versionable_object_pid);
@@ -324,7 +317,7 @@ function add_cwrc_derived_transcription($cwrcwriter, $versionable_object_pid, $t
 }
 
 /**
- * Builds temp file with CWRC data from page level objects.
+ * Builds temp file with TE-RDF data from page level objects.
  *
  * @param AbstractObject $page_object
  *   Object representing page
@@ -355,7 +348,6 @@ function islandora_transcription_file_add($transcription, $transcription_datastr
   $transcription_datastream->setContentFromFile($filename);
   unlink($filename);
   $transcription->ingestDatastream($transcription_datastream);
-  $tuque->repository->ingestObject($transcription);
 }
 
 /**
@@ -405,4 +397,27 @@ function islandora_update_from_tei_rdf_object($tei_rdf_object_pid, $transcriptio
 function islandora_transcription_file_update($transcription, $filename) {
   $transcription['TRANSCRIPTION']->setContentFromFile($filename);
   unlink($filename);
+}
+
+/**
+ * Builds and ingest transcription object.
+ *
+ * @param AbstractObject $versionable_object
+ *   object representing enclising Versionable Object
+ * @param String $label
+ *   Label for new Transcription
+ *
+ * @return AbsgtractObject
+ *   Transcription object
+ */
+function islandora_critical_edition_advanced_build_transcription($versionable_object, $label) {
+  $tuque = new IslandoraTuque();
+  $namespace = islandora_get_namespace($versionable_object->id);
+  $transcription = $tuque->repository->constructObject($namespace);
+  $transcription->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOf', $versionable_object->id);
+  $transcription->relationships->add(FEDORA_MODEL_URI, 'hasModel', 'islandora:transcriptionCModel');
+  $transcription->label = $label;
+  $transcription->owner = $versionable_object->owner;
+  $transcription_object = $tuque->repository->ingestObject($transcription);
+  return $transcription_object;
 }

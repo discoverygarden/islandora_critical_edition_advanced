@@ -120,7 +120,8 @@ function critical_apparatus_form_submit($form, $form_state) {
  * @param AbstractObject $fedora_object
  *   object representing Critical Edition Container
  */
-function islandora_critical_edition_advanced_add_apparatus($fedora_object) {
+function islandora_critical_edition_advanced_add_apparatus($form_state) {
+  $fedora_object = $form_state['islandora']['objects'][0];
   $tuque = new IslandoraTuque();
   $namespace = islandora_get_namespace($fedora_object->id);
   $apparatus = $tuque->repository->constructObject($namespace);
@@ -169,7 +170,7 @@ function islandora_critical_edition_replace_apparatus($form, $form_state, $objec
 }
 
 /**
- * Submit handler for replace apparaus form.
+ * Submit handler for replace apparatus form.
  *
  * @param array $form
  *   Drupal form
@@ -178,6 +179,8 @@ function islandora_critical_edition_replace_apparatus($form, $form_state, $objec
  */
 function islandora_critical_edition_replace_apparatus_submit($form, $form_state) {
   $container_object = islandora_object_load($form_state['values']['container_pid']);
-  islandora_critical_edition_advanced_add_apparatus($container_object);
+  $args = array();
+  $args['islandora']['objects'][] = $container_object;
+  islandora_critical_edition_advanced_add_apparatus($args);
   drupal_set_message(t('Critical Apparatus is now available'));
 }

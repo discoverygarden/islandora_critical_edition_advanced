@@ -291,13 +291,23 @@ function islandora_critical_edition_associate_tei_rdf_form_submit($form, $form_s
     $tn = $book_object['TN'];
     $label = $book_object->label;
   }
-
+  
   if ($type == 'islandora:criticalEditionContainerCModel') {
     $container_object = islandora_object_load($form_state['values']['container_object_pid']);
-    $versionable_object_pid = islandora_critical_edition_build_vo($container_object, $label, $tn);
+    $versionable_object = islandora_critical_edition_build_vo($container_object, $label, $tn);
+    // Build and attach basic transcription
+    $transcription_label = t("Transcription of @label", array('@label' => $versionable_object->label));
+    $transcription = islandora_critical_edition_advanced_build_transcription($versionable_object, $transcription_label);
+    $datastream_id = "TRANSCRIPTION";
+    $control_group = "M";
+    $transcription_datastream = $transcription->constructDatastream($datastream_id, $control_group);
+    $transcription_datastream->mimetype = 'text/plain';
   }
   else {
     $versionable_object_pid = $form_state['values']['container_object_pid'];
   }
-  $tei_rdf_object->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOf', $versionable_object_pid);
+  $tei_rdf_object->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOf', $versionable_object->id);
+  if ($type == 'islandora:criticalEditionContainerCModel') {
+    add_derived_transcription($tei_rdf_object, $versionable_object->id, $transcription, $transcription_datastream);
+  }
 }
