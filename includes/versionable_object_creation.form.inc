@@ -71,7 +71,7 @@ function islandora_critical_edition_build_vo($fedora_object, $label, $tn_datastr
   $versionable_object->label = $label;
   $versionable_object->owner = $fedora_object->owner;
   if (!$tn_datastream) {
-    $tn_path = drupal_get_path('module', 'islandora_critical_edition') . '/images/folder.png';
+    $tn_path = drupal_get_path('module', 'islandora_critical_edition_advanced') . '/images/folder.png';
     $tn_datastream = $versionable_object->constructDatastream('TN');
     $tn_datastream->label = 'Thumbnail';
     $tn_datastream->mimetype = 'image/png';
