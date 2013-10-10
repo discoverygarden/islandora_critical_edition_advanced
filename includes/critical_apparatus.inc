@@ -111,7 +111,8 @@ function critical_apparatus_form_submit($form, $form_state) {
     $datastream->mimetype = 'text/plain';
     $apparatus->ingestDatastream($datastream);
   }
-  drupal_set_message(t("Updated @ds", array('@ds' => $datastreams[$chosen])));
+  $ds_label = $datastreams[$chosen];
+  drupal_set_message(t("Updated @ds", array('@ds' => $ds_label)));
 }
 
 /**
