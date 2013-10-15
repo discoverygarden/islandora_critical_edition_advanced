@@ -34,7 +34,6 @@ drupal_set_title($object->label);
     $transcription_object = reset($objects);
     print $transcription_object['TRANSCRIPTION']->content;
     ?>
-
   </div>
 <?php else:; ?>
   <div id="tabs">
