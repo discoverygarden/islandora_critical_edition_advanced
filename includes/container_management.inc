@@ -18,7 +18,7 @@
  * @return array
  *   The Drupal form definition.
  */
-function islandora_critical_edition_container_management(array $form, array &$form_state, AbstractObject $object) {
+function islandora_critical_edition_container_management_deprecated(array $form, array &$form_state, AbstractObject $object) {
   module_load_include('inc', 'islandora_critical_edition', 'includes/utilities');
   $path = drupal_get_path('module', 'islandora_critical_edition');
   drupal_add_css("$path/css/critical_edition_management.css");
@@ -107,15 +107,15 @@ function islandora_critical_edition_attach_versionable(array $form, array &$form
   $objects = islandora_get_versionable_objects();
   $chosen = array_keys(islandora_critical_edition_get_members($object->id, 'islandora:versionableObjectCModel'));
   $comparator = function ($a, $b) use ($chosen) {
-    $a_val = $b_val = 0;
-    if (in_array($a, $chosen)) {
-      $a_val = 1;
-    }
-    if (in_array($b, $chosen)) {
-      $b_val = 1;
-    }
-    return $b_val - $a_val;
-  };
+        $a_val = $b_val = 0;
+        if (in_array($a, $chosen)) {
+          $a_val = 1;
+        }
+        if (in_array($b, $chosen)) {
+          $b_val = 1;
+        }
+        return $b_val - $a_val;
+      };
   uksort($objects, $comparator);
   $rows = array();
   $defaults = array();
@@ -268,13 +268,19 @@ function islandora_critical_edition_management_menu(AbstractObject $object) {
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/critical_apparatus');
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/manage_rdf_tei_attachment.form');
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/transcriptions');
+  module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/mvd');
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/utilities');
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/versionable_object_creation.form');
   drupal_set_breadcrumb(islandora_get_breadcrumbs($object));
   drupal_set_title($object->label);
   $members = islandora_critical_edition_get_members($object->id);
-  $cwrcwriter = array_search('islandora:criticalEditionCModel', $members);
-  $transcriptions = array_keys($members, 'islandora:transcriptionCModel');
+  $tei_rdf = array_search('islandora:criticalEditionCModel', $members);
+  $versionable_objects = array_keys($members, 'islandora:versionableObjectCModel');
+  $transcriptions = array();
+  foreach ($versionable_objects as $versionable_object) {
+    $vo_members = islandora_critical_edition_get_members($versionable_object);
+    $transcriptions = array_merge($transcriptions, array_keys($vo_members, 'islandora:transcriptionCModel'));
+  }
   $apparatus = array_keys($members, 'islandora:criticalApparatusCModel');
   $output = array();
   $output['manage_critical_edition'] = array('#type' => 'vertical_tabs');
@@ -316,26 +322,15 @@ function islandora_critical_edition_management_menu(AbstractObject $object) {
     '#collapsed' => TRUE,
   );
 
-  if ($cwrcwriter) {
-    $output['manage_critical_edition']['add_transcription'] = array(
-      '#access' => user_access(ISLANDORA_ADD_DS),
-      '#title' => t('Create Transcription'),
-      '#type' => 'fieldset',
-      'form' => drupal_get_form('islandora_critical_edition_create_transcription_form', $object),
-      '#collapsible' => TRUE,
-      '#collapsed' => TRUE,
-    );
-  }
-  if ($transcriptions) {
-    $output['manage_critical_edition']['manage_transcription'] = array(
-      '#access' => user_access(ISLANDORA_ADD_DS) && $transcriptions,
-      '#title' => t('Manage Transcriptions'),
-      '#type' => 'fieldset',
-      'form' => drupal_get_form('islandora_critical_edition_manage_transcriptions_form', $object),
-      '#collapsible' => TRUE,
-      '#collapsed' => TRUE,
-    );
-  }
+  $output['manage_critical_edition']['mvd'] = array(
+    '#access' => user_access(ISLANDORA_ADD_DS) && $transcriptions,
+    '#title' => t('Create MVD'),
+    '#type' => 'fieldset',
+    'form' => drupal_get_form('islandora_critical_edition_mvd_form', $object),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+  );
+
 
   return $output;
 }

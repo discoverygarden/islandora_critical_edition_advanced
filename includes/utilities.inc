@@ -124,7 +124,7 @@ function islandora_critical_edition_get_related_objects($content_model, $offset 
 }
 
 /**
- * Builds and returns query to get all book objects in repository.
+ * Builds and returns query to get objects filtered by content model from repository.
  *
  * @param integer $offset
  *   Offset for query

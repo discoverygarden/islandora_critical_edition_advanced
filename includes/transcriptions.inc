@@ -145,7 +145,7 @@ function islandora_critical_edition_manage_transcriptions_form(array $form, arra
     '#type' => 'tableselect',
     '#header' => $header,
     '#options' => $rows,
-    '#empty' => t("This versionable object has not transcription objects."),
+    '#empty' => t("This versionable object has no transcription objects."),
     '#js' => FALSE,
     '#multiple' => FALSE,
   );

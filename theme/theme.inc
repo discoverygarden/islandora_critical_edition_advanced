@@ -34,7 +34,7 @@ function islandora_critical_edition_preprocess_islandora_critical_edition_contai
 function islandora_critical_edition_preprocess_islandora_transcription_object(&$variables) {
   islandora_critical_edition_advanced_prep_tabs();
   $multiple = FALSE;
-  if (count($variables['transcriptions']) > 1) {
+  if (isset($variables['transcriptions']) && count($variables['transcriptions']) > 1) {
     $multiple = TRUE;
   }
   $variables['multiple'] = $multiple;
