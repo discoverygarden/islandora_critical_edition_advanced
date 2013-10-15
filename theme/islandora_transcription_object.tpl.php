@@ -27,14 +27,10 @@ module_load_include('inc', 'islandora', 'includes/breadcrumb');
 drupal_set_breadcrumb(islandora_get_breadcrumbs($object));
 drupal_set_title($object->label);
 ?>
-<script>
-  $(function() {
-    $("#tabs").tabs();
-  });
-</script>
+
 <?php if (!$variables['multiple']): ?>
   <div class="islandora_transcription_object">
-    <?php;
+    <?php
     $transcription_object = reset($objects);
     print $transcription_object['TRANSCRIPTION']->content;
     ?>

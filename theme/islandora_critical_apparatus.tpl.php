@@ -17,11 +17,7 @@ foreach ($dsids as $dsid) {
 }
 $count = count($dsids_to_display);
 ?>
-<script>
-  $(function() {
-    $("#tabs").tabs();
-  });
-</script>
+
 <?php if ($count == 0): ?>
 <p><?php print t("No information has been added to this apparatus."); ?></p>
 <?php else:; ?>
