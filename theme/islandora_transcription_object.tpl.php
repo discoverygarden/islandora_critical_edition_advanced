@@ -2,16 +2,56 @@
 /**
  * @file
  * islandora-basic-collection.tpl.php
+ * //notes
+  foreach ($variables['transcriptions'] as $transcription) {
+  $objects[$transcription] = islandora_object_load($transcription);
+  $pid = islandora_escape_pid_for_function($transcription);
+  if ($objects[$pid]['TRANSCRIPTION']) {
+  $texts[] = $objects[$transcription]['TRANSCRIPTION']->content;
+  }
+  }
  */
-$object = $variables['islandora_object'];
+$objects = array();
+$texts = array();
+foreach ($variables['transcriptions'] as $transcription) {
+  $flat_pid = islandora_escape_pid_for_function($transcription);
+  $objects[$flat_pid] = islandora_object_load($transcription);
+  if ($objects[$flat_pid]['TRANSCRIPTION']) {
+    $texts[] = $objects[$flat_pid]['TRANSCRIPTION']->content;
+  }
+}
+
+$object = $objects[key($objects)];
 $transcription = $object['TRANSCRIPTION']->content;
 module_load_include('inc', 'islandora', 'includes/breadcrumb');
 drupal_set_breadcrumb(islandora_get_breadcrumbs($object));
 drupal_set_title($object->label);
 ?>
+<script>
+  $(function() {
+    $("#tabs").tabs();
+  });
+</script>
+<?php if (!$variables['multiple']): ?>
+  <div class="islandora_transcription_object">
+    <?php;
+    $transcription_object = reset($objects);
+    print $transcription_object['TRANSCRIPTION']->content;
+    ?>
 
-<div class="islandora_transcription_object">
-  <?php if (isset($transcription)): ?>
-    <?php print $transcription; ?>
+  </div>
+<?php else:; ?>
+  <div id="tabs">
+    <ul>
+  <?php foreach ($objects as $flat_pid => $object): ?>
+        <li><a href="#<?php print $flat_pid; ?>"><?php print $object->label; ?></a></li>
+      <?php endforeach; ?>
+    </ul>
+      <?php foreach ($objects as $flat_pid => $object): ?>
+      <div id="<?php print $flat_pid; ?>"">
+        <p><?php print $object['TRANSCRIPTION']->content; ?></p>
+      </div>
+  <?php endforeach; ?>
+  </div>
   <?php endif; ?>
-</div>
+

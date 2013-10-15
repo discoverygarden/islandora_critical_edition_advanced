@@ -11,7 +11,7 @@ $transcriptions = array_keys($members, 'islandora:transcriptionCModel');
 drupal_set_breadcrumb(islandora_get_breadcrumbs($object));
 drupal_set_title($object->label);
 ?>
-
+<p>ISLANDORA VERSIONABLKE OBJECT TEST.  FROM THE .tpl FILE</p>
 <div class="islandora_tei_editor_object">
   <?php if (!$critical_edition  && empty($transcriptions)): ?>
     <?php print t("This Versionable Object has no associated objects."); ?>
