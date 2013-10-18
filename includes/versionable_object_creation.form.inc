@@ -66,7 +66,7 @@ function islandora_critical_edition_build_vo($fedora_object, $label, $tn_datastr
   $tuque = new IslandoraTuque();
   $namespace = islandora_get_namespace($fedora_object->id);
   $versionable_object = $tuque->repository->constructObject($namespace);
-  $versionable_object->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOf', $fedora_object->id);                              
+  $versionable_object->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOf', $fedora_object->id);
   $versionable_object->relationships->add(FEDORA_MODEL_URI, 'hasModel', 'islandora:versionableObjectCModel');
   $versionable_object->label = $label;
   $versionable_object->owner = $fedora_object->owner;

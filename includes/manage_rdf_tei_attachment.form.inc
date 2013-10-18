@@ -291,11 +291,10 @@ function islandora_critical_edition_associate_tei_rdf_form_submit($form, $form_s
     $tn = $book_object['TN'];
     $label = $book_object->label;
   }
-  
+
   if ($type == 'islandora:criticalEditionContainerCModel') {
     $container_object = islandora_object_load($form_state['values']['container_object_pid']);
     $versionable_object = islandora_critical_edition_build_vo($container_object, $label, $tn);
-    // Build and attach basic transcription
     $transcription_label = t("Transcription of @label", array('@label' => $versionable_object->label));
     $transcription = islandora_critical_edition_advanced_build_transcription($versionable_object, $transcription_label);
     $datastream_id = "TRANSCRIPTION";

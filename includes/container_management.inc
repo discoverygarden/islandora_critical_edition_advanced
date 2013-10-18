@@ -6,90 +6,6 @@
  */
 
 /**
- * Creates form to manage Critical Edition.
- *
- * @param array $form
- *   The Drupal form definition.
- * @param array $form_state
- *   The Drupal form state.
- * @param AbstractObject $object
- *   Object representing Critical Edition container
- *
- * @return array
- *   The Drupal form definition.
- */
-function islandora_critical_edition_container_management_deprecated(array $form, array &$form_state, AbstractObject $object) {
-  module_load_include('inc', 'islandora_critical_edition', 'includes/utilities');
-  $path = drupal_get_path('module', 'islandora_critical_edition');
-  drupal_add_css("$path/css/critical_edition_management.css");
-  $versionable_objects = array_keys(islandora_critical_edition_get_members($object->id, 'islandora:versionableObjectCModel'));
-  $transcriptions = array();
-  foreach ($versionable_objects as $versionable_object) {
-    $transcriptions = array_merge($transcriptions, array_keys(islandora_critical_get_related_transcriptions($versionable_object)));
-  }
-
-  drupal_add_css("$path/css/critical_edition_management.css");
-  $form = array();
-  $form['create_new'] = array(
-    '#type' => 'submit',
-    '#value' => t('Create New Versionable Object'),
-    '#attributes' => array('source' => 'new_versionable', 'class' => array('critical_edition_submit')),
-  );
-  $form['attach'] = array(
-    '#type' => 'submit',
-    '#value' => t('Attach Versionable Object to Critical Edition'),
-    '#attributes' => array('source' => 'attach_versionable', 'class' => array('critical_edition_submit')),
-  );
-
-  $form['include_tei_rdf'] = array(
-    '#type' => 'submit',
-    '#value' => t('Include RDF-TEI Object'),
-    '#attributes' => array('source' => 'include_rdf', 'class' => array('critical_edition_submit')),
-  );
-
-  if (!empty($transcriptions)) {
-    $form['mvd'] = array(
-      '#type' => 'submit',
-      '#value' => t('Create/Update MVD'),
-      '#attributes' => array('source' => 'make_mvd', 'class' => array('critical_edition_submit')),
-    );
-  }
-  $form['pid'] = array(
-    '#type' => 'hidden',
-    '#value' => $object->id,
-  );
-  return $form;
-}
-
-/**
- * Submit handler for critical edition management.
- *
- * @param array $form
- *   The form.
- * @param array $form_state
- *   The form state.
- */
-function islandora_critical_edition_container_management_submit(array $form, array &$form_state) {
-  $action = $form_state['triggering_element']['#attributes']['source'];
-  $pid = $form_state['values']['pid'];
-
-  switch ($action) {
-
-    case 'new_versionable':
-      drupal_goto("islandora/critical_edition/$pid/create/versionable_object");
-      break;
-
-    case 'attach_versionable':
-      drupal_goto("islandora/critical_edition/$pid/associate");
-      break;
-
-    case 'make_mvd':
-      drupal_goto("islandora/critical_edition/$pid/mvd");
-      break;
-  }
-}
-
-/**
  * Attaches and detaches versionable objects from Critical Edition object.
  *
  * @param array $form
@@ -107,15 +23,15 @@ function islandora_critical_edition_attach_versionable(array $form, array &$form
   $objects = islandora_get_versionable_objects();
   $chosen = array_keys(islandora_critical_edition_get_members($object->id, 'islandora:versionableObjectCModel'));
   $comparator = function ($a, $b) use ($chosen) {
-        $a_val = $b_val = 0;
-        if (in_array($a, $chosen)) {
-          $a_val = 1;
-        }
-        if (in_array($b, $chosen)) {
-          $b_val = 1;
-        }
-        return $b_val - $a_val;
-      };
+    $a_val = $b_val = 0;
+    if (in_array($a, $chosen)) {
+      $a_val = 1;
+    }
+    if (in_array($b, $chosen)) {
+      $b_val = 1;
+    }
+    return $b_val - $a_val;
+  };
   uksort($objects, $comparator);
   $rows = array();
   $defaults = array();
@@ -130,7 +46,7 @@ function islandora_critical_edition_attach_versionable(array $form, array &$form
     'title' => array('data' => t('Versionable Object Title')),
     'pid' => array('data' => t('PID')),
   );
-  // Build and return table element.
+
   $table_element = array(
     '#type' => 'tableselect',
     '#header' => $header,
@@ -254,7 +170,7 @@ function islandora_get_associated_versionable_objects($critical_edition_pid) {
 }
 
 /**
- * Displays the versionable object forms in a set of vertical tabs.
+ * Displays the container forms in a set of vertical tabs.
  *
  * @param AbstractObject $object
  *   The versionable object to manage.

@@ -40,7 +40,6 @@ function islandora_critical_edition_mvd_form(array $form, array &$form_state, Ab
       'pid' => l($transcription, "islandora/object/$transcription"),
       'title' => l($transcription_object->label, "islandora/object/$transcription"),
     );
-
   }
   $header = array(
     'title' => array('data' => t('Transcription Title')),
@@ -56,7 +55,7 @@ function islandora_critical_edition_mvd_form(array $form, array &$form_state, Ab
     '#type' => 'markup',
     '#markup' => t("Choose transcriptions of @label to compare.", array('@label' => $object->label)),
   );
-  $form['versionable_objects'] = $table_element;
+  $form['transcriptions'] = $table_element;
   $form['next'] = array(
     '#type' => 'submit',
     '#value' => t('Create MVD'),
@@ -67,4 +66,49 @@ function islandora_critical_edition_mvd_form(array $form, array &$form_state, Ab
   );
 
   return $form;
+}
+
+function islandora_critical_edition_mvd_form_submit($form, $form_state) {
+  module_load_include('inc', 'islandora_calliope', 'includes/utilities');
+  module_load_include('inc', 'islandora', 'includes/utilities');
+  $transcriptions = $form_state['values']['transcriptions'];
+  $mvd = islandora_critical_edition_advanced_build_mvd($form_state['values']['pid'], $form_state['values']['mvd'], $transcriptions);
+  $success = islandora_calliope_create_mvd(islandora_escape_pid_for_function($mvd->id), $transcriptions);
+  drupal_set_message($success);
+}
+
+/**
+ * Builds MVD object in repository.
+ *
+ * @param String $critical_edition
+ *   PID of critical edition
+ * @param String $title
+ *   Title for MVD
+ * @param array $transcriptions
+ *   Transcriptions to be included in MVD
+ *
+ * @return AbstractObject 
+ *   MVD object
+ */
+function islandora_critical_edition_advanced_build_mvd($critical_edition, $title, $transcriptions) {
+  $fedora_object = islandora_object_load($critical_edition);
+  $tuque = new IslandoraTuque();
+  $namespace = islandora_get_namespace($fedora_object->id);
+  $mvd = $tuque->repository->constructObject($namespace);
+  $mvd->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOf', $fedora_object->id);
+  $mvd->relationships->add(FEDORA_MODEL_URI, 'hasModel', 'islandora:mvdCModel');
+  $mvd->label = $title;
+  $mvd->owner = $fedora_object->owner;
+  $tn_path = drupal_get_path('module', 'islandora_critical_edition_advanced') . '/images/calliope.jpg';
+  $tn = $mvd->constructDatastream('TN');
+  $tn->label = 'Thumbnail';
+  $tn->mimetype = 'image/jpg';
+  $tn->setContentFromFile($tn_path);
+  $mvd->ingestDatastream($tn);
+  $new_object = $tuque->repository->ingestObject($mvd);
+  foreach ($transcriptions as $transcription) {
+    $transcription_object = islandora_object_load($transcription);
+    $transcription_object->relationships->add(FEDORA_RELS_EXT_URI, 'isPartOf', $new_object->id);
+  }
+  return $new_object;
 }

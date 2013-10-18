@@ -89,7 +89,6 @@ function islandora_critical_edition_create_transcription_form_submit(array $form
   $label = $form_state['values']['transcription'];
   $content_source = $form_state['values']['content_source'];
   $transcription = islandora_critical_edition_advanced_build_transcription($versionable_object, $label);
-  // add transcription datastream
   $datastream_id = "TRANSCRIPTION";
   $control_group = "M";
   $transcription_datastream = $transcription->constructDatastream($datastream_id, $control_group);

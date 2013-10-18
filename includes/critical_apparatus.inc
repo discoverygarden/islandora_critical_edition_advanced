@@ -118,8 +118,8 @@ function critical_apparatus_form_submit($form, $form_state) {
 /**
  * Builds Critical Apparatus and associates with Critical Edition.
  *
- * @param AbstractObject $fedora_object
- *   object representing Critical Edition Container
+ * @param array $form_state
+ *   Drupal from state
  */
 function islandora_critical_edition_advanced_add_apparatus($form_state) {
   $fedora_object = $form_state['islandora']['objects'][0];
