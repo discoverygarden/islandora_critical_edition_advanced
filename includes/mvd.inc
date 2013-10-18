@@ -71,7 +71,7 @@ function islandora_critical_edition_mvd_form(array $form, array &$form_state, Ab
 function islandora_critical_edition_mvd_form_submit($form, $form_state) {
   module_load_include('inc', 'islandora_calliope', 'includes/utilities');
   module_load_include('inc', 'islandora', 'includes/utilities');
-  $transcriptions = $form_state['values']['transcriptions'];
+  $transcriptions = array_filter($form_state['values']['transcriptions']);
   $mvd = islandora_critical_edition_advanced_build_mvd($form_state['values']['pid'], $form_state['values']['mvd'], $transcriptions);
   $success = islandora_calliope_create_mvd(islandora_escape_pid_for_function($mvd->id), $transcriptions);
   drupal_set_message($success);
