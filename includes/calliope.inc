@@ -176,8 +176,8 @@ function islandora_calliope_write_file($pid, $project = '') {
     $grid = islandora_calliope_create_mongo_grid();
     $query = array('_resourceid' => $flat_pid);
     $record = $grid->findOne($query);
-    $id = $record->file['_id'];
-    if ($id) {
+    if ($record) {
+      $id = $record->file['_id'];
       $grid->remove($query);
     }
     $storedfile = $grid->storeFile($real_path, array(

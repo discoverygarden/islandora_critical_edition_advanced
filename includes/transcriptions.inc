@@ -83,6 +83,7 @@ function islandora_critical_edition_create_transcription_form(array $form, array
  *   Drupal form_state
  */
 function islandora_critical_edition_create_transcription_form_submit(array $form, array &$form_state) {
+  module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/calliope');
   module_load_include('inc', 'islandora', 'includes/utilities');
   $versionable_object_pid = $form_state['values']['versionable_object_pid'];
   $versionable_object = islandora_object_load($versionable_object_pid);
@@ -111,6 +112,7 @@ function islandora_critical_edition_create_transcription_form_submit(array $form
   }
 
   $transcription->ingestDatastream($transcription_datastream);
+  islandora_calliope_write_file($transcription->id);
   drupal_set_message(t("Transaction object created"));
 }
 
@@ -258,6 +260,7 @@ function islandora_critical_transcription_edit_form($form, $form_state, $transcr
  *   Drupal form
  */
 function islandora_critical_transcription_edit_form_submit($form, $form_state) {
+  module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/calliope');
   $transcription_object = islandora_object_load($form_state['values']['pid']);
   if (isset($form_state['values']['transcription']['value'])) {
     $content = $form_state['values']['transcription']['value'];
@@ -273,6 +276,7 @@ function islandora_critical_transcription_edit_form_submit($form, $form_state) {
   }
   if ($success) {
     drupal_set_message(t("Transcription updated."));
+    islandora_calliope_write_file($transcription_object->id);
   }
 }
 
