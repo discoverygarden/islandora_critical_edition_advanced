@@ -42,4 +42,3 @@ drupal_set_title($object->label);
     <?php endforeach; ?>
   </div>
 <?php endif; ?>
-

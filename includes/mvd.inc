@@ -68,6 +68,14 @@ function islandora_critical_edition_mvd_form(array $form, array &$form_state, Ab
   return $form;
 }
 
+/**
+ * Sumit handler for MVD form.
+ *
+ * @param array $form
+ *   Drupal Form
+ * @param array $form_state
+ *   Drupal Form State
+ */
 function islandora_critical_edition_mvd_form_submit($form, $form_state) {
   module_load_include('inc', 'islandora_calliope', 'includes/utilities');
   module_load_include('inc', 'islandora', 'includes/utilities');
@@ -87,7 +95,7 @@ function islandora_critical_edition_mvd_form_submit($form, $form_state) {
  * @param array $transcriptions
  *   Transcriptions to be included in MVD
  *
- * @return AbstractObject 
+ * @return AbstractObject
  *   MVD object
  */
 function islandora_critical_edition_advanced_build_mvd($critical_edition, $title, $transcriptions) {

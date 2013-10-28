@@ -67,7 +67,7 @@ function islandora_critical_edition_advanced_menu() {
     'type' => MENU_LOCAL_TASK,
     'access callback' => 'user_access',
     'access arguments' => array(ISLANDORA_CRITICAL_EDITION_MODIFY),
-    'file' => 'includes/calliope_interaction.inc',
+    'file' => 'includes/calliope.inc',
   );
   $items['islandora/transcription/edit/%islandora_object'] = array(
     'title' => 'Edit Transcription',
