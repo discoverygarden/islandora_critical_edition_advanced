@@ -252,9 +252,7 @@ function islandora_calliope_create_mvd($project, $mvd_title, $resource_ids = NUL
           'resources' => $id_array,
           'filter' => $filter,
         );
-        if ($project) {
-          $newmvd['project'] = $project;
-        }
+
         $ch2 = curl_init();
         curl_setopt($ch2, CURLOPT_URL, trim($mvddburl));
         curl_setopt($ch2, CURLOPT_RETURNTRANSFER, 1);
