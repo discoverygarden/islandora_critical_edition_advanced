@@ -120,44 +120,52 @@ function islandora_critical_create_mvd($critical_edition_container_object) {
   drupal_goto('islandora/object/' . $critical_edition_container_object->id);
 }
 
+
+
 /**
  * Send selected documents to calliope.
  *
- * @global url $base_url
+ * @global type $base_url
  *
+ * @param String $project
+ *   MVD's Project
+ * @param String $mvd_title
+ *   Title for MVD
  * @param array $ids
- *   Ids identifying source documents
+ *   Array of transcriptions to build MVD
+ * @param String $supplied_filter
+ *   Optional Filter
  *
  * @return String
- *   Success or failure message
+ *   Status message
  */
-function islandora_calliope_create_mvd($project, $mvd_title, $ids = NULL, $filter = NULL) {
+function islandora_calliope_create_mvd($project, $mvd_title, $resource_ids = NULL, $filter = "Empty") {
   global $base_url;
+  $project = NULL;
   $mvd_url = variable_get('austese_collation_mvd_url', $base_url . "/calliope/");
   $calliope_import_url = "$mvd_url/import/"; 
-  if (!$filter) {
-     $filter = "Empty";
-  }
-  
+ 
   // Remove spaces from doc path.
   $docpath = str_replace(' ', '_', "$project/$mvd_title");
   $origdocpath = $docpath;
-  if ($ids == NULL) {
+  if ($resource_ids == NULL) {
     return t('Identifiers of resources to add to MVD not specified');
   }
-  $resource_ids = array_filter(explode(";", $ids));
-
   $boundary = "-------------" . uniqid();
   $data = "";
   $id_array = array();
   foreach ($resource_ids as $resource_id) {
     if ($resource_id != "") {
       $file = islandora_calliope_get_file($resource_id);
-      $filename = $file->file['filename'];
-      $file_label = pathinfo($filename, PATHINFO_FILENAME);
+      if (!$file) {
+        drupal_set_message(t("Resource @resource_id does not exist", array('@resource_id' => $resource_id)));
+        continue;
+      }
       $contents = $file->getBytes();
-      $file_label = str_replace('.', '_', $file_label);
+      $filename = $file->file['filename'];
+      $file_label = str_replace('.', '_',pathinfo($filename, PATHINFO_FILENAME));
       $id_array[] = array('id' => $resource_id, 'name' => $file_label);
+
       $data .= "--" . $boundary . "\r\n";
       $data .= "Content-Disposition: form-data; name=\"uploadedfile[]\"; filename=\"" . $file_label . "\"\r\n";
       $data .= "Content-Type: " . 'text/xml' . "\r\n";

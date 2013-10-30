@@ -17,7 +17,16 @@ function islandora_critical_edition_mvd_form(array $form, array &$form_state, Ab
   module_load_include('inc', 'islandora_critical_edition', 'includes/utilities');
   drupal_set_breadcrumb(islandora_get_breadcrumbs($object));
   drupal_set_title($object->label);
+  $filter_options = array(
+    'Empty' => 'Empty',
+    'CCE' => 'CCE',
+    'Novel' => 'Novel',
+    'Play' => 'Play',
+    'Poem' => 'Poem'
+  );
+  
   $form = array();
+  
   $form['mvd'] = array(
     '#type' => 'textfield',
     '#title' => t('Title of new MVD'),
@@ -51,6 +60,19 @@ function islandora_critical_edition_mvd_form(array $form, array &$form_state, Ab
     '#options' => $rows,
     '#empty' => t("There are no transcriptions associated with this Critical Edition."),
   );
+
+  $form['project'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Project'),
+    '#default_value' => 'islandora'
+  );
+
+  $form['filter'] = array(
+    '#type' => 'select',
+    '#title' => t('Filter'),
+    '#options' => $filter_options,
+  );
+
   $form['intro'] = array(
     '#type' => 'markup',
     '#markup' => t("Choose transcriptions of @label to compare.", array('@label' => $object->label)),
@@ -77,11 +99,14 @@ function islandora_critical_edition_mvd_form(array $form, array &$form_state, Ab
  *   Drupal Form State
  */
 function islandora_critical_edition_mvd_form_submit($form, $form_state) {
-  module_load_include('inc', 'islandora_calliope', 'includes/utilities');
+  module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/calliope');
   module_load_include('inc', 'islandora', 'includes/utilities');
   $transcriptions = array_filter($form_state['values']['transcriptions']);
   $mvd = islandora_critical_edition_advanced_build_mvd($form_state['values']['pid'], $form_state['values']['mvd'], $transcriptions);
-  $success = islandora_calliope_create_mvd(islandora_escape_pid_for_function($mvd->id), $transcriptions);
+  $project = $form_state['values']['project'];
+  $mvd_title = $form_state['values']['mvd'];
+  $filter = $form_state['values']['filter'];
+  $success = islandora_calliope_create_mvd($project, $mvd_title, $transcriptions, $filter);
   drupal_set_message($success);
 }
 
