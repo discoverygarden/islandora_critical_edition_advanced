@@ -161,10 +161,11 @@ function islandora_calliope_create_mvd($project, $mvd_title, $resource_ids = NUL
         drupal_set_message(t("Resource @resource_id does not exist", array('@resource_id' => $resource_id)));
         continue;
       }
+      $flat_id - islandora_escape_pid_for_function($resource_id);
       $contents = $file->getBytes();
       $filename = $file->file['filename'];
       $file_label = str_replace('.', '_',pathinfo($filename, PATHINFO_FILENAME));
-      $id_array[] = array('id' => $resource_id, 'name' => $file_label);
+      $id_array[] = array('id' => $flat_id, 'name' => $file_label);
 
       $data .= "--" . $boundary . "\r\n";
       $data .= "Content-Disposition: form-data; name=\"uploadedfile[]\"; filename=\"" . $file_label . "\"\r\n";
