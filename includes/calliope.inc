@@ -141,7 +141,6 @@ function islandora_critical_create_mvd($critical_edition_container_object) {
  */
 function islandora_calliope_create_mvd($project, $mvd_title, $resource_ids = NULL, $filter = "Empty") {
   global $base_url;
-  $project = 'default';
   $mvd_url = variable_get('austese_collation_mvd_url', $base_url . "/calliope/");
   $calliope_import_url = "$mvd_url/import/"; 
  
