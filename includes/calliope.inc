@@ -329,3 +329,24 @@ function islandora_calliope_get_file($pid) {
   
   return $file;
 }
+
+function run_mongo_query($query){
+  module_load_include('inc', 'islandora', 'includes/utilities');
+  $grid = islandora_calliope_create_mongo_grid();
+  
+  $query = array('_id' => new MongoId( '52694f35f3a06b684f6e3488'));
+  $file = $grid->findOne($query);
+  if ($file == null){
+   drupal_add_http_header('Status', '404 Not found');
+   echo 'The requested resource does not exist';
+   return;
+  }
+  
+  if (array_key_exists('_deleted',$file->file)){
+   drupal_add_http_header('Status', '410 Gone');
+   echo 'The requested resource has been deleted';
+   return;
+  }
+  
+  return $file;
+}            

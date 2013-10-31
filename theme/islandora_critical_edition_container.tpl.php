@@ -5,7 +5,7 @@
  */
 module_load_include('inc', 'islandora', 'includes/breadcrumb');
 $object = $variables['islandora_object'];
-$versionable_objects = $variables['apparatus'] + $variables['versionable_objects'];
+$versionable_objects = array_merge($variables['apparatus'], $variables['versionable_objects']);
 drupal_set_breadcrumb(islandora_get_breadcrumbs($object));
 drupal_set_title($object->label);
 ?>
