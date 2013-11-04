@@ -22,11 +22,11 @@ function islandora_critical_edition_mvd_form(array $form, array &$form_state, Ab
     'CCE' => 'CCE',
     'Novel' => 'Novel',
     'Play' => 'Play',
-    'Poem' => 'Poem'
+    'Poem' => 'Poem',
   );
-  
+
   $form = array();
-  
+
   $form['mvd'] = array(
     '#type' => 'textfield',
     '#title' => t('Title of new MVD'),
@@ -64,7 +64,7 @@ function islandora_critical_edition_mvd_form(array $form, array &$form_state, Ab
   $form['project'] = array(
     '#type' => 'textfield',
     '#title' => t('Project'),
-    '#default_value' => 'islandora'
+    '#default_value' => 'islandora',
   );
 
   $form['filter'] = array(

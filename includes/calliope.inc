@@ -21,8 +21,7 @@ function islandora_calliope_create_mongo_grid() {
     $grid = $db->getGridFS();
   }
   catch (Exception $e) {
-    drupal_add_http_header('Status', '500 Internal server error');
-    echo $e->getMessage();
+    drupal_set_message($e->getMessage());
     exit;
   }
   return $grid;
@@ -99,31 +98,7 @@ function islandora_calliope_delete_file($pid) {
 }
 
 /**
- * Creates MVD from Versionable Object.
- *
- * @param AbstractObject $critical_edition_container_object
- *   Object representing Critical Edition object
- *
- * @return String
- *   Success/failure message
- */
-function islandora_critical_create_mvd($critical_edition_container_object) {
-  module_load_include('inc', 'islandora_calliope', 'includes/utilities');
-  module_load_include('inc', 'islandora_critical_edition', 'includes/utilities');
-  $versionable_objects = array_keys(islandora_critical_edition_get_members($critical_edition_container_object->id, 'islandora:versionableObjectCModel'));
-  $transcriptions = array();
-  foreach ($versionable_objects as $versionable_object) {
-    $transcriptions = array_merge($transcriptions, array_keys(islandora_critical_get_related_transcriptions($versionable_object)));
-  }
-  $success = islandora_calliope_create_mvd($critical_edition_container_object->id, $transcriptions);
-  drupal_set_message($success);
-  drupal_goto('islandora/object/' . $critical_edition_container_object->id);
-}
-
-
-
-/**
- * Send selected documents to calliope.
+ * Send selected documents to calliope to create MVD.
  *
  * @global type $base_url
  *
@@ -131,9 +106,9 @@ function islandora_critical_create_mvd($critical_edition_container_object) {
  *   MVD's Project
  * @param String $mvd_title
  *   Title for MVD
- * @param array $ids
+ * @param array $resource_ids
  *   Array of transcriptions to build MVD
- * @param String $supplied_filter
+ * @param String $filter
  *   Optional Filter
  *
  * @return String
@@ -142,8 +117,8 @@ function islandora_critical_create_mvd($critical_edition_container_object) {
 function islandora_calliope_create_mvd($project, $mvd_title, $resource_ids = NULL, $filter = "Empty") {
   global $base_url;
   $mvd_url = variable_get('austese_collation_mvd_url', $base_url . "/calliope/");
-  $calliope_import_url = "$mvd_url/import/"; 
- 
+  $calliope_import_url = "$mvd_url/import/";
+
   // Remove spaces from doc path.
   $docpath = str_replace(' ', '_', "$project/$mvd_title");
   $origdocpath = $docpath;
@@ -158,12 +133,13 @@ function islandora_calliope_create_mvd($project, $mvd_title, $resource_ids = NUL
       $file = islandora_calliope_get_file($resource_id);
       if (!$file) {
         drupal_set_message(t("Resource @resource_id does not exist", array('@resource_id' => $resource_id)));
-        continue;
+        islandora_calliope_write_file($resource_id);
+        //continue;
       }
       $flat_id = islandora_escape_pid_for_function($resource_id);
       $contents = $file->getBytes();
       $filename = $file->file['filename'];
-      $file_label = str_replace('.', '_',pathinfo($filename, PATHINFO_FILENAME));
+      $file_label = str_replace('.', '_', pathinfo($filename, PATHINFO_FILENAME));
       $id_array[] = array('id' => $flat_id, 'name' => $file_label);
 
       $data .= "--" . $boundary . "\r\n";
@@ -315,38 +291,17 @@ function islandora_calliope_get_file($pid) {
   $grid = islandora_calliope_create_mongo_grid();
   $query = array('_resourceid' => $id);
   $file = $grid->findOne($query);
-  if ($file == null){
-   drupal_add_http_header('Status', '404 Not found');
-   echo 'The requested resource does not exist';
-   return;
+  if ($file == NULL) {
+    drupal_add_http_header('Status', '404 Not found');
+    echo 'The requested resource does not exist';
+    return;
   }
-  
-  if (array_key_exists('_deleted',$file->file)){
-   drupal_add_http_header('Status', '410 Gone');
-   echo 'The requested resource has been deleted';
-   return;
+
+  if (array_key_exists('_deleted', $file->file)) {
+    drupal_add_http_header('Status', '410 Gone');
+    echo 'The requested resource has been deleted';
+    return;
   }
-  
+
   return $file;
 }
-
-function run_mongo_query($query){
-  module_load_include('inc', 'islandora', 'includes/utilities');
-  $grid = islandora_calliope_create_mongo_grid();
-  
-  $query = array('_id' => new MongoId( '52694f35f3a06b684f6e3488'));
-  $file = $grid->findOne($query);
-  if ($file == null){
-   drupal_add_http_header('Status', '404 Not found');
-   echo 'The requested resource does not exist';
-   return;
-  }
-  
-  if (array_key_exists('_deleted',$file->file)){
-   drupal_add_http_header('Status', '410 Gone');
-   echo 'The requested resource has been deleted';
-   return;
-  }
-  
-  return $file;
-}            

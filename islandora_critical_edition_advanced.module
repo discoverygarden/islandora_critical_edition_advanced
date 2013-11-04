@@ -99,6 +99,15 @@ function islandora_critical_edition_advanced_menu() {
     'file' => 'includes/islandora_critical_edition_display.inc',
   );
 
+    $items['islandora/object/%islandora_object/tei'] = array(
+    'title' => 'TEI',
+    'page callback' => 'islandora_critical_edition_advanced_display_tei',
+    'page arguments' => array(2),
+    'type' => MENU_LOCAL_TASK,
+    'access callback' => 'islandora_critical_edition_advanced_object_management_access',
+    'access arguments' => array(2, 'display_consolidated_tei'),
+    'file' => 'includes/consolidate_tei.inc',
+  );
   return $items;
 }
 
@@ -333,6 +342,13 @@ function islandora_critical_edition_advanced_object_management_access($object, $
         $access = TRUE;
       }
       break;
+      
+    case 'display_consolidated_tei':
+      if (in_array('islandora:criticalEditionCModel', $content_models)) {
+        $access = TRUE;
+      }
+      break;
+      
     case 'view_versionable_object':
       module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/utilities');
       $members = islandora_critical_edition_get_members($object->id);
@@ -342,6 +358,7 @@ function islandora_critical_edition_advanced_object_management_access($object, $
         $access = TRUE;
       }
       break;
+      
     case 'manage_apparatus':
       if (in_array('islandora:criticalApparatusCModel', $content_models)) {
         $access = TRUE;

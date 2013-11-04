@@ -15,5 +15,8 @@ CONFIGURATION
 --------------
 
 This module requires the Islandora Critical Edition Solution Pack.
-No additional configuration is required.
+The saxon.jar file contained in the dependencies directory must by moved or 
+copied to the webapps directory of the tomcat server.
+
+This will normally be /usr/local/fedora/tomcat/webapps/
 
