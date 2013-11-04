@@ -134,7 +134,7 @@ function islandora_calliope_create_mvd($project, $mvd_title, $resource_ids = NUL
       if (!$file) {
         drupal_set_message(t("Resource @resource_id does not exist", array('@resource_id' => $resource_id)));
         islandora_calliope_write_file($resource_id);
-        //continue;
+        $file = islandora_calliope_get_file($resource_id);
       }
       $flat_id = islandora_escape_pid_for_function($resource_id);
       $contents = $file->getBytes();
