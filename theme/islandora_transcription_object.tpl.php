@@ -36,8 +36,8 @@ drupal_set_title($object->label);
       <?php endforeach; ?>
     </ul>
     <?php foreach ($objects as $flat_pid => $object): ?>
-      <div id="<?php print $flat_pid; ?>"">
-        <p><?php print  str_replace("\n", "<br />", $object['TRANSCRIPTION']->content); ?></p>
+      <div id="<?php print $flat_pid; ?>">
+        <p><?php print str_replace("\n", "<br />", $object['TRANSCRIPTION']->content); ?></p>
       </div>
     <?php endforeach; ?>
   </div>
