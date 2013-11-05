@@ -8,11 +8,21 @@
 /**
  * Consolidates page level TEI to book level TEI.
  *
- * @param String $tei_rdf_object
- *   PID of TEI_RDF object
+ * @param AbstractObject $object
+ *   Object representing either TEI-RDF object, or enclosing Versionable Object
  */
-function islandora_critical_edition_consolidate_tei($tei_rdf_object) {
+function islandora_critical_edition_consolidate_tei($object) {
   module_load_include('inc', 'islandora_paged_content', 'includes/utilities');
+  module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/utilities');
+
+  $content_models = $object->models;
+  if (in_array('islandora:versionableObjectCModel', $content_models)) {
+    $tei_rdfs = array_keys(islandora_critical_edition_get_members($object->id, 'islandora:criticalEditionCModel'));
+    $tei_rdf_object = islandora_object_load($tei_rdfs[0]);
+  }
+  else {
+    $tei_rdf_object = $object;
+  }
   $page_results = islandora_paged_content_get_pages($tei_rdf_object);
   $pids_to_add = array_keys($page_results);
   $title = $tei_rdf_object->label;
@@ -46,7 +56,6 @@ function islandora_critical_edition_consolidate_tei($tei_rdf_object) {
   }
 
   islandora_critical_edition_upsert_tei($tei_rdf_object, $master->saveXML());
-  print $master->saveXML();
 }
 
 /**
@@ -60,28 +69,25 @@ function islandora_critical_edition_consolidate_tei($tei_rdf_object) {
  */
 function islandora_critical_edition_advanced_get_blank_tei($title) {
   $tei = <<<EOD
-<TEI xmlns="http://www.tei-c.org/ns/1.0" xml:id="struct_35">
-    <teiHeader xml:id="struct_530">
-        <fileDesc xml:id="struct_531">
-            <titleStmt xml:id="struct_532">
-                <title xml:id="struct_533">$title</title>
+<TEI xmlns="http://www.tei-c.org/ns/1.0">
+    <teiHeader>
+        <fileDesc>
+            <titleStmt>
+                <title>$title</title>
             </titleStmt>
-            <publicationStmt xml:id="struct_534">
-                <p xml:id="struct_535"/>
+            <publicationStmt>
+                <p/>
             </publicationStmt>
-            <sourceDesc xml:id="struct_536" sameAs="http://www.cwrc.ca">
-                <p xml:id="struct_537">Created from islandora book ingest unless otherwise
-                    noted.</p>
+            <sourceDesc>
+                <p>Created from islandora book ingest unless otherwise noted.</p>
             </sourceDesc>
         </fileDesc>
     </teiHeader>
 
     <text>
-        <front> </front>
-        <body>
-        </body>
+        <front></front>
+        <body></body>
         <back></back>
-
     </text>
 </TEI>
 EOD;
@@ -123,6 +129,14 @@ function islandora_critical_edition_upsert_tei($tei_rdf, $tei) {
  */
 function islandora_critical_edition_advanced_display_tei($object) {
   module_load_include('inc', 'islandora', 'includes/authtokens');
+  module_load_include('inc', 'islandora_paged_content', 'includes/utilities');
+  module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/utilities');
+
+  $content_models = $object->models;
+  if (in_array('islandora:versionableObjectCModel', $content_models)) {
+    $tei_rdfs = array_keys(islandora_critical_edition_get_members($object->id, 'islandora:criticalEditionCModel'));
+    $object = islandora_object_load($tei_rdfs[0]);
+  }
   global $base_url;
   $islandora_url = variable_get('islandora_base_url', 'http://localhost:8080/fedora');
   $tomcat_url = str_replace('/fedora', '', $islandora_url);
@@ -138,7 +152,5 @@ function islandora_critical_edition_advanced_display_tei($object) {
     ),
   ));
   $xslt_path = "$base_url/$path/xml/basic_format.xsl";
-  $output = file_get_contents("$tomcat_url/saxon/SaxonServlet?source=$xml_path&style=$xslt_path");
-
-  return $output;
+  return file_get_contents("$tomcat_url/saxon/SaxonServlet?source=$xml_path&style=$xslt_path");
 }
