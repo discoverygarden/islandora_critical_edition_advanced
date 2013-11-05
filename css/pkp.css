@@ -1,0 +1,93 @@
+span.bold{
+font-weight: bold;
+}
+span.completion {
+font-variant: small-caps;
+color: purple;
+}
+span.corr{
+color: red;
+}
+span.editorial{
+font-variant: small-caps;
+color:gray;
+}
+span.emendation {
+color: red;
+}
+span.final{
+color: red;
+}
+span.id{
+color: red;
+}
+span.illegible{
+color: red;
+text-decoration:underline;
+}
+span.italic{
+font-style:italic;
+}
+span.layout{
+font-variant: small-caps;
+color: blue;
+}
+span.nontext{
+color: green;
+}
+span.note_underline{
+border-bottom-style: solid ; 
+border-bottom-color: green; 
+border-bottom-width: 1px; 
+}
+span.orig{
+font-variant: small-caps;
+color: red;
+}
+span.pagebreak{
+color: gray;
+}
+span.pagedivision{
+color: blue;
+}
+span.pb{
+color: red;
+}
+span.poem{
+font-weight: bold;
+}
+span.red{
+color: red;
+}
+span.regularization{
+color: red;
+}
+span.rend{
+color: blue;
+}
+span.revision {
+color: red;
+}
+span.sic{
+color: red;
+}
+span.small{
+font-variant: small-caps;
+}
+span.small-caps{
+font-variant: small-caps;
+}
+span.sup{
+font-size:70%;
+position:relative;
+bottom: 0.5em;
+}
+span.title{
+font-weight: bold;
+}
+span.underline{
+text-decoration:underline;
+}
+
+
+
