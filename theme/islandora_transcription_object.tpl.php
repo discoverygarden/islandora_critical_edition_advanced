@@ -15,8 +15,7 @@ else{
   $objects[] = $variables['islandora_object'];
 }
 $object = $objects[key($objects)];
-$transcription = $object['TRANSCRIPTION']->content;
-$transcription = str_replace("\n", "<br />", $transcription);
+$transcription = str_replace("\n", "<br />", $object['TRANSCRIPTION']->content);
 module_load_include('inc', 'islandora', 'includes/breadcrumb');
 drupal_set_breadcrumb(islandora_get_breadcrumbs($object));
 drupal_set_title($object->label);
@@ -26,7 +25,7 @@ drupal_set_title($object->label);
   <div class="islandora_transcription_object">
     <?php
     $transcription_object = reset($objects);
-    print $transcription_object['TRANSCRIPTION']->content;
+    print $transcription;
     ?>
   </div>
 <?php else:; ?>
@@ -38,7 +37,7 @@ drupal_set_title($object->label);
     </ul>
     <?php foreach ($objects as $flat_pid => $object): ?>
       <div id="<?php print $flat_pid; ?>"">
-        <p><?php print $object['TRANSCRIPTION']->content; ?></p>
+        <p><?php print  str_replace("\n", "<br />", $object['TRANSCRIPTION']->content); ?></p>
       </div>
     <?php endforeach; ?>
   </div>
