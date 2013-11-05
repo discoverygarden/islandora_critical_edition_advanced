@@ -16,6 +16,7 @@ else{
 }
 $object = $objects[key($objects)];
 $transcription = $object['TRANSCRIPTION']->content;
+$transcription = str_replace("\n", "<br />", $transcription);
 module_load_include('inc', 'islandora', 'includes/breadcrumb');
 drupal_set_breadcrumb(islandora_get_breadcrumbs($object));
 drupal_set_title($object->label);

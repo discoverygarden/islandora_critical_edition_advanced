@@ -320,7 +320,7 @@ function add_derived_transcription($tei_rdf_object, $versionable_object_pid, $tr
 }
 
 /**
- * Builds temp file with TE-RDF data from page level objects.
+ * Builds temp file with TEI-RDF data from page level objects.
  *
  * @param AbstractObject $page_object
  *   Object representing page
@@ -328,10 +328,22 @@ function add_derived_transcription($tei_rdf_object, $versionable_object_pid, $tr
  *   Temp file to hold data
  */
 function islandora_critical_edition_build_text_file($page_object, $filename) {
+  $replace_candidates = array(
+    '<br>',
+    '<br />',
+    '<lb></lb>',
+    '<lb/>',
+    '</l>',
+    '</lg>',
+  );
   if ($page_object['CWRC']) {
     $raw_cwrc = $page_object['CWRC']->content;
-    $cwrc = str_replace('<br />', "\n", $raw_cwrc);
-    $cleaned_text = strip_tags($cwrc);
+    $simple = $simple  = simplexml_load_string($raw_cwrc);
+    $raw_text = $simple->text[0]->asXML();
+    foreach($replace_candidates as $candidate) {
+       $raw_text = str_replace($candidate, "$candidate\n", $raw_text);
+    }
+    $cleaned_text = strip_tags($raw_text);
     file_put_contents($filename, $cleaned_text, FILE_APPEND | LOCK_EX);
   }
 }
