@@ -124,6 +124,8 @@ function islandora_critical_edition_upsert_tei($tei_rdf, $tei) {
 function islandora_critical_edition_advanced_display_tei($object) {
   module_load_include('inc', 'islandora', 'includes/authtokens');
   global $base_url;
+  $islandora_url = variable_get('islandora_base_url', 'http://localhost:8080/fedora');
+  $tomcat_url = str_replace('/fedora', '', $islandora_url);
   $pid = $object->id;
   if (!$object['TEI']) {
     islandora_critical_edition_consolidate_tei($object);
@@ -136,7 +138,7 @@ function islandora_critical_edition_advanced_display_tei($object) {
     ),
   ));
   $xslt_path = "$base_url/$path/xml/basic_format.xsl";
-  $output = file_get_contents("http://astanley-vagrant-emic.local:8080/saxon/SaxonServlet?source=$xml_path&style=$xslt_path");
+  $output = file_get_contents("$tomcat_url/saxon/SaxonServlet?source=$xml_path&style=$xslt_path");
 
   return $output;
 }
