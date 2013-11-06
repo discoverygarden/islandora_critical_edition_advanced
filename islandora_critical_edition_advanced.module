@@ -51,15 +51,6 @@ function islandora_critical_edition_advanced_menu() {
     'file' => 'includes/versionable_object.inc',
   );
 
-  $items['islandora/critical_edition/%islandora_object/associate'] = array(
-    'title' => 'Associate Versionable Object',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('islandora_critical_edition_attach_versionable', 2),
-    'type' => MENU_LOCAL_TASK,
-    'access callback' => 'user_access',
-    'access arguments' => array(ISLANDORA_CRITICAL_EDITION_MODIFY),
-    'file' => 'includes/container_management.inc',
-  );
   $items['islandora/critical_edition/%islandora_object/mvd'] = array(
     'title' => 'Create MVD',
     'page callback' => 'islandora_critical_create_mvd',
@@ -417,13 +408,22 @@ function islandora_critical_edition_advanced_form_islandora_delete_object_form_a
     $message = t('This will remove the entire Critical Edition and related Versionable Objects. This action cannot be undone.');
     $pids_to_delete = array_merge($pids_to_delete, array_keys(islandora_critical_edition_get_members($object->id, 'islandora:criticalApparatusCModel')));
     $versionable_objects = array_keys(islandora_critical_edition_get_members($object->id, 'islandora:versionableObjectCModel'));
+    foreach ($versionable_objects as $versionable_object) {
+      if (count(islandora_critical_get_parent_editions($versionable_object)) > 1) {
+        $objects_to_free[$versionable_object] = $object->id;
+        $key = array_search($versionable_object, $versionable_objects);
+        if ($key !== false) {
+          unset($versionable_objects[$key]);
+        }
+      }
+    }
     $pids_to_delete = array_merge($pids_to_delete, $versionable_objects);
     foreach ($versionable_objects as $versionable_object) {
       $pids_to_delete = array_merge($pids_to_delete, array_keys(islandora_critical_edition_get_members($versionable_object, 'islandora:transcriptionCModel')));
       $debug_array = islandora_critical_edition_get_members($versionable_object);
       $tei_rdfs = array_keys(islandora_critical_edition_get_members($versionable_object, 'islandora:criticalEditionCModel'));
       foreach ($tei_rdfs as $tei_rdf) {
-        $tei_rdfs_to_free[$tei_rdf] = $versionable_object;
+        $objects_to_free[$tei_rdf] = $versionable_object;
       }
     }
   }
@@ -432,7 +432,7 @@ function islandora_critical_edition_advanced_form_islandora_delete_object_form_a
     $pids_to_delete = array_merge($pids_to_delete, array_keys(islandora_critical_edition_get_members($object->id, 'islandora:transcriptionCModel')));
     $tei_rdfs = array_keys(islandora_critical_edition_get_members($object->id, 'islandora:criticalEditionCModel'));
     foreach ($tei_rdfs as $tei_rdf) {
-      $tei_rdfs_to_free[$tei_rdf] = $versionable_object;
+      $objects_to_free[$tei_rdf] = $versionable_object;
     }
   }
 
@@ -441,7 +441,7 @@ function islandora_critical_edition_advanced_form_islandora_delete_object_form_a
     $form['description']['#markup'] = $message;
     $form['#submit'] = array('islandora_critical_edition_advanced_islandora_delete_object_form_submit');
     $form_state['pids_to_delete'] = isset($pids_to_delete) ? $pids_to_delete : NULL;
-    $form_state['tei_rdfs_to_free'] = isset($tei_rdfs_to_free) ? $tei_rdfs_to_free : NULL;
+    $form_state['objects_to_free'] = isset($objects_to_free) ? $objects_to_free : NULL;
   }
 }
 
@@ -455,19 +455,20 @@ function islandora_critical_edition_advanced_form_islandora_delete_object_form_a
  */
 function islandora_critical_edition_advanced_islandora_delete_object_form_submit(array $form, array &$form_state) {
   module_load_include('inc', 'islandora', 'includes/utilities');
+  return;
   $object = $form_state['object'];
   if ($form_state['pids_to_delete']) {
     foreach ($form_state['pids_to_delete'] as $pid) {
-       $object = islandora_object_load($pid);
-       $object->repository->purgeObject($pid);
+      $object = islandora_object_load($pid);
+      $object->repository->purgeObject($pid);
     }
   }
-    if ($form_state['tei_rdfs_to_free']) {
+  if ($form_state['tei_rdfs_to_free']) {
     foreach ($form_state['pids_to_delete'] as $rdf => $vo) {
-       $object = islandora_object_load($rdf);
-       $object->relationships->remove(FEDORA_RELS_EXT_URI, 'isMemberOfCollection', $vo);
+      $object = islandora_object_load($rdf);
+      $object->relationships->remove(FEDORA_RELS_EXT_URI, 'isMemberOfCollection', $vo);
     }
   }
- 
+
   $form_state['redirect'] = isset($parent) ? "islandora/object/{$parent->id}" : 'islandora';
 }

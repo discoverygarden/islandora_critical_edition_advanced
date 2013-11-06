@@ -20,8 +20,16 @@
  */
 function islandora_critical_edition_attach_versionable(array $form, array &$form_state, AbstractObject $object) {
   module_load_include('inc', 'islandora_critical_edition', 'includes/utilities');
+  $empty_message = t("There are no versionable objects in this Fedora Repository.");
   $objects = islandora_get_versionable_objects();
   $chosen = array_keys(islandora_critical_edition_get_members($object->id, 'islandora:versionableObjectCModel'));
+  if (is_array($chosen)) {
+    foreach ($chosen as $choice) {
+      unset($objects[$choice]);
+    }
+    $empty_message = t("There are no versionable objects in this Fedora Repository which are not already attached to this Critical Edition.");
+  }
+
   $comparator = function ($a, $b) use ($chosen) {
     $a_val = $b_val = 0;
     if (in_array($a, $chosen)) {
@@ -52,7 +60,7 @@ function islandora_critical_edition_attach_versionable(array $form, array &$form
     '#header' => $header,
     '#options' => $rows,
     '#default_value' => $defaults,
-    '#empty' => t("There are no versionable objects in this Fedora Repository."),
+    '#empty' => $empty_message,
     '#js' => FALSE,
   );
   $form['intro'] = array(

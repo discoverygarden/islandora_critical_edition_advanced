@@ -79,6 +79,36 @@ function islandora_critical_get_related_transcriptions($versionable_object_pid) 
   }
   return $objects;
 }
+/**
+ * Gets all Critical Editions to which this object is a member.
+ *
+ * @param String $versionable_object_pid
+ *   PID of object
+ *
+ * @return array
+ *   Array of pid=>label pairs
+ */
+function islandora_critical_get_parent_editions($versionable_object_pid) {
+  module_load_include('inc', 'islandora', 'includes/utilities');
+  $tuque = islandora_get_tuque_connection();
+  $query = "
+            PREFIX fm: <" . FEDORA_MODEL_URI . ">
+            PREFIX fr: <" . FEDORA_RELS_EXT_URI . ">
+
+            SELECT DISTINCT ?object FROM <#ri>
+                WHERE {
+                        {<info:fedora/$versionable_object_pid> fm:hasModel <info:fedora/islandora:versionableObjectCModel>;
+                                  fr:isMemberOf ?object;
+                        }
+
+                      }";
+  $objects = array();
+  $results = $tuque->repository->ri->sparqlQuery($query, 'unlimited');
+  foreach ($results as $result) {
+    $objects[] = $result['object']['value'];
+  }
+  return $objects;
+}
 
 /**
  * Returns array of possible apparatus datastreams.
