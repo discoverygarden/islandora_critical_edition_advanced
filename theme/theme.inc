@@ -51,4 +51,5 @@ function islandora_critical_edition_advanced_prep_tabs() {
   drupal_add_js($critical_edition_module_path . "/CWRC-Writer/src/js/lib/jquery/jquery-ui-1.9.0.custom.min.js");
   $critical_edition_advanced_module_path = drupal_get_path('module', 'islandora_critical_edition_advanced');
   drupal_add_js($critical_edition_advanced_module_path . "/js/activate_tabs.js");
-}
+  drupal_add_css("$critical_edition_advanced_module_path/css/jquery-ui.css");
+};
