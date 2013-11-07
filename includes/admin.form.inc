@@ -72,5 +72,5 @@ function islandora_critical_edition_admin_settings_form_submit(array &$form, arr
     variable_set('critical_apparatus_streams', islandora_critical_apparatus_get_datastreams());
     $confirmation = t('The configuration has been reset.');
   }
-  drupal_set_message($confirmation, 'status');
+  drupal_set_message($confirmation);
 }

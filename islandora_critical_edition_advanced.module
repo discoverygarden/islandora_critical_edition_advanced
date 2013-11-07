@@ -455,7 +455,6 @@ function islandora_critical_edition_advanced_form_islandora_delete_object_form_a
  *   The Drupal form state.
  */
 function islandora_critical_edition_advanced_islandora_delete_object_form_submit(array $form, array &$form_state) {
-  
   //Add collection awareness
   module_load_include('inc', 'islandora', 'includes/utilities');
   $object = $form_state['object'];
