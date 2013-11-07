@@ -4,6 +4,7 @@
  * @file
  * Add advanced data modeling options to Islandora Critical Editions.
  */
+
 define('ISLANDORA_CRITICAL_EDITION_MANAGE_CONTAINER', 'manage critical edition');
 define('ISLANDORA_CRITICAL_EDITION_CREATE', 'create critical editions');
 define('ISLANDORA_CRITICAL_EDITION_READ', 'read critical editions');
@@ -412,7 +413,7 @@ function islandora_critical_edition_advanced_form_islandora_delete_object_form_a
       if (count(islandora_critical_get_parent_editions($versionable_object)) > 1) {
         $objects_to_free[$versionable_object] = $object->id;
         $key = array_search($versionable_object, $versionable_objects);
-        if ($key !== false) {
+        if ($key !== FALSE) {
           unset($versionable_objects[$key]);
         }
       }
@@ -432,7 +433,7 @@ function islandora_critical_edition_advanced_form_islandora_delete_object_form_a
     $pids_to_delete = array_merge($pids_to_delete, array_keys(islandora_critical_edition_get_members($object->id, 'islandora:transcriptionCModel')));
     $tei_rdfs = array_keys(islandora_critical_edition_get_members($object->id, 'islandora:criticalEditionCModel'));
     foreach ($tei_rdfs as $tei_rdf) {
-      $objects_to_free[$tei_rdf] = $versionable_object;
+      $objects_to_free[$tei_rdf] = $object->id;
     }
   }
 
@@ -454,19 +455,22 @@ function islandora_critical_edition_advanced_form_islandora_delete_object_form_a
  *   The Drupal form state.
  */
 function islandora_critical_edition_advanced_islandora_delete_object_form_submit(array $form, array &$form_state) {
+  
+  //Add collection awareness
   module_load_include('inc', 'islandora', 'includes/utilities');
-  return;
   $object = $form_state['object'];
-  if ($form_state['pids_to_delete']) {
+  if (isset($form_state['pids_to_delete'])) {
     foreach ($form_state['pids_to_delete'] as $pid) {
       $object = islandora_object_load($pid);
       $object->repository->purgeObject($pid);
     }
   }
-  if ($form_state['tei_rdfs_to_free']) {
-    foreach ($form_state['pids_to_delete'] as $rdf => $vo) {
+  if (isset($form_state['objects_to_free'])) {
+    foreach ($form_state['objects_to_free'] as $rdf => $vo) {
       $object = islandora_object_load($rdf);
-      $object->relationships->remove(FEDORA_RELS_EXT_URI, 'isMemberOfCollection', $vo);
+      if ($object) {
+        $object->relationships->remove(FEDORA_RELS_EXT_URI, 'isMemberOfCollection', $vo);
+      }
     }
   }
 

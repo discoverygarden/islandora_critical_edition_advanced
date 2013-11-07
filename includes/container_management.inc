@@ -211,8 +211,8 @@ function islandora_critical_edition_management_menu(AbstractObject $object) {
 
   $output['manage_critical_edition']['replace_apparatus'] = array(
     '#access' => user_access(ISLANDORA_ADD_DS) && empty($apparatus),
-    '#title' => t('Replace Apparatus'),
-    '#description' => t('Create Versionable object and associate it with this Critical Edition'),
+    '#title' => t('Create Apparatus'),
+    '#description' => t('Creates blank Critical Apparatus'),
     '#type' => 'fieldset',
     'form' => drupal_get_form('islandora_critical_edition_replace_apparatus', $object),
     '#collapsible' => TRUE,
@@ -230,7 +230,7 @@ function islandora_critical_edition_management_menu(AbstractObject $object) {
   $output['manage_critical_edition']['create_vo'] = array(
     '#access' => user_access(ISLANDORA_ADD_DS),
     '#title' => t('Create new Versionable Object'),
-    '#description' => t('Create Versionable object and associate it with this Critical Edition'),
+    '#description' => t("Create Versionable object and associate it with this Critical Edition."),
     '#type' => 'fieldset',
     'form' => drupal_get_form('islandora_critical_edition_create_versionable_object', $object),
     '#collapsible' => TRUE,

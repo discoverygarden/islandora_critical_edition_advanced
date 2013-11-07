@@ -223,6 +223,11 @@ function islandora_critical_edition_associate_tei_rdf_form($form, $form_state, $
     '#markup' => t("Choose RDF-TEI object to associate with this @label.", array('@label' => $name_mappings[$object_model])),
   );
   $form['tei_rdf_objects'] = $element;
+  $form['vo_title'] = array(
+    '#type' => 'textfield',
+    '#title' => t("Title for new Versionable Object"),
+    '#required' => TRUE,
+  );
   $form['next'] = array(
     '#type' => 'submit',
     '#value' => t('Associate TEI-RDF Object'),
@@ -289,7 +294,7 @@ function islandora_critical_edition_associate_tei_rdf_form_submit($form, $form_s
   if (!empty($relationships)) {
     $book_object = islandora_object_load($relationships[0]['object']['value']);
     $tn = $book_object['TN'];
-    $label = $book_object->label;
+    $label = $form_state['values']['vo_title'];
   }
 
   if ($type == 'islandora:criticalEditionContainerCModel') {
