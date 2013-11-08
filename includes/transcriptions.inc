@@ -15,8 +15,11 @@
  */
 function islandora_critical_edition_create_transcription_form(array $form, array &$form_state, AbstractObject $object) {
   module_load_include('inc', 'islandora_critical_edition', 'includes/utilities');
+  module_load_include('inc', 'islandora_paged_content', 'includes/utilities');
   drupal_set_breadcrumb(islandora_get_breadcrumbs($object));
   drupal_set_title($object->label);
+
+  drupal_add_css(drupal_get_path('module', 'islandora_critical_edition_advanced') . "/css/fix_textfield_width.css");
   $upload_size = min((int) ini_get('post_max_size'), (int) ini_get('upload_max_filesize'));
   $extensions = array('txt');
   $form = array();
@@ -31,10 +34,16 @@ function islandora_critical_edition_create_transcription_form(array $form, array
   $members = islandora_critical_edition_get_members($object->id);
   $tei_rdf = array_search('islandora:criticalEditionCModel', $members);
   if ($tei_rdf) {
+    $page_results = islandora_paged_content_get_pages(islandora_object_load($tei_rdf));
+    $count = count($page_results);
     $input_types['tei_rdf'] = t('Create transcription from TEI-RDF Object');
     $form['cwrcwriter'] = array(
       '#type' => 'hidden',
       '#value' => $tei_rdf,
+    );
+    $form['page_count'] = array(
+      '#type' => 'hidden',
+      '#value' => $count,
     );
   }
   $input_types['none'] = t('Create born-digital transcription');
@@ -50,7 +59,45 @@ function islandora_critical_edition_create_transcription_form(array $form, array
     '#options' => $input_types,
     '#default_value' => 'none',
   );
-
+  if ($tei_rdf) {
+    $form['page'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Select page range'),
+      '#description' => t('You may optionally restrict the pages used int this transcription'),
+      '#states' => array(
+        'visible' => array(
+          ':input[name="content_source"]' => array('value' => 'tei_rdf'),
+        ),
+      ),
+    );
+    $form['page']['restricted'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Use restricted  page range'),
+      '#default_value' => FALSE,
+    );
+    $form['page']['first_page'] = array(
+      '#type' => 'textfield',
+      '#size' => 6,
+      '#title' => t('First page'),
+      '#default_value' => '1',
+      '#states' => array(
+        'visible' => array(
+          ':input[name="restricted"]' => array('checked' => TRUE),
+        ),
+      ),
+    );
+    $form['page']['last_page'] = array(
+      '#type' => 'textfield',
+      '#size' => 6,
+      '#title' => t('Last page'),
+      '#default_value' => $count,
+      '#states' => array(
+        'visible' => array(
+          ':input[name="restricted"]' => array('checked' => TRUE),
+        ),
+      ),
+    );
+  }
   $form['file'] = array(
     '#title' => t('Upload Optional Transcription.'),
     '#type' => 'managed_file',
@@ -75,6 +122,31 @@ function islandora_critical_edition_create_transcription_form(array $form, array
 }
 
 /**
+ * Validates Drupal Form.
+ *
+ * @param array $form
+ *   Drupal form
+ * @param array $form_state
+ *   Drupal form state
+ */
+function islandora_critical_edition_create_transcription_form_validate($form, $form_state) {
+  if ($form_state['values']['content_source'] == 'tei_rdf') {
+    $start_page = $form_state['values']['first_page'];
+    $last_page = $form_state['values']['last_page'];
+    $length = $form_state['values']['last_page'];
+    if (intval($start_page) == 0) {
+      form_set_error('first_page', t('Number between 1 and @count required.', array('@count' => $length)));
+    }
+    if (intval($last_page) == 0) {
+      form_set_error('last_page', t('Number between 1 and @count required.', array('@count' => $length)));
+    }
+    if ($last_page < $start_page) {
+      form_set_error('last_page', t('Ending page number must be lower than starting page.'));
+    }
+  }
+}
+
+/**
  * Submit handler for Transcription creation.
  *
  * @param array $form
@@ -94,10 +166,15 @@ function islandora_critical_edition_create_transcription_form_submit(array $form
   $control_group = "M";
   $transcription_datastream = $transcription->constructDatastream($datastream_id, $control_group);
   $transcription_datastream->mimetype = 'text/plain';
-
   if ($content_source == 'tei_rdf') {
+    $start_page = NULL;
+    $end_page = NULL;
+    if ($form_state['values']['restricted']) {
+      $start_page = $form_state['values']['first_page'];
+      $end_page = $form_state['values']['last_page'];
+    }
     $tei_rdf = islandora_object_load($form_state['values']['cwrcwriter']);
-    add_derived_transcription($tei_rdf, $versionable_object_pid, $transcription, $transcription_datastream);
+    add_derived_transcription($tei_rdf, $versionable_object_pid, $transcription, $transcription_datastream, $start_page, $end_page);
   }
 
   if ($content_source == 'file') {
@@ -292,10 +369,15 @@ function islandora_critical_transcription_edit_form_submit($form, $form_state) {
  * @param IslandoraFedoraDatastream $transcription_datastream
  *   Datastream object to be updated
  */
-function add_derived_transcription($tei_rdf_object, $versionable_object_pid, $transcription, $transcription_datastream) {
+function add_derived_transcription($tei_rdf_object, $versionable_object_pid, $transcription, $transcription_datastream, $start_page = NULL, $end_page = NULL) {
   module_load_include('inc', 'islandora_paged_content', 'includes/utilities');
   module_load_include('inc', 'islandora', 'includes/utilities');
   $pages = array_keys(islandora_paged_content_get_pages($tei_rdf_object));
+  if ($start_page && $end_page) {
+    $offset = $start_page - 1;
+    $range = $end_page - $offset;
+    $pages = array_slice($pages, $offset, $range);
+  }
   $batch = array(
     'title' => t('Creating Transcription from TEI-RDF Object'),
     'operations' => array(),
