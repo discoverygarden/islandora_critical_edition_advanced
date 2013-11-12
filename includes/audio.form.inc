@@ -18,7 +18,7 @@
  * @return array
  *   Drupal Form
  */
-function islandora_critical_edition_associate_media_form($form, $form_state, $object, $content_model = 'islandora:sp-audioCModel') {
+function islandora_critical_edition_associate_audio_form($form, $form_state, $object, $content_model = 'islandora:sp-audioCModel') {
   $object_models = $object->models;
   $system = array_search("fedora-system:FedoraObject-3.0", $object_models);
   unset($object_models[$system]);
@@ -27,10 +27,6 @@ function islandora_critical_edition_associate_media_form($form, $form_state, $ob
   $name_mappings = array(
     'islandora:criticalEditionContainerCModel' => t('Critical Edition'),
     'islandora:versionableObjectCModel' => t('Versionable Object'),
-  );
-  $type_mappings = array(
-    'islandora:sp-audioCModel' => t('Audio'),
-    'islandora:sp_videoCModel' => t('Video'),
   );
   $audios = islandora_critical_edition_get_related_objects($content_model, $offset);
   $rows = array();
@@ -41,7 +37,7 @@ function islandora_critical_edition_associate_media_form($form, $form_state, $ob
     );
   }
   $header = array(
-    'title' => array('data' => t('@type Object', array('@type' => $type_mappings[$content_model]))),
+    'title' => array('data' => t('TEI-RDF Object')),
     'pid' => array('data' => t('PID')),
   );
   // Build and return table element.
@@ -49,7 +45,7 @@ function islandora_critical_edition_associate_media_form($form, $form_state, $ob
     '#type' => 'tableselect',
     '#header' => $header,
     '#options' => $rows,
-    '#empty' => t("There are no @type Objects in this Fedora Repository.", array('@type' => $type_mappings[$content_model])),
+    '#empty' => t("There are no RDF-TEI Objects in this Fedora Repository."),
     '#js' => FALSE,
     '#multiple' => FALSE,
   );
@@ -100,46 +96,45 @@ function islandora_critical_edition_associate_audio_form_submit($form, $form_sta
 
   if ($type == 'islandora:criticalEditionContainerCModel') {
     $audio = $form_state['values']['audio_objects'];
-    $media_object = islandora_object_load($audio);
+    $audio_object = islandora_object_load($audio);
     $container_object = islandora_object_load($form_state['values']['container_object_pid']);
-    $tn = $media_object['TN'];
+    $tn = $audio_object['TN'];
     $label = $form_state['values']['vo_title'];
     $versionable_object = islandora_critical_edition_build_vo($container_object, $label, $tn);
-    $tei_rdf = make_audio_tei_rdf($versionable_object, $media_object);
-    $transcription = make_media_transcription($versionable_object, $form_state['values']['audio_objects']);
+    $tei_rdf = make_audio_tei_rdf($versionable_object, $audio_object);
+    $transcription = make_audio_transcription($versionable_object, $form_state['values']['audio_objects']);
   }
   else {
     $versionable_object_pid = $form_state['values']['container_object_pid'];
   }
-  $media_object->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOf', $versionable_object->id);
+  $audio_object->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOf', $versionable_object->id);
 }
 
-/**
- * Builds TEI_RDF from media resource.
- *
- * @param AbstractObject $versionable_object
- *   Object representing Versionable Object
- * @param AbstractObject $media_object
- *   Object representing audio or video object
- */
-function make_audio_tei_rdf($versionable_object, $media_object) {
+function make_audio_tei_rdf($versionable_object, $audio_object) {
   module_load_include('inc', 'islandora_critical_edition', 'includes/create');
   module_load_include('inc', 'islandora_critical_edition', 'includes/utilities');
-  $namespace = islandora_get_namespace($media_object->id);
-  $new_tei_rdf_object = islandora_critical_edition_create_object($namespace, $media_object->label);
+  $namespace = islandora_get_namespace($audio_object->id);
+  $new_tei_rdf_object = islandora_critical_edition_create_object($namespace, $audio_object->label);
   $new_tei_rdf_object->relationships->add(FEDORA_MODEL_URI, 'hasModel', 'islandora:criticalEditionCModel');
   $new_tei_rdf_object->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOf', $versionable_object->id);
-  $new_tei_rdf_object->relationships->add(ISLANDORA_RELS_EXT_URI, ISLANDORA_CRITICAL_EDITION_IS_CRITICAL_EDITION_OF, $versionable_object->id, RELS_TYPE_PLAIN_LITERAL);
+  $new_tei_rdf_object->relationships->add(ISLANDORA_RELS_EXT_URI, ISLANDORA_CRITICAL_EDITION_IS_CRITICAL_EDITION_OF, $audio_object->id, RELS_TYPE_PLAIN_LITERAL);
   $tei_rdf_object = islandora_add_object($new_tei_rdf_object);
+
   $new_page_object = islandora_critical_edition_create_object($namespace, "Audio Transcription");
+
+  // Add all relationships.
   $new_page_object->relationships->add(FEDORA_MODEL_URI, 'hasModel', 'islandora:criticalEditionCModelPage');
   $new_page_object->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOf', $tei_rdf_object->id);
   $new_page_object->relationships->add(ISLANDORA_RELS_EXT_URI, 'isPageOf', $tei_rdf_object->id);
   $new_page_object->relationships->add(ISLANDORA_RELS_EXT_URI, 'isPageNumber', 1, RELS_TYPE_PLAIN_LITERAL);
   $new_page_object->relationships->add(ISLANDORA_RELS_EXT_URI, 'isSequenceNumber', 1, RELS_TYPE_PLAIN_LITERAL);
+  // Create object.
   $page_object = islandora_add_object($new_page_object);
-  if ($media_object['TN']) {
-    $page_object->ingestDatastream($media_object['TN']);
+
+  // Add a minimal set of datastreams from original page object.
+
+  if ($audio_object['TN']) {
+    $page_object->ingestDatastream($audio_object['TN']);
   }
   $ocr_datastream = $new_page_object->constructDatastream("OCR", 'M');
   $ocr_datastream->mimetype = 'text/plain';
@@ -149,18 +144,10 @@ function make_audio_tei_rdf($versionable_object, $media_object) {
   islandora_critical_edition_add_cwrc_datastream($page_object);
 }
 
-/**
- * Builds transcription object for media object.
- *
- * @param AbstractObject $versionable_object
- *   Object representing Versionable Object
- * @param String $media_object_pid
- *   Pid of media object
- */
-function make_media_transcription($versionable_object, $media_object_pid) {
+function make_audio_transcription($versionable_object, $audio_object_pid) {
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/calliope');
-  $media_object = islandora_object_load($media_object_pid);
-  $label = t('Transcription of') . " " . $media_object->label;
+  $audio_object = islandora_object_load($audio_object_pid);
+  $label = t('Transcription of') . " " . $audio_object->label;
   $transcription_object = islandora_critical_edition_advanced_build_transcription($versionable_object, $label);
   $transcription_datastream = $transcription_object->constructDatastream("TRANSCRIPTION", 'M');
   $transcription_datastream->mimetype = 'text/plain';

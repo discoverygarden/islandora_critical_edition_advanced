@@ -173,6 +173,10 @@ function islandora_critical_edition_islandora_versionableobjectcmodel_islandora_
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/utilities');
   $tei_rdfs = array_keys(islandora_critical_edition_get_members($object->id, 'islandora:criticalEditionCModel'));
   if (is_array($tei_rdfs)) {
+    $media_cmodels = array(
+      'islandora:sp_videoCModel',
+      'islandora:sp-audioCModel',
+    );
     $tei_rdf = islandora_object_load($tei_rdfs[0]);
     $rels = $tei_rdf->relationships->get(ISLANDORA_RELS_EXT_URI, ISLANDORA_CRITICAL_EDITION_IS_CRITICAL_EDITION_OF);
     if (is_array($rels)) {
@@ -182,7 +186,7 @@ function islandora_critical_edition_islandora_versionableobjectcmodel_islandora_
       if ($content_model == 'islandora:bookCModel') {
         $output = theme('islandora_critical_edition', array('islandora_object' => $tei_rdf));
       }
-      if ($content_model == 'islandora:sp-audioCModel') {
+      if (in_array($content_model, $media_cmodels)) {
         $output = theme('islandora_critical_media_object', array('islandora_object' => $tei_rdf, 'reference_object' => $reference_object));
       }
     }

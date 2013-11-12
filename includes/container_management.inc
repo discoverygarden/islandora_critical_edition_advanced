@@ -195,7 +195,8 @@ function islandora_critical_edition_management_menu(AbstractObject $object) {
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/mvd');
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/utilities');
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/versionable_object_creation.form');
-  module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/media_forms');
+  module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/audio.form');
+  module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/video.form');
   drupal_add_css(drupal_get_path('module', 'islandora_critical_edition_advanced') . "/css/fix_textfield_width.css");
   drupal_set_breadcrumb(islandora_get_breadcrumbs($object));
   drupal_set_title($object->label);
@@ -234,7 +235,7 @@ function islandora_critical_edition_management_menu(AbstractObject $object) {
     '#title' => t('Associate Audio Object'),
     '#description' => t('Associate existing Audio Object from repository.'),
     '#type' => 'fieldset',
-    'form' => drupal_get_form('islandora_critical_edition_associate_media_form', $object),
+    'form' => drupal_get_form('islandora_critical_edition_associate_audio_form', $object, 'islandora:sp-audioCModel'),
     '#collapsible' => TRUE,
     '#collapsed' => TRUE,
   );
@@ -243,7 +244,7 @@ function islandora_critical_edition_management_menu(AbstractObject $object) {
     '#title' => t('Associate Video Object'),
     '#description' => t('Associate existing Video Object from repository.'),
     '#type' => 'fieldset',
-    'form' => drupal_get_form('islandora_critical_edition_associate_media_form', $object, 'islandora:sp_videoCModel'),
+    'form' => drupal_get_form('islandora_critical_edition_associate_video_form', $object, 'islandora:sp_videoCModel'),
     '#collapsible' => TRUE,
     '#collapsed' => TRUE,
   );
