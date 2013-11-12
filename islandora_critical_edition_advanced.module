@@ -187,7 +187,7 @@ function islandora_critical_edition_islandora_versionableobjectcmodel_islandora_
         $output = theme('islandora_critical_edition', array('islandora_object' => $tei_rdf));
       }
       if (in_array($content_model, $media_cmodels)) {
-        $output = theme('islandora_critical_media_object', array('islandora_object' => $tei_rdf, 'reference_object' => $reference_object));
+        $output = theme('islandora_critical_media_object', array('islandora_object' => $tei_rdf, 'reference_object' => $reference_object, 'content_model' => $content_model));
       }
     }
   }
