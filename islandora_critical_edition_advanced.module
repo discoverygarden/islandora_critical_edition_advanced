@@ -132,6 +132,12 @@ function islandora_critical_edition_advanced_theme($existing, $type, $theme, $pa
       'pattern' => 'islandora_transcription_object__',
       'variables' => array('islandora_object' => NULL),
     ),
+    'islandora_critical_media_object' => array(
+      'file' => 'theme/theme.inc',
+      'template' => 'theme/islandora_critical_media_object',
+      'pattern' => 'islandora_critical_media_object__',
+      'variables' => array('islandora_object' => NULL),
+    ),
   );
 }
 
@@ -165,13 +171,24 @@ function islandora_critical_edition_islandora_transcriptioncmodel_islandora_view
  */
 function islandora_critical_edition_islandora_versionableobjectcmodel_islandora_view_object($object, $page_number, $page_size) {
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/utilities');
-  $members = islandora_critical_edition_get_members($object->id);
-  $critical_edition = array_search('islandora:criticalEditionCModel', $members);
-  $edition_object = islandora_object_load($critical_edition);
-  if ($edition_object) {
-    $output = theme('islandora_critical_edition', array('islandora_object' => $edition_object));
+  $tei_rdfs = array_keys(islandora_critical_edition_get_members($object->id, 'islandora:criticalEditionCModel'));
+  if (is_array($tei_rdfs)) {
+    $tei_rdf = islandora_object_load($tei_rdfs[0]);
+    $rels = $tei_rdf->relationships->get(ISLANDORA_RELS_EXT_URI, ISLANDORA_CRITICAL_EDITION_IS_CRITICAL_EDITION_OF);
+    if (is_array($rels)) {
+      $reference_object = islandora_object_load($rels[0]['object']['value']);
+      $content_models = $reference_object->relationships->get(FEDORA_MODEL_URI, 'hasModel');
+      $content_model = $content_models[0]['object']['value'];
+      if ($content_model == 'islandora:bookCModel') {
+        $output = theme('islandora_critical_edition', array('islandora_object' => $tei_rdf));
+      }
+      if ($content_model == 'islandora:sp-audioCModel') {
+        $output = theme('islandora_critical_media_object', array('islandora_object' => $tei_rdf, 'reference_object' => $reference_object));
+      }
+    }
   }
   else {
+    $members = islandora_critical_edition_get_members($object->id);
     $output = theme('islandora_versionable_object', array('islandora_object' => $object, 'members' => $members));
   }
   return array('' => $output);
@@ -228,38 +245,38 @@ function islandora_critical_edition_advanced_islandora_criticalEditionContainerC
 function islandora_critical_edition_advanced_islandora_required_objects(IslandoraTuque $connection) {
   $module_path = drupal_get_path('module', 'islandora_critical_edition_advanced');
   // Critical Edition Overview.
-  $critical_edition_container_content_model = $connection->repository->constructObject('islandora:criticalEditionContainerCModel');
-  $critical_edition_container_content_model->owner = 'fedoraAdmin';
-  $critical_edition_container_content_model->label = 'Islandora Critical Edition Overview Content Model';
-  $critical_edition_container_content_model->models = 'fedora-system:ContentModel-3.0';
+  $tei_rdf_container_content_model = $connection->repository->constructObject('islandora:criticalEditionContainerCModel');
+  $tei_rdf_container_content_model->owner = 'fedoraAdmin';
+  $tei_rdf_container_content_model->label = 'Islandora Critical Edition Overview Content Model';
+  $tei_rdf_container_content_model->models = 'fedora-system:ContentModel-3.0';
   // DS-COMPOSITE-MODEL Datastream.
-  $datastream = $critical_edition_container_content_model->constructDatastream('DS-COMPOSITE-MODEL', 'M');
+  $datastream = $tei_rdf_container_content_model->constructDatastream('DS-COMPOSITE-MODEL', 'M');
   $datastream->label = 'DS-COMPOSITE-MODEL';
   $datastream->mimetype = 'text/xml';
   $datastream->setContentFromFile("$module_path/xml/islandora_critical_edition_container_ds_composite_model.xml", FALSE);
-  $critical_edition_container_content_model->ingestDatastream($datastream);
+  $tei_rdf_container_content_model->ingestDatastream($datastream);
   // Versionable Object Content Model.
-  $critical_edition_versionable_object_content_model = $connection->repository->constructObject('islandora:versionableObjectCModel');
-  $critical_edition_versionable_object_content_model->owner = 'fedoraAdmin';
-  $critical_edition_versionable_object_content_model->label = 'Islandora Versionable Object Content Model';
-  $critical_edition_versionable_object_content_model->models = 'fedora-system:ContentModel-3.0';
+  $tei_rdf_versionable_object_content_model = $connection->repository->constructObject('islandora:versionableObjectCModel');
+  $tei_rdf_versionable_object_content_model->owner = 'fedoraAdmin';
+  $tei_rdf_versionable_object_content_model->label = 'Islandora Versionable Object Content Model';
+  $tei_rdf_versionable_object_content_model->models = 'fedora-system:ContentModel-3.0';
   // DS-COMPOSITE-MODEL Datastream.
-  $datastream = $critical_edition_versionable_object_content_model->constructDatastream('DS-COMPOSITE-MODEL', 'M');
+  $datastream = $tei_rdf_versionable_object_content_model->constructDatastream('DS-COMPOSITE-MODEL', 'M');
   $datastream->label = 'DS-COMPOSITE-MODEL';
   $datastream->mimetype = 'text/xml';
   $datastream->setContentFromFile("$module_path/xml/islandora_versionable_object_ds_composite_model.xml", FALSE);
-  $critical_edition_versionable_object_content_model->ingestDatastream($datastream);
+  $tei_rdf_versionable_object_content_model->ingestDatastream($datastream);
   // Critical Apparatus Content Model.
-  $critical_edition_apparatus_content_model = $connection->repository->constructObject('islandora:criticalApparatusCModel');
-  $critical_edition_apparatus_content_model->owner = 'fedoraAdmin';
-  $critical_edition_apparatus_content_model->label = 'Islandora Critical Apparatus Content Model';
-  $critical_edition_apparatus_content_model->models = 'fedora-system:ContentModel-3.0';
+  $tei_rdf_apparatus_content_model = $connection->repository->constructObject('islandora:criticalApparatusCModel');
+  $tei_rdf_apparatus_content_model->owner = 'fedoraAdmin';
+  $tei_rdf_apparatus_content_model->label = 'Islandora Critical Apparatus Content Model';
+  $tei_rdf_apparatus_content_model->models = 'fedora-system:ContentModel-3.0';
   // DS-COMPOSITE-MODEL Datastream.
-  $datastream = $critical_edition_apparatus_content_model->constructDatastream('DS-COMPOSITE-MODEL', 'M');
+  $datastream = $tei_rdf_apparatus_content_model->constructDatastream('DS-COMPOSITE-MODEL', 'M');
   $datastream->label = 'DS-COMPOSITE-MODEL';
   $datastream->mimetype = 'text/xml';
   $datastream->setContentFromFile("$module_path/xml/islandora_critical_apparatus_ds_composite_model.xml", FALSE);
-  $critical_edition_apparatus_content_model->ingestDatastream($datastream);
+  $tei_rdf_apparatus_content_model->ingestDatastream($datastream);
   // Transcription Content Model.
   $transcription_content_model = $connection->repository->constructObject('islandora:transcriptionCModel');
   $transcription_content_model->owner = 'fedoraAdmin';
@@ -275,9 +292,9 @@ function islandora_critical_edition_advanced_islandora_required_objects(Islandor
     'islandora_critical_edition_advanced' => array(
       'title' => 'Islandora critical editions - advanced',
       'objects' => array(
-        $critical_edition_versionable_object_content_model,
-        $critical_edition_container_content_model,
-        $critical_edition_apparatus_content_model,
+        $tei_rdf_versionable_object_content_model,
+        $tei_rdf_container_content_model,
+        $tei_rdf_apparatus_content_model,
         $transcription_content_model,
       ),
     ),
@@ -296,6 +313,7 @@ function islandora_critical_edition_advanced_islandora_required_objects(Islandor
  *   Access to path
  */
 function islandora_critical_edition_advanced_object_management_access($object, $context) {
+  module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/utilities');
   if (is_null($object)) {
     return FALSE;
   }
@@ -337,7 +355,10 @@ function islandora_critical_edition_advanced_object_management_access($object, $
 
     case 'display_consolidated_tei':
       if (in_array('islandora:versionableObjectCModel', $content_models)) {
-        $access = TRUE;
+        $tei_rdfs = array_keys(islandora_critical_edition_get_members($object->id, 'islandora:criticalEditionCModel'));
+        if (!empty($tei_rdfs)) {
+          $access = TRUE;
+        }
       }
       break;
 
@@ -455,7 +476,7 @@ function islandora_critical_edition_advanced_form_islandora_delete_object_form_a
  *   The Drupal form state.
  */
 function islandora_critical_edition_advanced_islandora_delete_object_form_submit(array $form, array &$form_state) {
-  //Add collection awareness
+  // Add collection awareness.
   module_load_include('inc', 'islandora', 'includes/utilities');
   $object = $form_state['object'];
   if (isset($form_state['pids_to_delete'])) {

@@ -175,3 +175,34 @@ function islandora_critical_edition_get_associated_objects_query($content_model,
             ORDER BY ?label OFFSET $offset";
   return $query;
 }
+
+/**
+ * Adds paging to form and determines offset.
+ *
+ * @param AbstrctObject $object
+ *   Object representing containing object
+ * @param String $content_model
+ *   PID of content model to limit search results
+ *
+ * @return integer
+ *   Offset for paging
+ */
+function islandora_critical_edition_prep_form($object, $content_model) {
+  module_load_include('inc', 'islandora_critical_edition', 'includes/utilities');
+  drupal_set_breadcrumb(islandora_get_breadcrumbs($object));
+  drupal_set_title($object->label);
+  $offset = 0;
+  $tuque = islandora_get_tuque_connection();
+  $repository = $tuque->repository;
+  $total = $repository->ri->countQuery(islandora_critical_edition_get_associated_objects_query($content_model, 0), 'sparql');
+  $limit = 25;
+  if ($total < 28) {
+    $limit = $total;
+  }
+  if ($total) {
+    $current_page = pager_default_initialize($total, $limit);
+    $offset = $current_page * $limit;
+  }
+
+  return $offset;
+}

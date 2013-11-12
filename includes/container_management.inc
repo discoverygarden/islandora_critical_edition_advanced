@@ -195,6 +195,8 @@ function islandora_critical_edition_management_menu(AbstractObject $object) {
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/mvd');
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/utilities');
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/versionable_object_creation.form');
+  module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/media_forms');
+  drupal_add_css(drupal_get_path('module', 'islandora_critical_edition_advanced') . "/css/fix_textfield_width.css");
   drupal_set_breadcrumb(islandora_get_breadcrumbs($object));
   drupal_set_title($object->label);
   $members = islandora_critical_edition_get_members($object->id);
@@ -224,6 +226,24 @@ function islandora_critical_edition_management_menu(AbstractObject $object) {
     '#description' => t('Associate existing TEI-RDF Object from repository.'),
     '#type' => 'fieldset',
     'form' => drupal_get_form('islandora_critical_edition_associate_tei_rdf_form', $object),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+  );
+  $output['manage_critical_edition']['attach_audio'] = array(
+    '#access' => user_access(ISLANDORA_ADD_DS),
+    '#title' => t('Associate Audio Object'),
+    '#description' => t('Associate existing Audio Object from repository.'),
+    '#type' => 'fieldset',
+    'form' => drupal_get_form('islandora_critical_edition_associate_media_form', $object),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+  );
+  $output['manage_critical_edition']['attach_video'] = array(
+    '#access' => user_access(ISLANDORA_ADD_DS),
+    '#title' => t('Associate Video Object'),
+    '#description' => t('Associate existing Video Object from repository.'),
+    '#type' => 'fieldset',
+    'form' => drupal_get_form('islandora_critical_edition_associate_media_form', $object, 'islandora:sp_videoCModel'),
     '#collapsible' => TRUE,
     '#collapsed' => TRUE,
   );

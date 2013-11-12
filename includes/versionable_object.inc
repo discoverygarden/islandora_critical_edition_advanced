@@ -23,14 +23,19 @@ function islandora_versionable_object_management_menu(AbstractObject $object) {
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/update_datastreams.form');
   drupal_set_breadcrumb(islandora_get_breadcrumbs($object));
   drupal_set_title($object->label);
+  $primary_object_types = array(
+    'islandora:criticalEditionCModel',
+    'islandora:sp-audioCModel',
+  );
   $members = islandora_critical_edition_get_members($object->id);
+  $primary_objects = array_intersect($primary_object_types, array_values($members));
   $tei_rdf = array_search('islandora:criticalEditionCModel', $members);
   $transcriptions = array_keys($members, 'islandora:transcriptionCModel');
 
   $output = array();
   $output['management_tabs'] = array('#type' => 'vertical_tabs');
   $output['management_tabs']['create_tei_rdf'] = array(
-    '#access' => user_access(ISLANDORA_ADD_DS) & !$tei_rdf,
+    '#access' => user_access(ISLANDORA_ADD_DS) && empty($primary_objects),
     '#title' => t('Create TEI-RDF Object'),
     '#description' => t('Create TEI-RDF Object from existing book object'),
     '#type' => 'fieldset',
@@ -39,7 +44,7 @@ function islandora_versionable_object_management_menu(AbstractObject $object) {
     '#collapsed' => TRUE,
   );
   $output['management_tabs']['attach_tei_rdf'] = array(
-    '#access' => user_access(ISLANDORA_ADD_DS) & !$tei_rdf,
+    '#access' => user_access(ISLANDORA_ADD_DS) && empty($primary_objects),
     '#title' => t('Associate TEI-RDF Object'),
     '#description' => t('Associate existing TEI-RDF Object from repository'),
     '#type' => 'fieldset',
@@ -48,7 +53,7 @@ function islandora_versionable_object_management_menu(AbstractObject $object) {
     '#collapsed' => TRUE,
   );
   $output['management_tabs']['attach_partial_tei_rdf'] = array(
-    '#access' => user_access(ISLANDORA_ADD_DS) & !$tei_rdf,
+    '#access' => user_access(ISLANDORA_ADD_DS) && empty($primary_objects),
     '#title' => t('Create TEI-RDF Object from existing object'),
     '#description' => t('Create new RDF-TEI object as a full or partial subset on an existing object.'),
     '#type' => 'fieldset',
@@ -83,7 +88,7 @@ function islandora_versionable_object_management_menu(AbstractObject $object) {
     '#collapsed' => TRUE,
   );
   $output['management_tabs']['update_datastreams'] = array(
-    '#access' => user_access(ISLANDORA_ADD_DS),
+    '#access' => user_access(ISLANDORA_ADD_DS) && $tei_rdf,
     '#title' => t('Update Consolidated TEI'),
     '#type' => 'fieldset',
     'form' => drupal_get_form('islandora_critical_edition_advanced_update_datastream_form', $object, $tei_rdf),
