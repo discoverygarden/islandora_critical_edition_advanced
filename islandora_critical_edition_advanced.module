@@ -172,7 +172,7 @@ function islandora_critical_edition_islandora_transcriptioncmodel_islandora_view
 function islandora_critical_edition_islandora_versionableobjectcmodel_islandora_view_object($object, $page_number, $page_size) {
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/utilities');
   $tei_rdfs = array_keys(islandora_critical_edition_get_members($object->id, 'islandora:criticalEditionCModel'));
-  if (is_array($tei_rdfs)) {
+  if (!empty($tei_rdfs)) {
     $media_cmodels = array(
       'islandora:sp_videoCModel',
       'islandora:sp-audioCModel',
