@@ -63,7 +63,7 @@ function islandora_calliope_write_file($pid, $project = '') {
     );
     $id = $storedfile->{'$id'};
     $grid->update(
-        array('_id' => new MongoId($id)), array('$set' => array('_resourceid' => $flat_pid, 'filename' => $transcription_object->label)), array('safe' => TRUE));
+        array('_id' => new MongoId($id)), array('$set' => array('_resourceid' => $resource_id, 'filename' => $transcription_object->label)), array('safe' => TRUE));
     unlink($filename);
   }
   catch (Exception $e) {
@@ -131,6 +131,7 @@ function islandora_calliope_create_mvd($project, $mvd_title, $resource_ids = NUL
   $id_array = array();
   foreach ($resource_ids as $resource_id) {
     if ($resource_id != "") {
+      $resource_id = islandora_escape_pid_for_function($resource_id);
       $file = islandora_calliope_get_file($resource_id);
       if (!$file) {
         islandora_calliope_write_file($resource_id);
@@ -140,7 +141,7 @@ function islandora_calliope_create_mvd($project, $mvd_title, $resource_ids = NUL
       $contents = $file->getBytes();
       $filename = $file->file['filename'];
       $file_label = str_replace('.', '_', pathinfo($filename, PATHINFO_FILENAME));
-      $id_array[] = array('id' => $flat_id, 'name' => $file_label);
+      $id_array[] = array('id' => $resource_id, 'name' => $file_label);
 
       $data .= "--" . $boundary . "\r\n";
       $data .= "Content-Disposition: form-data; name=\"uploadedfile[]\"; filename=\"" . $file_label . "\"\r\n";

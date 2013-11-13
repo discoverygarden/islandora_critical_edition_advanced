@@ -447,10 +447,13 @@ function islandora_critical_edition_build_text_file($page_object, $filename) {
  *   file to be added
  */
 function islandora_transcription_file_add($transcription, $transcription_datastream, $filename) {
+  module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/calliope');
   $tuque = new IslandoraTuque();
   $transcription_datastream->setContentFromFile($filename);
-  unlink($filename);
   $transcription->ingestDatastream($transcription_datastream);
+  islandora_calliope_write_file($transcription->id);
+  unlink($filename);
+
 }
 
 /**
