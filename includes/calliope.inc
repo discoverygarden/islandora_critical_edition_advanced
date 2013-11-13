@@ -63,7 +63,7 @@ function islandora_calliope_write_file($pid, $project = '') {
     );
     $id = $storedfile->{'$id'};
     $grid->update(
-        array('_id' => new MongoId($id)), array('$set' => array('_resourceid' => $resource_id, 'filename' => $transcription_object->label)), array('safe' => TRUE));
+        array('_id' => new MongoId($id)), array('$set' => array('_resourceid' => $flat_pid, 'filename' => $transcription_object->label)), array('safe' => TRUE));
     unlink($filename);
   }
   catch (Exception $e) {
