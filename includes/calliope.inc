@@ -136,8 +136,11 @@ function islandora_calliope_create_mvd($project, $mvd_title, $resource_ids = NUL
       if (!$file) {
         islandora_calliope_write_file($resource_id);
         $file = islandora_calliope_get_file($resource_id);
+        if (!$file) {
+          drupal_set_message("Resource_id could not be used to make file");
+        }
       }
-      $flat_id = islandora_escape_pid_for_function($resource_id);
+   
       $contents = $file->getBytes();
       $filename = $file->file['filename'];
       $file_label = str_replace('.', '_', pathinfo($filename, PATHINFO_FILENAME));
@@ -296,7 +299,7 @@ function islandora_calliope_get_file($pid) {
   $query = array('_resourceid' => $id);
   $file = $grid->findOne($query);
   if ($file == NULL) {
-    drupal_set_messeage(t('The requested resource does not exist'));
+    drupal_set_message(t('The requested resource does not exist'));
     return;
   }
   if (array_key_exists('_deleted', $file->file)) {
