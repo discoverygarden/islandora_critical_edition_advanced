@@ -416,6 +416,7 @@ function add_derived_transcription($tei_rdf_object, $versionable_object_pid, $tr
  *   Temp file to hold data
  */
 function islandora_critical_edition_build_text_file($page_object, $filename) {
+    // @codingStandardsIgnoreStart
   $replace_candidates = array(
     '<br>',
     '<br />',
@@ -424,6 +425,7 @@ function islandora_critical_edition_build_text_file($page_object, $filename) {
     '</l>',
     '</lg>',
   );
+  // @codingStandardsIgnoreEnd
   if ($page_object['CWRC']) {
     $raw_cwrc = $page_object['CWRC']->content;
     $simple = $simple = simplexml_load_string($raw_cwrc);

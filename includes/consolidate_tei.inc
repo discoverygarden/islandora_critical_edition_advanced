@@ -54,7 +54,6 @@ function islandora_critical_edition_consolidate_tei($object) {
       }
     }
   }
-
   islandora_critical_edition_upsert_tei($tei_rdf_object, $master->saveXML());
 }
 
