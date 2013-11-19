@@ -130,7 +130,7 @@ function islandora_get_versionable_objects() {
                         {?subject fm:hasModel <info:fedora/islandora:versionableObjectCModel>;
                        }
                  OPTIONAL{
-                           ?subject fm:label  ?label; 
+                           ?subject fm:label  ?label;
                           }
                        }";
   $objects = array();
@@ -161,12 +161,12 @@ function islandora_get_associated_versionable_objects($critical_edition_pid) {
                             fm:state fm:Active;
                             fr:isMemberOfCollection <info:fedora/$critical_edition_pid>;
               }
-            UNION 
+            UNION
               {?subject fm:hasModel <info:fedora/islandora:versionableObjectCModel>;
                         fm:state fm:Active;
                         fr:isMemberOf <info:fedora/$critical_edition_pid>;
               }
- 
+
 
              }";
   $objects = array();
@@ -275,7 +275,5 @@ function islandora_critical_edition_management_menu(AbstractObject $object) {
     '#collapsible' => TRUE,
     '#collapsed' => TRUE,
   );
-
-
   return $output;
 }

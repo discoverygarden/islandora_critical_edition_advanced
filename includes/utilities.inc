@@ -27,9 +27,9 @@ function islandora_critical_edition_get_members($object_pid, $content_model = NU
                         fr:isMemberOfCollection <info:fedora/$object_pid>;
                         fm:hasModel ?object;
                         $qualifier
-                          
+
               }
-            UNION 
+            UNION
               {?subject fm:state fm:Active;
                         fr:isMemberOf <info:fedora/$object_pid>;
                         fm:hasModel ?object;
@@ -69,7 +69,7 @@ function islandora_critical_get_related_transcriptions($versionable_object_pid) 
                                   fr:isMemberOf <info:fedora/$versionable_object_pid>;
                        }
                  OPTIONAL{
-                           ?subject fm:label  ?label; 
+                           ?subject fm:label  ?label;
                           }
                        }";
   $objects = array();
@@ -156,10 +156,12 @@ function islandora_critical_edition_get_related_objects($content_model, $offset 
 /**
  * Builds and returns query to get objects filtered by content model.
  *
- * @param integer $offset
+ * @param string $content_model
+ *   The content model to filter by.
+ * @param int $offset
  *   Offset for query
  *
- * @return String
+ * @return string
  *   Query to get relevant objects
  */
 function islandora_critical_edition_get_associated_objects_query($content_model, $offset) {
@@ -169,7 +171,7 @@ function islandora_critical_edition_get_associated_objects_query($content_model,
                         {?subject fm:hasModel <info:fedora/$content_model>;
                        }
                  OPTIONAL{
-                           ?subject fm:label  ?label; 
+                           ?subject fm:label  ?label;
                           }
                        }
             ORDER BY ?label OFFSET $offset";
@@ -184,7 +186,7 @@ function islandora_critical_edition_get_associated_objects_query($content_model,
  * @param String $content_model
  *   PID of content model to limit search results
  *
- * @return integer
+ * @return int
  *   Offset for paging
  */
 function islandora_critical_edition_prep_form($object, $content_model) {

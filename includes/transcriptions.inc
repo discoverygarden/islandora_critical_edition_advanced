@@ -260,8 +260,6 @@ function islandora_critical_edition_manage_transcriptions_form(array $form, arra
       '#value' => $cwrcwriter,
     );
   }
-
-
   return $form;
 }
 

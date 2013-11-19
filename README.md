@@ -1,3 +1,8 @@
+BUILD STATUS
+------------
+Current build status:
+[![Build Status](https://travis-ci.org/discoverygarden/islandora_critical_edition_advanced.png?branch=7.x)](https://travis-ci.org/discoverygarden/islandora_critical_edition_advanced)
+
 CONTENTS OF THIS FILE
 ---------------------
 
@@ -15,7 +20,7 @@ CONFIGURATION
 --------------
 
 This module requires the Islandora Critical Edition Solution Pack.
-The saxon.jar file contained in the dependencies directory must by moved or 
+The saxon.jar file contained in the dependencies directory must by moved or
 copied to the webapps directory of the tomcat server.
 
 This will normally be /usr/local/fedora/tomcat/webapps/

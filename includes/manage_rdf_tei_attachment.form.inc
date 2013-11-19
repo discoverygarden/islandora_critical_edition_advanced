@@ -59,9 +59,7 @@ function islandora_critical_edition_associate_book_form(array $form, array &$for
     '#type' => 'hidden',
     '#value' => $object->id,
   );
-
   return $form;
-  $form = array();
 }
 
 /**
@@ -241,7 +239,6 @@ function islandora_critical_edition_associate_tei_rdf_form($form, $form_state, $
     '#value' => $object_model,
   );
   return $form;
-  $form = array();
 }
 
 /**

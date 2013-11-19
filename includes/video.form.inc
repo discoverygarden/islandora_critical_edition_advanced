@@ -77,7 +77,6 @@ function islandora_critical_edition_associate_video_form($form, $form_state, $ob
     '#value' => $object_model,
   );
   return $form;
-  $form = array();
 }
 
 /**
@@ -110,6 +109,10 @@ function islandora_critical_edition_associate_video_form_submit($form, $form_sta
   $video_object->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOf', $versionable_object->id);
 }
 
+/**
+ * Unsure of what this does.
+ * @todo Document
+ */
 function make_video_tei_rdf($versionable_object, $video_object) {
   module_load_include('inc', 'islandora_critical_edition', 'includes/create');
   module_load_include('inc', 'islandora_critical_edition', 'includes/utilities');
@@ -132,7 +135,6 @@ function make_video_tei_rdf($versionable_object, $video_object) {
   $page_object = islandora_add_object($new_page_object);
 
   // Add a minimal set of datastreams from original page object.
-
   if ($video_object['TN']) {
     $page_object->ingestDatastream($video_object['TN']);
   }
@@ -144,6 +146,10 @@ function make_video_tei_rdf($versionable_object, $video_object) {
   islandora_critical_edition_add_cwrc_datastream($page_object);
 }
 
+/**
+ * Unsure of what this does.
+ * @todo Document
+ */
 function make_video_transcription($versionable_object, $video_object_pid) {
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/calliope');
   $video_object = islandora_object_load($video_object_pid);

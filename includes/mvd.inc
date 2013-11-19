@@ -107,7 +107,7 @@ function islandora_critical_edition_mvd_form_submit($form, $form_state) {
   $mvd_title = $form_state['values']['mvd'];
   $filter = $form_state['values']['filter'];
   $success = islandora_calliope_create_mvd($project, $mvd_title, $transcriptions, $filter);
-  drupal_set_message($success);
+  drupal_set_message(check_plain($success));
 }
 
 /**
