@@ -226,7 +226,7 @@ function islandora_critical_edition_management_menu(AbstractObject $object) {
     '#title' => t('Associate TEI-RDF Object'),
     '#description' => t('Associate existing TEI-RDF Object from repository.'),
     '#type' => 'fieldset',
-    'form' => drupal_get_form('islandora_critical_edition_associate_tei_rdf_form', $object),
+    'form' => drupal_get_form('islandora_critical_edition_associate_tei_rdf_form', $object, 'islandora:criticalEditionCModel'),
     '#collapsible' => TRUE,
     '#collapsed' => TRUE,
   );

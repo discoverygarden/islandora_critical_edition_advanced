@@ -48,7 +48,7 @@ function islandora_versionable_object_management_menu(AbstractObject $object) {
     '#title' => t('Associate TEI-RDF Object'),
     '#description' => t('Associate existing TEI-RDF Object from repository'),
     '#type' => 'fieldset',
-    'form' => drupal_get_form('islandora_critical_edition_associate_tei_rdf_form', $object),
+    'form' => drupal_get_form('islandora_critical_edition_associate_tei_rdf_form', $object, 'islandora:criticalEditionCModel'),
     '#collapsible' => TRUE,
     '#collapsed' => TRUE,
   );
@@ -57,7 +57,7 @@ function islandora_versionable_object_management_menu(AbstractObject $object) {
     '#title' => t('Create TEI-RDF Object from existing object'),
     '#description' => t('Create new RDF-TEI object as a full or partial subset on an existing object.'),
     '#type' => 'fieldset',
-    'form' => drupal_get_form('islandora_critical_edition_associate_tei_rdf_form', $object),
+    'form' => drupal_get_form('islandora_critical_edition_associate_tei_rdf_form', $object, 'islandora:criticalEditionCModel'),
     '#collapsible' => TRUE,
     '#collapsed' => TRUE,
   );

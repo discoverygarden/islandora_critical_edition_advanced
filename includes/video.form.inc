@@ -19,64 +19,7 @@
  *   Drupal Form
  */
 function islandora_critical_edition_associate_video_form($form, $form_state, $object, $content_model = 'islandora:sp_videoCModel') {
-  $object_models = $object->models;
-  $system = array_search("fedora-system:FedoraObject-3.0", $object_models);
-  unset($object_models[$system]);
-  $object_model = array_shift($object_models);
-  $offset = islandora_critical_edition_prep_form($object, $content_model);
-  $name_mappings = array(
-    'islandora:criticalEditionContainerCModel' => t('Critical Edition'),
-    'islandora:versionableObjectCModel' => t('Versionable Object'),
-  );
-  $videos = islandora_critical_edition_get_related_objects($content_model, $offset);
-  $rows = array();
-  foreach ($videos as $pid => $label) {
-    $rows[$pid] = array(
-      'pid' => $pid,
-      'title' => $label,
-    );
-  }
-  $header = array(
-    'title' => array('data' => t('TEI-RDF Object')),
-    'pid' => array('data' => t('PID')),
-  );
-  // Build and return table element.
-  $element = array(
-    '#type' => 'tableselect',
-    '#header' => $header,
-    '#options' => $rows,
-    '#empty' => t("There are no RDF-TEI Objects in this Fedora Repository."),
-    '#js' => FALSE,
-    '#multiple' => FALSE,
-  );
-
-  $form['pager'] = array(
-    '#type' => 'markup',
-    '#markup' => theme('pager', array('quantity', count($rows))),
-  );
-  $form['intro'] = array(
-    '#type' => 'markup',
-    '#markup' => t("Choose RDF-TEI object to associate with this @label.", array('@label' => $name_mappings[$object_model])),
-  );
-  $form['video_objects'] = $element;
-  $form['vo_title'] = array(
-    '#type' => 'textfield',
-    '#title' => t("Title for new Versionable Object"),
-    '#required' => TRUE,
-  );
-  $form['next'] = array(
-    '#type' => 'submit',
-    '#value' => t('Associate TEI-RDF Object'),
-  );
-  $form['container_object_pid'] = array(
-    '#type' => 'hidden',
-    '#value' => $object->id,
-  );
-  $form['container_object_model'] = array(
-    '#type' => 'hidden',
-    '#value' => $object_model,
-  );
-  return $form;
+  return islandora_critical_edition_associate_tei_rdf_base_form($form, $form_state, $object, $content_model);
 }
 
 /**
@@ -94,14 +37,14 @@ function islandora_critical_edition_associate_video_form_submit($form, $form_sta
   $type = $form_state['values']['container_object_model'];
 
   if ($type == 'islandora:criticalEditionContainerCModel') {
-    $video = $form_state['values']['video_objects'];
+    $video = $form_state['values']['table'];
     $video_object = islandora_object_load($video);
     $container_object = islandora_object_load($form_state['values']['container_object_pid']);
     $tn = $video_object['TN'];
     $label = $form_state['values']['vo_title'];
     $versionable_object = islandora_critical_edition_build_vo($container_object, $label, $tn);
     $tei_rdf = make_video_tei_rdf($versionable_object, $video_object);
-    $transcription = make_video_transcription($versionable_object, $form_state['values']['video_objects']);
+    $transcription = make_video_transcription($versionable_object, $form_state['values']['table']);
   }
   else {
     $versionable_object_pid = $form_state['values']['container_object_pid'];

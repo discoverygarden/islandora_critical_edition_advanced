@@ -208,3 +208,119 @@ function islandora_critical_edition_prep_form($object, $content_model) {
 
   return $offset;
 }
+
+/**
+ * Base form for All/Audio/Video associate TEI-RDF forms.
+ *
+ * @param array $form
+ *   The Drupal form definition.
+ * @param array $form_state
+ *   The Drupal form state.
+ * @param AbstractObject $object
+ *   The Object to associated the selected TEI-RDF object with.
+ * @param string $content_model
+ *   Limit the possible TEI-RDF objects to those with this content model type.
+ *
+ * @return array
+ *   The Drupal form definition.
+ */
+function islandora_critical_edition_associate_tei_rdf_base_form($form, $form_state, $object, $content_model) {
+  $object_models = $object->models;
+  $system = array_search("fedora-system:FedoraObject-3.0", $object_models);
+  unset($object_models[$system]);
+  // Assume the object's first content model is the definitive one, ignore
+  // the default object content model though.
+  $object_model = array_shift($object_models);
+  $offset = islandora_critical_edition_prep_form($object, $content_model);
+  $name_mappings = array(
+    'islandora:criticalEditionContainerCModel' => t('Critical Edition'),
+    'islandora:versionableObjectCModel' => t('Versionable Object'),
+  );
+  $associate_with_label = $name_mappings[$object_model];
+  $objects = islandora_critical_edition_get_related_objects($content_model, $offset);
+  $rows = array();
+  foreach ($objects as $pid => $label) {
+    $rows[$pid] = array(
+      'pid' => $pid,
+      'title' => $label,
+    );
+  }
+  return array(
+    'pager' => array(
+      '#type' => 'markup',
+      '#markup' => theme('pager', array('quantity', count($rows))),
+    ),
+    'intro' => array(
+      '#type' => 'markup',
+      '#markup' => t("Choose RDF-TEI object to associate with this @label.", array('@label' => $associate_with_label)),
+    ),
+    'table' => array(
+      '#type' => 'tableselect',
+      '#header' => array(
+        'title' => array('data' => t('TEI-RDF Object')),
+        'pid' => array('data' => t('PID')),
+      ),
+      '#options' => $rows,
+      '#empty' => t("There are no RDF-TEI Objects in this Fedora Repository."),
+      '#js' => FALSE,
+      '#multiple' => FALSE,
+    ),
+    'vo_title' => array(
+      '#type' => 'textfield',
+      '#title' => t("Title for new Versionable Object"),
+      '#required' => TRUE,
+    ),
+    'next' => array(
+      '#type' => 'submit',
+      '#value' => t('Associate TEI-RDF Object'),
+    ),
+    'container_object_pid' => array(
+      '#type' => 'hidden',
+      '#value' => $object->id,
+    ),
+    'container_object_model' => array(
+      '#type' => 'hidden',
+      '#value' => $object_model,
+    ),
+  );
+}
+
+
+/**
+ * Creates a select table for choosing one of the provided objects.
+ */
+function islandora_critical_edition_create_select_teirdf_object_table(array $objects, $associate_with_label) {
+  $name_mappings = array(
+    'islandora:criticalEditionContainerCModel' => t('Critical Edition'),
+    'islandora:versionableObjectCModel' => t('Versionable Object'),
+  );
+  $associate_with_label = $name_mappings[$object_model];
+  $rows = array();
+  foreach ($objects as $pid => $label) {
+    $rows[$pid] = array(
+      'pid' => $pid,
+      'title' => $label,
+    );
+  }
+  return array(
+    'pager' => array(
+      '#type' => 'markup',
+      '#markup' => theme('pager', array('quantity', count($rows))),
+    ),
+    'intro' => array(
+      '#type' => 'markup',
+      '#markup' => t("Choose RDF-TEI object to associate with this @label.", array('@label' => $name_mappings[$object_model])),
+    ),
+    'table' => array(
+      '#type' => 'tableselect',
+      '#header' => array(
+        'title' => array('data' => t('TEI-RDF Object')),
+        'pid' => array('data' => t('PID')),
+      ),
+      '#options' => $rows,
+      '#empty' => t("There are no RDF-TEI Objects in this Fedora Repository."),
+      '#js' => FALSE,
+      '#multiple' => FALSE,
+    ),
+  );
+}
