@@ -130,7 +130,7 @@ function islandora_get_versionable_objects() {
                         {?subject fm:hasModel <info:fedora/islandora:versionableObjectCModel>;
                        }
                  OPTIONAL{
-                           ?subject fm:label  ?label; 
+                           ?subject fm:label  ?label;
                           }
                        }";
   $objects = array();
@@ -161,12 +161,12 @@ function islandora_get_associated_versionable_objects($critical_edition_pid) {
                             fm:state fm:Active;
                             fr:isMemberOfCollection <info:fedora/$critical_edition_pid>;
               }
-            UNION 
+            UNION
               {?subject fm:hasModel <info:fedora/islandora:versionableObjectCModel>;
                         fm:state fm:Active;
                         fr:isMemberOf <info:fedora/$critical_edition_pid>;
               }
- 
+
 
              }";
   $objects = array();
@@ -226,7 +226,7 @@ function islandora_critical_edition_management_menu(AbstractObject $object) {
     '#title' => t('Associate TEI-RDF Object'),
     '#description' => t('Associate existing TEI-RDF Object from repository.'),
     '#type' => 'fieldset',
-    'form' => drupal_get_form('islandora_critical_edition_associate_tei_rdf_form', $object),
+    'form' => drupal_get_form('islandora_critical_edition_associate_tei_rdf_form', $object, 'islandora:criticalEditionCModel'),
     '#collapsible' => TRUE,
     '#collapsed' => TRUE,
   );
@@ -275,7 +275,5 @@ function islandora_critical_edition_management_menu(AbstractObject $object) {
     '#collapsible' => TRUE,
     '#collapsed' => TRUE,
   );
-
-
   return $output;
 }

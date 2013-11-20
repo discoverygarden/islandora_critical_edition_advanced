@@ -1,0 +1,38 @@
+language: php
+php:
+  - 5.3.3
+  - 5.4
+branches:
+  only:
+    - 7.x
+env:
+  - FEDORA_VERSION="3.5"
+  - FEDORA_VERSION="3.6.2"
+  - FEDORA_VERSION="3.7.0"
+before_install:
+  - cd $HOME
+  - git clone -b 7.x git://github.com/discoverygarden/islandora_critical_edition.git
+  - git clone -b 7.x git://github.com/Islandora/islandora.git
+  - git clone -b 7.x git://github.com/Islandora/islandora_solution_pack_book.git
+  - git clone -b 7.x git://github.com/Islandora/islandora_paged_content.git
+  - git clone -b 7.x git://github.com/discoverygarden/islandora_image_annotation.git
+  - git clone -b 7.x git://github.com/discoverygarden/islandora_solution_pack_entities.git
+  - git clone -b 7.x git://github.com/Islandora/islandora_solution_pack_collection.git
+  - git clone -b 7.x git://github.com/Islandora/islandora_solr_search.git
+  - export ISLANDORA_DIR=$HOME/islandora
+  - $HOME/islandora/tests/scripts/travis_setup.sh
+  - cd $HOME/drupal-*
+  - ln -s $TRAVIS_BUILD_DIR sites/all/modules/islandora_critical_edition_advanced
+  - ln -s $HOME/islandora_critical_edition sites/all/modules/islandora_critical_edition
+  - ln -s $HOME/islandora_solution_pack_book sites/all/modules/islandora_solution_pack_book
+  - ln -s $HOME/islandora_paged_content sites/all/modules/islandora_paged_content
+  - ln -s $HOME/islandora_image_annotation sites/all/modules/islandora_image_annotation
+  - ln -s $HOME/islandora_solution_pack_entities sites/all/modules/islandora_solution_pack_entities
+  - ln -s $HOME/islandora_solution_pack_collection sites/all/modules/islandora_solution_pack_collection
+  - ln -s $HOME/islandora_solr_search sites/all/modules/islandora_solr_search
+  - drush en --yes --user=1 islandora_critical_edition_advanced
+script:
+  - ant -buildfile sites/all/modules/islandora_critical_edition/build.xml lint
+  - $ISLANDORA_DIR/tests/scripts/line_endings.sh sites/all/modules/islandora_critical_edition_advanced
+  - drush coder-review --reviews=production,security,style,i18n,potx,sniffer islandora_critical_edition_advanced
+  - phpcpd --names *.module,*.inc,*.test sites/all/modules/islandora_critical_edition_advanced

@@ -59,9 +59,7 @@ function islandora_critical_edition_associate_book_form(array $form, array &$for
     '#type' => 'hidden',
     '#value' => $object->id,
   );
-
   return $form;
-  $form = array();
 }
 
 /**
@@ -183,65 +181,7 @@ function islandora_critical_edition_delete_tei_rdf_form_submit($form, $form_stat
  *   Drupal Form
  */
 function islandora_critical_edition_associate_tei_rdf_form($form, $form_state, $object, $content_model = 'islandora:criticalEditionCModel') {
-  $object_models = $object->models;
-  $system = array_search("fedora-system:FedoraObject-3.0", $object_models);
-  unset($object_models[$system]);
-  $object_model = array_shift($object_models);
-  $offset = islandora_critical_edition_prep_form($object, $content_model);
-  $name_mappings = array(
-    'islandora:criticalEditionContainerCModel' => t('Critical Edition'),
-    'islandora:versionableObjectCModel' => t('Versionable Object'),
-  );
-  $tei_rdfs = islandora_critical_edition_get_related_objects($content_model, $offset);
-  $rows = array();
-  foreach ($tei_rdfs as $pid => $label) {
-    $rows[$pid] = array(
-      'pid' => $pid,
-      'title' => $label,
-    );
-  }
-  $header = array(
-    'title' => array('data' => t('TEI-RDF Object')),
-    'pid' => array('data' => t('PID')),
-  );
-  // Build and return table element.
-  $element = array(
-    '#type' => 'tableselect',
-    '#header' => $header,
-    '#options' => $rows,
-    '#empty' => t("There are no RDF-TEI Objects in this Fedora Repository."),
-    '#js' => FALSE,
-    '#multiple' => FALSE,
-  );
-
-  $form['pager'] = array(
-    '#type' => 'markup',
-    '#markup' => theme('pager', array('quantity', count($rows))),
-  );
-  $form['intro'] = array(
-    '#type' => 'markup',
-    '#markup' => t("Choose RDF-TEI object to associate with this @label.", array('@label' => $name_mappings[$object_model])),
-  );
-  $form['tei_rdf_objects'] = $element;
-  $form['vo_title'] = array(
-    '#type' => 'textfield',
-    '#title' => t("Title for new Versionable Object"),
-    '#required' => TRUE,
-  );
-  $form['next'] = array(
-    '#type' => 'submit',
-    '#value' => t('Associate TEI-RDF Object'),
-  );
-  $form['container_object_pid'] = array(
-    '#type' => 'hidden',
-    '#value' => $object->id,
-  );
-  $form['container_object_model'] = array(
-    '#type' => 'hidden',
-    '#value' => $object_model,
-  );
-  return $form;
-  $form = array();
+  return islandora_critical_edition_associate_tei_rdf_base_form($form, $form_state, $object, $content_model);
 }
 
 /**
@@ -256,7 +196,7 @@ function islandora_critical_edition_associate_tei_rdf_form_submit($form, $form_s
   module_load_include('inc', 'islandora_critical_edition', 'includes/versionable_object_creation.form');
   module_load_include('inc', 'islandora_paged_content', 'includes/utilities');
   $type = $form_state['values']['container_object_model'];
-  $tei_rdf = $form_state['values']['tei_rdf_objects'];
+  $tei_rdf = $form_state['values']['table'];
   $tei_rdf_object = islandora_object_load($tei_rdf);
   $relationships = $tei_rdf_object->relationships->get(ISLANDORA_RELS_EXT_URI, 'isCriticalEditionOf');
   $tn = NULL;

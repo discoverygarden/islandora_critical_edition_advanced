@@ -5,11 +5,11 @@
  * Add advanced data modeling options to Islandora Critical Editions.
  */
 
-define('ISLANDORA_CRITICAL_EDITION_MANAGE_CONTAINER', 'manage critical edition');
-define('ISLANDORA_CRITICAL_EDITION_CREATE', 'create critical editions');
-define('ISLANDORA_CRITICAL_EDITION_READ', 'read critical editions');
-define('ISLANDORA_CRITICAL_EDITION_MODIFY', 'modify critical editions');
-define('ISLANDORA_CRITICAL_EDITION_DELETE', 'delete critical editions');
+define('ISLANDORA_CRITICAL_EDITION_ADVANCED_MANAGE_CONTAINER', 'manage critical edition');
+define('ISLANDORA_CRITICAL_EDITION_ADVANCED_CREATE', 'create critical editions');
+define('ISLANDORA_CRITICAL_EDITION_ADVANCED_READ', 'read critical editions');
+define('ISLANDORA_CRITICAL_EDITION_ADVANCED_MODIFY', 'modify critical editions');
+define('ISLANDORA_CRITICAL_EDITION_ADVANCED_DELETE', 'delete critical editions');
 
 /**
  * Implements hook_menu().
@@ -58,7 +58,7 @@ function islandora_critical_edition_advanced_menu() {
     'page arguments' => array(2),
     'type' => MENU_LOCAL_TASK,
     'access callback' => 'user_access',
-    'access arguments' => array(ISLANDORA_CRITICAL_EDITION_MODIFY),
+    'access arguments' => array(ISLANDORA_CRITICAL_EDITION_ADVANCED_MODIFY),
     'file' => 'includes/calliope.inc',
   );
   $items['islandora/transcription/edit/%islandora_object'] = array(
@@ -77,7 +77,7 @@ function islandora_critical_edition_advanced_menu() {
     'page arguments' => array('islandora_critical_edition_create_versionable_object', 2),
     'type' => MENU_CALLBACK,
     'access callback' => 'user_access',
-    'access arguments' => array(ISLANDORA_CRITICAL_EDITION_CREATE),
+    'access arguments' => array(ISLANDORA_CRITICAL_EDITION_ADVANCED_CREATE),
     'file' => 'includes/versionable_object_creation.form.inc',
   );
 
@@ -187,7 +187,10 @@ function islandora_critical_edition_islandora_versionableobjectcmodel_islandora_
         $output = theme('islandora_critical_edition', array('islandora_object' => $tei_rdf));
       }
       if (in_array($content_model, $media_cmodels)) {
-        $output = theme('islandora_critical_media_object', array('islandora_object' => $tei_rdf, 'reference_object' => $reference_object, 'content_model' => $content_model));
+        $output = theme('islandora_critical_media_object', array(
+                    'islandora_object' => $tei_rdf,
+                    'reference_object' => $reference_object,
+                    'content_model' => $content_model));
       }
     }
   }
@@ -203,24 +206,24 @@ function islandora_critical_edition_islandora_versionableobjectcmodel_islandora_
  */
 function islandora_critical_edition_advanced_permission() {
   return array(
-    ISLANDORA_CRITICAL_EDITION_CREATE => array(
+    ISLANDORA_CRITICAL_EDITION_ADVANCED_CREATE => array(
       'title' => t('Create Critical Edition Objects'),
       'description' => t('Create crit'),
     ),
-    ISLANDORA_CRITICAL_EDITION_READ => array(
+    ISLANDORA_CRITICAL_EDITION_ADVANCED_READ => array(
       'title' => t('Read Critical Edition Objects'),
       'description' => t('Access critical editions and their associated objects.'),
     ),
-    ISLANDORA_CRITICAL_EDITION_MODIFY => array(
+    ISLANDORA_CRITICAL_EDITION_ADVANCED_MODIFY => array(
       'title' => t('Modify Critical Editions'),
       'description' => t('Modify and edit objects assoicated with Critical Editions.'),
     ),
-    ISLANDORA_CRITICAL_EDITION_DELETE => array(
+    ISLANDORA_CRITICAL_EDITION_ADVANCED_DELETE => array(
       'title' => t('Delete Critical Editions'),
       'description' => t('Delete objects assoicated with Critical Editions.'),
     ),
-    ISLANDORA_CRITICAL_EDITION_MANAGE_CONTAINER => array(
-      'title' => t('Manage Critical Edition '),
+    ISLANDORA_CRITICAL_EDITION_ADVANCED_MANAGE_CONTAINER => array(
+      'title' => t('Manage Critical Edition'),
       'description' => t('Manage objects within critical edition.'),
     ),
   );
@@ -313,7 +316,7 @@ function islandora_critical_edition_advanced_islandora_required_objects(Islandor
  * @param String $context
  *   Determines origin of function call
  *
- * @return boolean
+ * @return bool
  *   Access to path
  */
 function islandora_critical_edition_advanced_object_management_access($object, $context) {
@@ -328,13 +331,13 @@ function islandora_critical_edition_advanced_object_management_access($object, $
   switch ($context) {
 
     case 'associate_versionable_object':
-      if (in_array('islandora:criticalEditionContainerCModel', $content_models) && user_access(ISLANDORA_CRITICAL_EDITION_MODIFY)) {
+      if (in_array('islandora:criticalEditionContainerCModel', $content_models) && user_access(ISLANDORA_CRITICAL_EDITION_ADVANCED_MODIFY)) {
         $access = TRUE;
       }
       break;
 
     case 'manage_container':
-      if (in_array('islandora:criticalEditionContainerCModel', $content_models) && user_access(ISLANDORA_CRITICAL_EDITION_MANAGE_CONTAINER)) {
+      if (in_array('islandora:criticalEditionContainerCModel', $content_models) && user_access(ISLANDORA_CRITICAL_EDITION_ADVANCED_MANAGE_CONTAINER)) {
         $access = TRUE;
       }
       break;
@@ -461,7 +464,6 @@ function islandora_critical_edition_advanced_form_islandora_delete_object_form_a
       $objects_to_free[$tei_rdf] = $object->id;
     }
   }
-
 
   if ($message) {
     $form['description']['#markup'] = $message;
