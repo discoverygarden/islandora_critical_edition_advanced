@@ -353,7 +353,7 @@ function islandora_critical_transcription_edit_form_submit($form, $form_state) {
     $success = $transcription_object['TRANSCRIPTION']->content = $content;
   }
   catch (Exception $exc) {
-    watchdog("islandora critical edition advanced", $exc->getTraceAsString());
+    watchdog_exception("islandora critical edition advanced", $exc);
   }
   if ($success) {
     drupal_set_message(t("Transcription updated."));
