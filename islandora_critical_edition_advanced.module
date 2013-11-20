@@ -100,7 +100,78 @@ function islandora_critical_edition_advanced_menu() {
     'access arguments' => array(2, 'display_consolidated_tei'),
     'file' => 'includes/consolidate_tei.inc',
   );
+  
+  $items['islandora/object/%islandora_object/critical_edition_publish'] = array(
+    'title' => 'Publish Viewer',
+    'page callback' => 'islandora_critical_edition_publish_view',
+    'page arguments' => array(2),
+    'type' => MENU_LOCAL_TASK,
+    'access callback' => 'islandora_critical_edition_publish_access',
+    'access arguments' => array(2),
+  );
+  
   return $items;
+}
+
+/**
+ * Determines whether or not to show the publish tab.
+ *
+ * @global object $user
+ *
+ * @param FedoraObject $fedora_object
+ *   A FedoraObject.
+ *
+ * @return bool
+ *   Whether the user has access or not.
+ */
+function islandora_critical_edition_publish_access($fedora_object) {
+  if (!isset($fedora_object)) {
+    return FALSE;
+  }
+   foreach ($fedora_object->models as $model) {
+     if ($model == 'islandora:criticalEditionContainerCModel') {
+       return user_access(ISLANDORA_CRITICAL_EDITION_READ);
+     }
+   }
+  return FALSE;
+}
+
+/**
+ * The image annotation view.
+ *
+ * @param FedoraObject $object
+ *   A FedoraObject.
+ *
+ * @return string
+ *   The marked up output.
+ */
+function islandora_critical_edition_publish_view(AbstractObject $object) {
+  return theme('islandora_critical_edition_publish_view', array('islandora_object' => $object, 'publish_form' => NULL));
+}
+
+/**
+ * Implements hook_preprocess().
+ */
+function islandora_critical_edition_advanced_preprocess_islandora_critical_edition_publish_view(&$variables) {
+  module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/utilities');
+  module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/publish_form');
+  $test = array('title_page' => 'Title Page');
+
+  $form_state['publish_viewer']['#type'] = 'vertical_tabs';
+  $aparatus_datastreams = islandora_critical_apparatus_get_datastreams();
+  dsm($aparatus_datastreams);
+/// Build forms for only the accessible elements.
+  foreach (array_keys($aparatus_datastreams) as $element) {
+    $form_state['publish_viewer']["{$element}_tab"] = array(
+      '#id' => "{$element}-tab",
+      '#group' => "{$element}_viewer",
+      '#access' => TRUE,
+      '#type' => 'fieldset',
+      '#title' => t($aparatus_datastreams[$element]),
+      'form' => drupal_get_form("islandora_critical_edition_advanced_{$element}_form", $variables['islandora_object']),
+    );
+  }
+  $variables['publish_form'] = drupal_render($form_state);
 }
 
 /**
@@ -113,6 +184,12 @@ function islandora_critical_edition_advanced_theme($existing, $type, $theme, $pa
       'template' => 'theme/islandora_critical_edition_container',
       'pattern' => 'islandora_critical_edition_container__',
       'variables' => array('islandora_object' => NULL),
+    ),
+    'islandora_critical_edition_publish_view' => array(
+      'template' => 'theme/islandora_critical_edition_publish_view',
+      'variables' => array(
+        'islandora_objects' => NULL,
+        'publish_form' => NULL),
     ),
     'islandora_versionable_object' => array(
       'file' => 'theme/theme.inc',
