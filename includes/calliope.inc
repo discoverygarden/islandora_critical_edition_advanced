@@ -121,7 +121,7 @@ function islandora_calliope_create_mvd($project, $mvd_title, $resource_ids = NUL
   $calliope_import_url = "$mvd_url/import/";
 
   // Remove spaces from doc path.
-  $docpath = str_replace(' ', '_', "$project/$mvd_title");
+  $docpath = str_replace(' ', '_', "$mvd_title");
   $origdocpath = $docpath;
   if ($resource_ids == NULL) {
     return t('Identifiers of resources to add to MVD not specified');
@@ -141,7 +141,7 @@ function islandora_calliope_create_mvd($project, $mvd_title, $resource_ids = NUL
           return;
         }
       }
-   
+
       $contents = $file->getBytes();
       $filename = $file->file['filename'];
       $file_label = str_replace('.', '_', pathinfo($filename, PATHINFO_FILENAME));
@@ -231,6 +231,7 @@ function islandora_calliope_create_mvd($project, $mvd_title, $resource_ids = NUL
           'name' => $origdocpath,
           'resources' => $id_array,
           'filter' => $filter,
+          'project' => $project,
         );
 
         $ch2 = curl_init();
@@ -308,4 +309,37 @@ function islandora_calliope_get_file($pid) {
     return;
   }
   return $file;
+}
+
+/**
+ * Pulls all MVD metadata from Mongo.
+ *
+ * @param AbstractObject $critical_edition_object
+ *   Object representing Critical Edition
+ *
+ * @return array
+ *   All values associated with all MVD's attached to this Critical Edition
+ */
+function islandora_calliope_find_mvd($critical_edition_object) {
+  module_load_include('inc', 'islandora', 'includes/utilities');
+  $dbhost = variable_get('austese_repository_mongo_host', "localhost");
+  $dbport = variable_get('austese_repository_mongo_port', "27017");
+  $dbname = variable_get('austese_repository_mongo_db', "test");
+  $project = islandora_escape_pid_for_function($critical_edition_object->id);
+  $query = array('metadata.project' => $project);
+  try {
+    $mongoclient = new MongoClient("$dbhost:$dbport");
+    $db = $mongoclient->selectDB($dbname);
+    $collection = $db->selectCollection('mvds');
+    $mvd_cursor = $collection->find($query);
+    $mvd_data = array();
+    foreach ($mvd_cursor as $mvd) {
+      $mvd_data[] = $mvd['metadata'];
+    }
+  }
+  catch (Exception $e) {
+    drupal_set_message($e->getMessage());
+    exit;
+  }
+  return $mvd_data;
 }
