@@ -1,0 +1,26 @@
+#aparatus_pager{
+    width:100%;
+    height:20px;
+    border:1px solid red;
+    margin-right:10px;
+    margin-left:10px;
+    float:left;
+}
+
+.aparatus_tab_previous{
+    float:left;
+    margin-left:5px;
+}
+
+.aparatus_tab_next{
+    float:right;
+    margin-right:5px;
+    margin-left:5px;
+}
+.aparatus_tab_next .aparatus_tab_previous {
+    cursor: hand;
+}
+
+.aparatus_title{
+    display:block;
+}
