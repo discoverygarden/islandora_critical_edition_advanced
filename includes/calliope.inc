@@ -12,9 +12,9 @@
  *   MongoFSGrid using supplied credentials
  */
 function islandora_calliope_create_mongo_grid() {
-  $dbhost = variable_get('austese_repository_mongo_host', "localhost");
-  $dbport = variable_get('austese_repository_mongo_port', "27017");
-  $dbname = variable_get('austese_repository_mongo_db', "test");
+  $dbhost = variable_get('islandora_critical_edition_mongo_host', "localhost");
+  $dbport = variable_get('islandora_critical_edition_mongo_port', "27017");
+  $dbname = variable_get('islandora_critical_edition_mongo_db', "test");
   try {
     $mongo = new Mongo("$dbhost:$dbport");
     $db = $mongo->selectDB($dbname);
@@ -322,9 +322,9 @@ function islandora_calliope_get_file($pid) {
  */
 function islandora_calliope_find_mvd($critical_edition_object) {
   module_load_include('inc', 'islandora', 'includes/utilities');
-  $dbhost = variable_get('austese_repository_mongo_host', "localhost");
-  $dbport = variable_get('austese_repository_mongo_port', "27017");
-  $dbname = variable_get('austese_repository_mongo_db', "test");
+  $dbhost = variable_get('islandora_critical_edition_mongo_host', "localhost");
+  $dbport = variable_get('islandora_critical_edition_mongo_port', "27017");
+  $dbname = variable_get('islandora_critical_edition_mongo_db', "test");
   $project = islandora_escape_pid_for_function($critical_edition_object->id);
   $query = array('metadata.project' => $project);
   try {

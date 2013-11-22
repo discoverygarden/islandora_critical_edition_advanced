@@ -25,6 +25,34 @@ function islandora_critical_edition_admin_settings_form(array $form, array &$for
     $default_stream_text .= "$dsid ~ $title \n";
   }
   $form = array();
+˙
+  $form['repository'] = array(
+    '#type' => 'fieldset',
+    '#title' => 'Mongo Configuration',
+    '#collapsed' => FALSE,
+    '#collapsible' => TRUE,
+  );
+
+  $form['repository']['islandora_critical_edition_mongo_port'] = array(
+    '#type' => 'textfield',
+    '#title' => t("Port"),
+    '#description' => t("Mongo Database Port"),
+    '#default_value' => variable_get('islandora_critical_edition_mongo_port', "27017"),
+  );
+  $form['repository']['islandora_critical_edition_mongo_host'] = array(
+    '#type' => 'textfield',
+    '#title' => t("Address"),
+    '#description' => t("Mongo Database server address"),
+    '#default_value' => variable_get('islandora_critical_edition_mongo_host', "localhost"),
+  );
+  $form['repository']['islandora_critical_edition_mongo_db'] = array(
+    '#type' => 'textfield',
+    '#title' => t("Database name"),
+    '#description' => t("Mongo Database instance name"),
+    '#default_value' => variable_get('islandora_critical_edition_mongo_db', "test"),
+  );
+
+
   $form['apparatus_streams'] = array(
     '#type' => 'textarea',
     '#title' => t('Apparatus Components'),
