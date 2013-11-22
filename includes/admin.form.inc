@@ -25,7 +25,6 @@ function islandora_critical_edition_admin_settings_form(array $form, array &$for
     $default_stream_text .= "$dsid ~ $title \n";
   }
   $form = array();
-˙
   $form['repository'] = array(
     '#type' => 'fieldset',
     '#title' => 'Mongo Configuration',
