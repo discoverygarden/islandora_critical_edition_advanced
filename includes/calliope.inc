@@ -320,7 +320,7 @@ function islandora_calliope_get_file($pid) {
  * @return array
  *   All values associated with all MVD's attached to this Critical Edition
  */
-function islandora_calliope_find_mvd($critical_edition_object) {
+function islandora_calliope_find_mvds($critical_edition_object) {
   module_load_include('inc', 'islandora', 'includes/utilities');
   $dbhost = variable_get('islandora_critical_edition_mongo_host', "localhost");
   $dbport = variable_get('islandora_critical_edition_mongo_port', "27017");

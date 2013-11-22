@@ -4,7 +4,6 @@
  * @file
  * Add advanced data modeling options to Islandora Critical Editions.
  */
-
 define('ISLANDORA_CRITICAL_EDITION_MANAGE_CONTAINER', 'manage critical edition');
 define('ISLANDORA_CRITICAL_EDITION_CREATE', 'create critical editions');
 define('ISLANDORA_CRITICAL_EDITION_READ', 'read critical editions');
@@ -88,6 +87,16 @@ function islandora_critical_edition_advanced_menu() {
     'type' => MENU_LOCAL_TASK,
     'access callback' => 'islandora_critical_edition_advanced_object_management_access',
     'access arguments' => array(2, 'view_versionable_object'),
+    'file' => 'includes/islandora_critical_edition_display.inc',
+  );
+
+  $items['islandora/object/%islandora_object/mvd'] = array(
+    'title' => 'Comparisons',
+    'page callback' => 'islandora_critical_edition_mvd_display',
+    'page arguments' => array(2),
+    'type' => MENU_LOCAL_TASK,
+    'access callback' => 'islandora_critical_edition_advanced_object_management_access',
+    'access arguments' => array(2, 'view_critical_edition'),
     'file' => 'includes/islandora_critical_edition_display.inc',
   );
 
@@ -363,6 +372,12 @@ function islandora_critical_edition_advanced_object_management_access($object, $
         if (!empty($tei_rdfs)) {
           $access = TRUE;
         }
+      }
+      break;
+
+    case 'view_critical_edition':
+      if (in_array('islandora:criticalEditionContainerCModel', $content_models)) {
+          $access = TRUE;
       }
       break;
 
