@@ -62,9 +62,8 @@ function islandora_critical_edition_mvd_form(array $form, array &$form_state, Ab
   );
 
   $form['project'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Project'),
-    '#default_value' => 'islandora',
+    '#type' => 'hidden',
+    '#value' => islandora_escape_pid_for_function($object->id),
   );
 
   $form['filter'] = array(
