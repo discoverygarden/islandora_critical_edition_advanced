@@ -117,7 +117,7 @@ function islandora_calliope_delete_file($pid) {
  */
 function islandora_calliope_create_mvd($project, $mvd_title, $resource_ids = NULL, $filter = "Empty") {
   global $base_url;
-  $mvd_url = "$base_url /calliope/";
+  $mvd_url = "$base_url/calliope/";
   $calliope_import_url = "$mvd_url/import/";
 
   // Remove spaces from doc path.
