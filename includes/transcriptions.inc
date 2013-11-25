@@ -172,6 +172,7 @@ function islandora_critical_edition_create_transcription_form_submit(array $form
   $control_group = "M";
   $transcription_datastream = $transcription->constructDatastream($datastream_id, $control_group);
   $transcription_datastream->mimetype = 'text/plain';
+  $transcription_datastream->label = 'Transcription';
   if ($content_source == 'tei_rdf') {
     $start_page = NULL;
     $end_page = NULL;
@@ -225,7 +226,7 @@ function islandora_critical_edition_manage_transcriptions_form(array $form, arra
     'pid' => array('data' => t('PID')),
   );
   // Build and return table element.
-  $book_element = array(
+  $table_element = array(
     '#type' => 'tableselect',
     '#header' => $header,
     '#options' => $rows,
@@ -237,7 +238,7 @@ function islandora_critical_edition_manage_transcriptions_form(array $form, arra
     '#type' => 'markup',
     '#markup' => t('Choose transcription.'),
   );
-  $form['transcription'] = $book_element;
+  $form['transcription'] = $table_element;
   $form['delete'] = array(
     '#type' => 'submit',
     '#value' => t('Delete Transcription'),
@@ -450,7 +451,6 @@ function islandora_critical_edition_build_text_file($page_object, $filename) {
  */
 function islandora_transcription_file_add($transcription, $transcription_datastream, $filename) {
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/calliope');
-  $tuque = new IslandoraTuque();
   $transcription_datastream->setContentFromFile($filename);
   $transcription->ingestDatastream($transcription_datastream);
   islandora_calliope_write_file($transcription->id);

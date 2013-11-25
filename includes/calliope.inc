@@ -67,8 +67,7 @@ function islandora_calliope_write_file($pid, $project = '') {
     unlink($filename);
   }
   catch (Exception $e) {
-    drupal_add_http_header('Status', '500 Internal server error');
-    echo $e->getMessage();
+    drupal_set_message($e->getMessage()) ;
     exit;
   }
 }
