@@ -136,11 +136,14 @@ function islandora_calliope_create_mvd($project, $mvd_title, $resource_ids = NUL
         islandora_calliope_write_file($resource_id);
         $file = islandora_calliope_get_file($resource_id);
         if (!$file) {
-          drupal_set_message("Resource_id could not be used to make file");
+          drupal_set_message(t("Resource_id could not be used to make file"));
           return;
         }
       }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 0d07a25a7602b241d5edf2dc73f4db29057762b4
       $contents = $file->getBytes();
       $filename = $file->file['filename'];
       $file_label = str_replace('.', '_', pathinfo($filename, PATHINFO_FILENAME));
@@ -254,7 +257,7 @@ function islandora_calliope_create_mvd($project, $mvd_title, $resource_ids = NUL
         }
         if ($info['http_code'] !== 201) {
           // Success with No Content.
-          return t("Error creating mvd record: ") . $dbresponse;
+          return t("Error creating mvd record: @response", array('@response' => $dbresponse));
         }
 
         // Message is success message.
@@ -275,9 +278,9 @@ function islandora_calliope_create_mvd($project, $mvd_title, $resource_ids = NUL
     $breadcrumb = array();
     $breadcrumb[] = l(t('Home'), '<front>');
     _add_project_or_repository($breadcrumb);
-    $breadcrumb[] = t(drupal_get_title());
+    $breadcrumb[] = drupal_get_title();
     drupal_set_breadcrumb($breadcrumb);
-    return t("<p>$response</p> @message", array('@message' => $message));
+    return t("<p>@response</p> @message", array('@message' => $message, '@response' => $response));
   }
 }
 
