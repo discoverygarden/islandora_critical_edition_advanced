@@ -140,10 +140,6 @@ function islandora_calliope_create_mvd($project, $mvd_title, $resource_ids = NUL
           return;
         }
       }
-<<<<<<< HEAD
-
-=======
->>>>>>> 0d07a25a7602b241d5edf2dc73f4db29057762b4
       $contents = $file->getBytes();
       $filename = $file->file['filename'];
       $file_label = str_replace('.', '_', pathinfo($filename, PATHINFO_FILENAME));
