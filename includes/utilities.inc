@@ -206,3 +206,12 @@ function islandora_critical_edition_prep_form($object, $content_model) {
 
   return $offset;
 }
+
+function islandora_critical_edition_advanced_view_trimmed_editor(AbstractObject $object) {
+	$module_path = drupal_get_path('module', 'islandora_critical_edition_advanced');
+// 	$critical_edition_module_path = drupal_get_path('module', 'islandora_critical_edition');
+// 	drupal_add_js("$critical_edition_module_path/CWRC-Writer/src/js/lib/jquery/jquery-1.8.3.js");
+// 	drupal_add_js("$module_path/js/editor-controller.js");
+	drupal_add_css("$module_path/css/show_plain.css");
+	return theme("islandora_critical_edition",array('islandora_object' => $object)); 
+}

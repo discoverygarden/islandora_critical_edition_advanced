@@ -24,3 +24,58 @@
 .aparatus_title{
     display:block;
 }
+
+
+/* TODO: get these in their own */
+/* css file. */
+.action_img {
+  padding-right:10px;
+  padding-left:10px;
+}
+
+.action_img .img_selected {
+   padding:1px;
+   border:1px solid #021a40;
+}
+
+.work_action_img {
+  vertical-align: middle;
+}
+
+.img_pager {
+  float:right !important;
+  vertical-align: middle;
+  margin-top:6px;
+}
+
+.switch-wrapper {
+  float:left;
+  display: inline-block;
+  position: relative;
+  padding-left:5px;
+}
+
+.switch {
+  top: 3px;
+}
+
+.slidedown {
+    background: #de9a44;
+    margin: 3px;
+    width: 80px;
+    height: 40px;
+    display: none;
+    float: left;
+}
+
+/* iframe preloader specific styling */
+#loadImg {
+	position:absolute;
+	z-index:999;
+	}
+#loadImg div {
+	display:table-cell;
+	background:#fff;
+	text-align:center;
+	vertical-align:middle;
+}
