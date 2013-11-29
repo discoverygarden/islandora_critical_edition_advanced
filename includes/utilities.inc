@@ -324,3 +324,73 @@ function islandora_critical_edition_create_select_teirdf_object_table(array $obj
     ),
   );
 }
+
+/**
+ * Gets the number of child versionable objects the given object has.
+ *
+ * @param AbstractObject $object
+ *   A critical edition containter object.
+ *
+ * @return int
+ *   The number of versionable objects the given object has.
+ */
+function islandora_critical_edition_number_of_child_versionable_objects(AbstractObject $object) {
+  $query = <<<EOT
+PREFIX fedora-rels-ext: <info:fedora/fedora-system:def/relations-external#>
+PREFIX fedora-model: <info:fedora/fedora-system:def/model#>
+PREFIX islandora: <http://islandora.ca/ontology/relsext#>
+SELECT DISTINCT ?object FROM <#ri> WHERE {
+ ?object fedora-rels-ext:isMemberOf <info:fedora/$object->id> ;
+         fedora-model:hasModel <info:fedora/islandora:versionableObjectCModel> .
+}
+EOT;
+  return $object->repository->ri->countQuery($query, 'sparql');
+}
+
+/**
+ * Gets the number of child collation objects the given object has.
+ *
+ * @param AbstractObject $object
+ *   A critical edition containter object.
+ *
+ * @return int
+ *   The number of collation objects the given object has.
+ */
+function islandora_critical_edition_number_of_child_transcriptions(AbstractObject $object) {
+  // Count the number of transcriptions of all verionable objects.
+  $query = <<<EOT
+    PREFIX fedora-rels-ext: <info:fedora/fedora-system:def/relations-external#>
+    PREFIX fedora-model: <info:fedora/fedora-system:def/model#>
+    PREFIX islandora: <http://islandora.ca/ontology/relsext#>
+      SELECT DISTINCT ?transcript FROM <#ri> WHERE {
+        ?object fedora-rels-ext:isMemberOf <info:fedora/$object->id> ;
+        fedora-model:hasModel <info:fedora/islandora:versionableObjectCModel> .
+        ?transcript fedora-rels-ext:isMemberOf ?object ;
+        fedora-model:hasModel <info:fedora/islandora:transcriptionCModel> .
+      }
+EOT;
+ return $object->repository->ri->countQuery($query, 'sparql');
+}
+
+/**
+ * Gets the number of child collation objects the given object has.
+ *
+ * @param AbstractObject $object
+ *   A critical edition containter object.
+ *
+ * @return int
+ *   The number of collation objects the given object has.
+ */
+function islandora_critical_edition_number_of_child_collation_objects(AbstractObject $object) {
+  // Count the number of collations.
+  $query = <<<EOT
+PREFIX fedora-rels-ext: <info:fedora/fedora-system:def/relations-external#>
+PREFIX fedora-model: <info:fedora/fedora-system:def/model#>
+PREFIX islandora: <http://islandora.ca/ontology/relsext#>
+SELECT DISTINCT ?object FROM <#ri> WHERE {
+ ?object fedora-rels-ext:isMemberOf <info:fedora/$object->id> ;
+         fedora-model:hasModel <info:fedora/islandora:mvdCModel> .
+}
+EOT;
+  return $object->repository->ri->countQuery($query, 'sparql');
+}

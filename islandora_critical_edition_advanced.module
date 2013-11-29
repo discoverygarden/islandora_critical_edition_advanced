@@ -123,7 +123,59 @@ function islandora_critical_edition_advanced_theme($existing, $type, $theme, $pa
       'file' => 'theme/theme.inc',
       'template' => 'theme/islandora_critical_edition_container',
       'pattern' => 'islandora_critical_edition_container__',
-      'variables' => array('islandora_object' => NULL),
+      'variables' => array('object' => NULL),
+    ),
+    'islandora_critical_edition_container_table' => array(
+      'file' => 'theme/theme.inc',
+      'variables' => array(
+        'object' => NULL,
+        'title' => '',
+        'header' => array(),
+        'rows' => array(),
+        'offset' => 0,
+        'limit' => 25,
+        'total' => 0,
+        'pager' => array(
+          'element' => 0,
+          'tags' => array('<<', '<', '', '>', '>>'),
+          'quantity' => 3,
+        ),
+      ),
+    ),
+    'islandora_critical_edition_container_versions_table' => array(
+      'file' => 'theme/theme.inc',
+      'variables' => array(
+        'object' => NULL,
+        'limit' => 25,
+        'columns' => array(
+          'version_name' => TRUE,
+          'source_name' => TRUE,
+          'transcriptions' => TRUE,
+          'operations' => TRUE,
+        ),
+        'pager' => array(
+          'element' => 0,
+          'tags' => array('<<', '<', '', '>', '>>'),
+          'quantity' => 3,
+        ),
+      ),
+    ),
+    'islandora_critical_edition_container_collations_table' => array(
+      'file' => 'theme/theme.inc',
+      'variables' => array(
+        'object' => NULL,
+        'limit' => 25,
+        'columns' => array(
+          'collation_name' => TRUE,
+          'transcriptions' => TRUE,
+          'operations' => TRUE,
+        ),
+        'pager' => array(
+          'element' => 1,
+          'tags' => array('<<', '<', '', '>', '>>'),
+          'quantity' => 3,
+        ),
+      ),
     ),
     'islandora_versionable_object' => array(
       'file' => 'theme/theme.inc',
@@ -156,7 +208,7 @@ function islandora_critical_edition_advanced_theme($existing, $type, $theme, $pa
  * Implements hook_CMODEL_PID_islandora_view_object().
  */
 function islandora_critical_edition_islandora_criticalEditionContainerCModel_islandora_view_object($object, $page_number, $page_size) {
-  $output = theme('islandora_critical_edition_container', array('islandora_object' => $object));
+  $output = theme('islandora_critical_edition_container', array('object' => $object));
   return array('' => $output);
 }
 

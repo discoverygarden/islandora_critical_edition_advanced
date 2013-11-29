@@ -35,6 +35,7 @@ function islandora_versionable_object_management_menu(AbstractObject $object) {
   $output = array();
   $output['management_tabs'] = array('#type' => 'vertical_tabs');
   $output['management_tabs']['create_tei_rdf'] = array(
+    '#id' => 'create-tei-rdf',
     '#access' => user_access(ISLANDORA_ADD_DS) && empty($primary_objects),
     '#title' => t('Create TEI-RDF Object'),
     '#description' => t('Create TEI-RDF Object from existing book object'),
@@ -44,6 +45,7 @@ function islandora_versionable_object_management_menu(AbstractObject $object) {
     '#collapsed' => TRUE,
   );
   $output['management_tabs']['attach_tei_rdf'] = array(
+    '#id' => 'attach-tei-rdf',
     '#access' => user_access(ISLANDORA_ADD_DS) && empty($primary_objects),
     '#title' => t('Associate TEI-RDF Object'),
     '#description' => t('Associate existing TEI-RDF Object from repository'),
@@ -53,6 +55,7 @@ function islandora_versionable_object_management_menu(AbstractObject $object) {
     '#collapsed' => TRUE,
   );
   $output['management_tabs']['attach_partial_tei_rdf'] = array(
+    '#id' => 'attach-partial-tei-rdf',
     '#access' => user_access(ISLANDORA_ADD_DS) && empty($primary_objects),
     '#title' => t('Create TEI-RDF Object from existing object'),
     '#description' => t('Create new RDF-TEI object as a full or partial subset on an existing object.'),
@@ -63,6 +66,7 @@ function islandora_versionable_object_management_menu(AbstractObject $object) {
   );
 
   $output['management_tabs']['add_transcription'] = array(
+    '#id' => 'add-transcription',
     '#access' => user_access(ISLANDORA_ADD_DS),
     '#title' => t('Create Transcription'),
     '#type' => 'fieldset',
@@ -71,6 +75,7 @@ function islandora_versionable_object_management_menu(AbstractObject $object) {
     '#collapsed' => TRUE,
   );
   $output['management_tabs']['manage_transcription'] = array(
+    '#id' => 'manage-transcription',
     '#access' => user_access(ISLANDORA_ADD_DS) && $transcriptions,
     '#title' => t('Manage Transcriptions'),
     '#type' => 'fieldset',
@@ -80,6 +85,7 @@ function islandora_versionable_object_management_menu(AbstractObject $object) {
   );
 
   $output['management_tabs']['delete_tei_rdf'] = array(
+    '#id' => 'delete-tei-rdf',
     '#access' => user_access(ISLANDORA_ADD_DS) && $tei_rdf,
     '#title' => t('Disassociate TEI-RDF Object'),
     '#type' => 'fieldset',
@@ -88,6 +94,7 @@ function islandora_versionable_object_management_menu(AbstractObject $object) {
     '#collapsed' => TRUE,
   );
   $output['management_tabs']['update_datastreams'] = array(
+    '#id' => 'update-datastreams',
     '#access' => user_access(ISLANDORA_ADD_DS) && $tei_rdf,
     '#title' => t('Update Consolidated TEI'),
     '#type' => 'fieldset',
