@@ -154,6 +154,7 @@ function islandora_critical_edition_advanced_prep_tabs() {
  * critical edition object.
  */
 function islandora_critical_edition_preprocess_islandora_critical_edition_container(array &$variables) {
+  module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/utilities');
   $module_path = drupal_get_path('module', 'islandora_critical_edition_advanced');
   drupal_add_css("$module_path/css/critical_edition_container.css");
   // For now we are using views/ctools to style our drop downs if they are not
@@ -163,7 +164,10 @@ function islandora_critical_edition_preprocess_islandora_critical_edition_contai
   drupal_add_css("$views_module_path/css/views-admin.seven.css");
 
   $object = $variables['object'];
-  $variables['apparatus'] = array('#markup' => '<div><strong>Apparatus Goes Here</strong></div>');
+  $apparatus = islandora_critical_edition_get_apparatus($object);
+  $link = l(t('Here'), "islandora/object/$apparatus");
+  $message = t('Apparatus Goes !here', array('!here' => $link));
+  $variables['apparatus'] = array('#markup' => "<div><strong>$message</strong></div>");
   $variables['edition_actions'] = islandora_critical_edition_container_editor_links($object);
   $variables['version_actions'] = islandora_critical_edition_container_version_links($object);
   $variables['collation_actions'] = islandora_critical_edition_container_collation_links($object);
