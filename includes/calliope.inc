@@ -116,7 +116,7 @@ function islandora_calliope_delete_file($pid) {
  */
 function islandora_calliope_create_mvd($project, $mvd_title, $resource_ids = NULL, $filter = "Empty") {
   global $base_url;
-  $mvd_url = "$base_url/calliope/";
+  $mvd_url = "$base_url/calliope";
   $calliope_import_url = "$mvd_url/import/";
 
   // Remove spaces from doc path.
@@ -229,7 +229,7 @@ function islandora_calliope_create_mvd($project, $mvd_title, $resource_ids = NUL
           'name' => $origdocpath,
           'resources' => $id_array,
           'filter' => $filter,
-          'project' => $project,
+          'critical_edition' => $project,
         );
 
         $ch2 = curl_init();
@@ -323,8 +323,8 @@ function islandora_calliope_find_mvds($critical_edition_object) {
   $dbhost = variable_get('islandora_critical_edition_mongo_host', "localhost");
   $dbport = variable_get('islandora_critical_edition_mongo_port', "27017");
   $dbname = variable_get('islandora_critical_edition_mongo_db', "test");
-  $project = islandora_escape_pid_for_function($critical_edition_object->id);
-  $query = array('metadata.project' => $project);
+  $critical_edition = islandora_escape_pid_for_function($critical_edition_object->id);
+  $query = array('metadata.critical_edition' => $critical_edition);
   try {
     $mongoclient = new MongoClient("$dbhost:$dbport");
     $db = $mongoclient->selectDB($dbname);
