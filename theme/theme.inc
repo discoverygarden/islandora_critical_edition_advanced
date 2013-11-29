@@ -44,7 +44,7 @@ function islandora_critical_edition_preprocess_islandora_critical_media_object(a
       'source_type' => 'media',
     ),
       ), 'setting');
-  islandora_critical_edition_add_js($variables , TRUE);
+  islandora_critical_edition_add_js($variables, TRUE);
   $islandora_object = $variables['islandora_object'];
   $pages = islandora_paged_content_get_pages($islandora_object);
   $pids = array_keys($pages);
