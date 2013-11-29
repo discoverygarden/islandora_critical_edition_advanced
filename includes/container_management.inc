@@ -213,67 +213,67 @@ function islandora_critical_edition_management_menu(AbstractObject $object) {
   $output['manage_critical_edition'] = array('#type' => 'vertical_tabs');
 
   $output['manage_critical_edition']['replace_apparatus'] = array(
+    '#id' => 'replace-apparatus',
     '#access' => user_access(ISLANDORA_ADD_DS) && empty($apparatus),
     '#title' => t('Create Apparatus'),
     '#description' => t('Creates blank Critical Apparatus'),
     '#type' => 'fieldset',
     'form' => drupal_get_form('islandora_critical_edition_replace_apparatus', $object),
-    '#collapsible' => TRUE,
-    '#collapsed' => TRUE,
+    '#group' => 'manage_critical_edition',
   );
   $output['manage_critical_edition']['attach_tei_rdf'] = array(
+    '#id' => 'attach-tei-rdf',
     '#access' => user_access(ISLANDORA_ADD_DS),
     '#title' => t('Associate TEI-RDF Object'),
     '#description' => t('Associate existing TEI-RDF Object from repository.'),
     '#type' => 'fieldset',
     'form' => drupal_get_form('islandora_critical_edition_associate_tei_rdf_form', $object, 'islandora:criticalEditionCModel'),
-    '#collapsible' => TRUE,
-    '#collapsed' => TRUE,
+    '#group' => 'manage_critical_edition',
   );
   $output['manage_critical_edition']['attach_audio'] = array(
+    '#id' => 'attach-audio',
     '#access' => user_access(ISLANDORA_ADD_DS),
     '#title' => t('Associate Audio Object'),
     '#description' => t('Associate existing Audio Object from repository.'),
     '#type' => 'fieldset',
     'form' => drupal_get_form('islandora_critical_edition_associate_audio_form', $object, 'islandora:sp-audioCModel'),
-    '#collapsible' => TRUE,
-    '#collapsed' => TRUE,
+    '#group' => 'manage_critical_edition',
   );
   $output['manage_critical_edition']['attach_video'] = array(
+    '#id' => 'attach-video',
     '#access' => user_access(ISLANDORA_ADD_DS),
     '#title' => t('Associate Video Object'),
     '#description' => t('Associate existing Video Object from repository.'),
     '#type' => 'fieldset',
     'form' => drupal_get_form('islandora_critical_edition_associate_video_form', $object, 'islandora:sp_videoCModel'),
-    '#collapsible' => TRUE,
-    '#collapsed' => TRUE,
+    '#group' => 'manage_critical_edition',
   );
   $output['manage_critical_edition']['create_vo'] = array(
+    '#id' => 'create-vo',
     '#access' => user_access(ISLANDORA_ADD_DS),
     '#title' => t('Create new Versionable Object'),
     '#description' => t("Create Versionable object and associate it with this Critical Edition."),
     '#type' => 'fieldset',
     'form' => drupal_get_form('islandora_critical_edition_create_versionable_object', $object),
-    '#collapsible' => TRUE,
-    '#collapsed' => TRUE,
+    '#group' => 'manage_critical_edition',
   );
   $output['manage_critical_edition']['attach_vo'] = array(
+    '#id' => 'attach-vo',
     '#access' => user_access(ISLANDORA_ADD_DS),
     '#title' => t('Associate existing Versionable Object'),
     '#description' => t('Associate existing Versionable Object with this Critical Edition'),
     '#type' => 'fieldset',
     'form' => drupal_get_form('islandora_critical_edition_attach_versionable', $object),
-    '#collapsible' => TRUE,
-    '#collapsed' => TRUE,
+    '#group' => 'manage_critical_edition',
   );
 
   $output['manage_critical_edition']['mvd'] = array(
+    '#id' => 'mvd',
     '#access' => user_access(ISLANDORA_ADD_DS) && $transcriptions,
     '#title' => t('Create MVD'),
     '#type' => 'fieldset',
     'form' => drupal_get_form('islandora_critical_edition_mvd_form', $object),
-    '#collapsible' => TRUE,
-    '#collapsed' => TRUE,
+    '#group' => 'manage_critical_edition',
   );
   return $output;
 }
