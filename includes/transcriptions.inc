@@ -348,6 +348,7 @@ function islandora_critical_transcription_edit_form($form, $form_state, $transcr
 function islandora_critical_transcription_edit_form_submit($form, $form_state) {
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/calliope');
   $transcription_object = islandora_object_load($form_state['values']['pid']);
+  $success = FALSE;
   if (isset($form_state['values']['transcription']['value'])) {
     $content = $form_state['values']['transcription']['value'];
   }
@@ -355,7 +356,18 @@ function islandora_critical_transcription_edit_form_submit($form, $form_state) {
     $content = $form_state['values']['transcription'];
   }
   try {
-    $success = $transcription_object['TRANSCRIPTION']->content = $content;
+    if ($transcription_object['TRANSCRIPTION']) {
+      $success = $transcription_object['TRANSCRIPTION']->content = $content;
+    }
+    else {
+      $datastream_id = "TRANSCRIPTION";
+      $control_group = "M";
+      $transcription_datastream = $transcription_object->constructDatastream($datastream_id, $control_group);
+      $transcription_datastream->mimetype = 'text/plain';
+      $transcription_datastream->label = 'Transcription';
+      $transcription_datastream->setContentFromString($content);
+      $success = $transcription_object->ingestDatastream($transcription_datastream);
+    }
   }
   catch (Exception $exc) {
     watchdog_exception("islandora critical edition advanced", $exc);
@@ -419,7 +431,7 @@ function add_derived_transcription($tei_rdf_object, $versionable_object_pid, $tr
  *   Temp file to hold data
  */
 function islandora_critical_edition_build_text_file($page_object, $filename) {
-    // @codingStandardsIgnoreStart
+  // @codingStandardsIgnoreStart
   $replace_candidates = array(
     '<br>',
     '<br />',
@@ -457,7 +469,6 @@ function islandora_transcription_file_add($transcription, $transcription_datastr
   $transcription->ingestDatastream($transcription_datastream);
   islandora_calliope_write_file($transcription->id);
   unlink($filename);
-
 }
 
 /**
