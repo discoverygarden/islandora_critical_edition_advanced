@@ -394,3 +394,30 @@ SELECT DISTINCT ?object FROM <#ri> WHERE {
 EOT;
   return $object->repository->ri->countQuery($query, 'sparql');
 }
+
+/**
+ * Gets the apparatus associated with this critical edition container.
+ *
+ * @param AbstractObject $object
+ *   A critical edition containter object.
+ *
+ * @return string
+ *   The apparatus associated with this critical edition container.
+ */
+function islandora_critical_edition_get_apparatus(AbstractObject $object) {
+  // Count the number of collations.
+  $query = <<<EOT
+PREFIX fedora-rels-ext: <info:fedora/fedora-system:def/relations-external#>
+PREFIX fedora-model: <info:fedora/fedora-system:def/model#>
+PREFIX islandora: <http://islandora.ca/ontology/relsext#>
+SELECT DISTINCT ?object FROM <#ri> WHERE {
+ ?object fedora-rels-ext:isMemberOf <info:fedora/$object->id> ;
+         fedora-model:hasModel <info:fedora/islandora:criticalApparatusCModel> .
+}
+EOT;
+  $results = $object->repository->ri->sparqlQuery($query);
+  if (count($results)) {
+    return $results[0]['object']['value'];
+  }
+  return NULL;
+}
