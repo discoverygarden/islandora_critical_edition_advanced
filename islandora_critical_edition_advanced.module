@@ -111,6 +111,14 @@ function islandora_critical_edition_advanced_menu() {
     'access arguments' => array(2, 'display_consolidated_tei'),
     'file' => 'includes/consolidate_tei.inc',
   );
+    $items['islandora/collation'] = array(
+    'title' => 'Collation',
+    'page callback' => 'islandora_critical_edition_advanced_mvd_crud',
+    'type' => MENU_CALLBACK,
+    'access callback' => 'user_access',
+    'access arguments' =>array(ISLANDORA_CRITICAL_EDITION_ADVANCED_MODIFY),
+    'file' => 'includes/mvd.inc',
+  );
   return $items;
 }
 

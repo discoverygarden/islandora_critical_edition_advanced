@@ -6,18 +6,36 @@
  */
 
 /**
- * Creates MongoFSGrid.
+ * Creates configured MongoDB object.
  *
- * @return MongoFSGrid
- *   MongoFSGrid using supplied credentials
+ * @return MongoDB
+ *   MongoDB built with Islandora configuration
  */
-function islandora_calliope_create_mongo_grid() {
+function islandora_calliope_create_mongo_db() {
   $dbhost = variable_get('islandora_critical_edition_mongo_host', "localhost");
   $dbport = variable_get('islandora_critical_edition_mongo_port', "27017");
   $dbname = variable_get('islandora_critical_edition_mongo_db', "test");
   try {
     $mongo = new Mongo("$dbhost:$dbport");
     $db = $mongo->selectDB($dbname);
+  }
+  catch (Exception $e) {
+    drupal_set_message($e->getMessage());
+    exit;
+  }
+  return $db;
+}
+
+/**
+ * Creates MongoFSGrid.
+ *
+ * @return MongoFSGrid
+ *   MongoFSGrid using supplied credentials
+ */
+function islandora_calliope_create_mongo_grid() {
+  try {
+
+    $db = islandora_calliope_create_mongo_db();
     $grid = $db->getGridFS();
   }
   catch (Exception $e) {
@@ -56,18 +74,19 @@ function islandora_calliope_write_file($pid, $project = '') {
       $id = $record->file['_id'];
       $grid->remove($query);
     }
-    $storedfile = $grid->storeFile($real_path, array(
-      'metadata' => array(
-        'filetype' => $transcription_ds->mimetype,
-        'project' => $project))
-    );
+    $metadata['filetype'] = $transcription_ds->mimetype;
+    if ($project) {
+      $metadata['project'] = $project;
+    }
+
+    $storedfile = $grid->storeFile($real_path, array('metadata' => $metadata));
     $id = $storedfile->{'$id'};
     $grid->update(
-        array('_id' => new MongoId($id)), array('$set' => array('_resourceid' => $flat_pid, 'filename' => $transcription_object->label)), array('safe' => TRUE));
+        array('_id' => new MongoId($id)), array('$set' => array('_resourceid' => $pid, 'filename' => $transcription_object->label)), array('safe' => TRUE));
     unlink($filename);
   }
   catch (Exception $e) {
-    drupal_set_message($e->getMessage()) ;
+    drupal_set_message($e->getMessage());
     exit;
   }
 }
@@ -80,10 +99,9 @@ function islandora_calliope_write_file($pid, $project = '') {
  */
 function islandora_calliope_delete_file($pid) {
   module_load_include('inc', 'islandora', 'includes/utilities');
-  $flat_pid = islandora_escape_pid_for_function($pid);
   try {
     $grid = islandora_calliope_create_mongo_grid();
-    $query = array('_resourceid' => $flat_pid);
+    $query = array('_resourceid' => $pid);
     $record = $grid->findOne($query);
     $id = $record->file['_id'];
     if ($id) {
@@ -97,6 +115,25 @@ function islandora_calliope_delete_file($pid) {
   }
 }
 
+/**
+ * Deletes Mongo MVD record.
+ *
+ * @param string $id
+ *   Mongo ID of MVD
+ */
+function islandora_calliope_delete_mvd($id) {
+  module_load_include('inc', 'islandora', 'includes/utilities');
+  try {
+    $db = islandora_calliope_create_mongo_db();
+    $collection = $db->selectCollection('mvds');
+    $collection->remove(array('_id' => $id));
+  }
+  catch (Exception $e) {
+    drupal_add_http_header('Status', '500 Internal server error');
+    echo $e->getMessage();
+    exit;
+  }
+}
 /**
  * Send selected documents to calliope to create MVD.
  *
@@ -130,7 +167,6 @@ function islandora_calliope_create_mvd($project, $mvd_title, $resource_ids = NUL
   $id_array = array();
   foreach ($resource_ids as $resource_id) {
     if ($resource_id != "") {
-      $resource_id = islandora_escape_pid_for_function($resource_id);
       $file = islandora_calliope_get_file($resource_id);
       if (!$file) {
         islandora_calliope_write_file($resource_id);
@@ -276,7 +312,7 @@ function islandora_calliope_create_mvd($project, $mvd_title, $resource_ids = NUL
     _add_project_or_repository($breadcrumb);
     $breadcrumb[] = drupal_get_title();
     drupal_set_breadcrumb($breadcrumb);
-    return t("<p>@response</p> @message", array('@message' => $message, '@response' => $response));
+    drupal_set_message(t("Collation successfully created."));
   }
 }
 
@@ -296,7 +332,7 @@ function islandora_calliope_get_file($pid) {
   if (!$grid) {
     return;
   }
-  $query = array('_resourceid' => $id);
+  $query = array('_resourceid' => $pid);
   $file = $grid->findOne($query);
   if ($file == NULL) {
     drupal_set_message(t('The requested resource does not exist'));
@@ -318,21 +354,69 @@ function islandora_calliope_get_file($pid) {
  * @return array
  *   All values associated with all MVD's attached to this Critical Edition
  */
-function islandora_calliope_find_mvds($critical_edition_object) {
-  module_load_include('inc', 'islandora', 'includes/utilities');
-  $dbhost = variable_get('islandora_critical_edition_mongo_host', "localhost");
-  $dbport = variable_get('islandora_critical_edition_mongo_port', "27017");
-  $dbname = variable_get('islandora_critical_edition_mongo_db', "test");
-  $critical_edition = islandora_escape_pid_for_function($critical_edition_object->id);
-  $query = array('metadata.critical_edition' => $critical_edition);
+
+/**
+ * Pulls all MVD metadata from Mongo.
+ *
+ * @param AbstractObject $critical_edition_object
+ *   Object representing Critical Edition
+ * @param String $sort
+ *   Sort type
+ * @param integer $limit
+ *   Size of resultset
+ * @param integer $offset
+ *   Offset for db call
+ *
+ * @return array
+ *   Associative array of MVD data
+ */
+function islandora_calliope_find_mvds($critical_edition_object, $sort = "asc", $limit = NULL, $offset = 0) {
+  $id = $critical_edition_object->id;
+  $query = array('metadata.critical_edition' => $critical_edition_object->id);
+  $sort = strtolower($sort);
+  $sort_val = ($sort == 'asc') ? 1 : -1;
   try {
-    $mongoclient = new MongoClient("$dbhost:$dbport");
-    $db = $mongoclient->selectDB($dbname);
+    $db = islandora_calliope_create_mongo_db();
+    $collection = $db->selectCollection('mvds');
+    $mvd_cursor = $collection->find($query);
+    $count = $mvd_cursor->count();
+    $mvd_cursor->sort(array('metadata.name' => $sort_val));
+    $mvd_data = array();
+    foreach ($mvd_cursor as $mvd) {
+      if (is_array($mvd['metadata']['resources'])) {
+        $transcriptions = array();
+        foreach ($mvd['metadata']['resources'] as $transcription) {
+          $transcriptions[$transcription['id']] = $transcription['name'];
+        }
+        $mvd_data[$mvd['metadata']['name']]['label'] = $mvd['metadata']['name'];
+        $mvd_data[$mvd['metadata']['name']]['transcriptions'] = $transcriptions;
+      }
+    }
+  }
+  catch (Exception $e) {
+    drupal_set_message($e->getMessage());
+    exit;
+  }
+  return $mvd_data;
+}
+
+/**
+ * Pulls all MVD metadata from Mongo.
+ *
+ * @param array $query
+ *   Mongo query
+ *
+ * @return array
+ *   All values associated with all MVD's attached to this Critical Edition
+ */
+function islandora_calliope_find_mvd($query) {
+  try {
+    $db = islandora_calliope_create_mongo_db();
     $collection = $db->selectCollection('mvds');
     $mvd_cursor = $collection->find($query);
     $mvd_data = array();
     foreach ($mvd_cursor as $mvd) {
-      $mvd_data[] = $mvd['metadata'];
+      $mvd_data[] = $mvd;
     }
   }
   catch (Exception $e) {

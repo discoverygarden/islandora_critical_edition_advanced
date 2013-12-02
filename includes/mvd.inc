@@ -61,9 +61,9 @@ function islandora_critical_edition_mvd_form(array $form, array &$form_state, Ab
     '#empty' => t("There are no transcriptions associated with this Critical Edition."),
   );
 
-  $form['project'] = array(
+  $form['pid'] = array(
     '#type' => 'hidden',
-    '#value' => islandora_escape_pid_for_function($object->id),
+    '#value' => $object->id,
   );
 
   $form['filter'] = array(
@@ -90,6 +90,26 @@ function islandora_critical_edition_mvd_form(array $form, array &$form_state, Ab
 }
 
 /**
+ * Drupal Form Validation.
+ *
+ * @param array $form
+ *   Drupal Form
+ * @param array $form_state
+ *   Drupal Form State
+ */
+function islandora_critical_edition_mvd_form_validate($form, $form_state) {
+  module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/calliope');
+  $critical_edition_object = islandora_object_load($form_state['values']['pid']);
+  $mvds = islandora_calliope_find_mvds($critical_edition_object);
+  $match = FALSE;
+  foreach ($mvds as $mvd) {
+    if ($mvd['label'] == $form_state['values']['mvd']) {
+      form_set_error('mvd', t('A collation with this name is already associated with this critical edition.'));
+    }
+  }
+}
+
+/**
  * Sumit handler for MVD form.
  *
  * @param array $form
@@ -102,10 +122,10 @@ function islandora_critical_edition_mvd_form_submit($form, $form_state) {
   module_load_include('inc', 'islandora', 'includes/utilities');
   $transcriptions = array_filter($form_state['values']['transcriptions']);
   $mvd = islandora_critical_edition_advanced_build_mvd($form_state['values']['pid'], $form_state['values']['mvd'], $transcriptions);
-  $project = $form_state['values']['project'];
+  $critical_edition_pid = $form_state['values']['pid'];
   $mvd_title = $form_state['values']['mvd'];
   $filter = $form_state['values']['filter'];
-  $success = islandora_calliope_create_mvd($project, $mvd_title, $transcriptions, $filter);
+  $success = islandora_calliope_create_mvd($critical_edition_pid, $mvd_title, $transcriptions, $filter);
   drupal_set_message(check_plain($success));
 }
 
@@ -143,4 +163,53 @@ function islandora_critical_edition_advanced_build_mvd($critical_edition, $title
     $transcription_object->relationships->add(FEDORA_RELS_EXT_URI, 'isPartOf', $new_object->id);
   }
   return $new_object;
+}
+
+/**
+ * Handles all crud operations for MVDs.
+ *
+ * @param String $critical_edition_pid
+ *   PID of Critical Edition
+ * @param String $mvd_label
+ *   Identifier for MVD
+ * @param string $operation
+ *   action to perform
+ */
+function islandora_critical_edition_advanced_mvd_crud($critical_edition_pid, $mvd_label, $operation) {
+  module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/calliope');
+  $query = array(
+    'metadata.critical_edition' => $critical_edition_pid,
+    'metadata.name' => $mvd_label,
+  );
+  $mvds = islandora_calliope_find_mvd($query);
+  $mvd = $mvds[0];
+
+  switch ($operation) {
+    case 'refresh':
+      foreach ($mvd['metadata']['resources'] as $transcription) {
+        $resource_ids[] = $transcription['id'];
+      }
+      $filter = $mvd['metadata']['filter'];
+      islandora_calliope_create_mvd($critical_edition_pid, $mvd_label, $resource_ids, $filter);
+      drupal_set_message(t("Collation successfully refreshed"));
+      drupal_goto("islandora/object/$critical_edition_pid");
+
+      break;
+
+    case 'delete':
+      islandora_calliope_delete_mvd($mvd['_id']);
+      drupal_set_message(t("Collation successfully removed"));
+      drupal_goto("islandora/object/$critical_edition_pid");
+      break;
+
+    case 'compare':
+      drupal_goto("collationtools/compare", array('fragment' =>$mvd_label));
+      break;
+
+    case 'table':
+      drupal_goto("collationtools/table", array('fragment' =>$mvd_label));
+      break;
+    default:
+      break;
+  }
 }

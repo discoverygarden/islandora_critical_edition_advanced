@@ -603,6 +603,7 @@ function islandora_critical_edition_container_versions_table_operations_cell($pi
  */
 function theme_islandora_critical_edition_container_collations_table(array &$variables) {
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/utilities');
+  module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/calliope');
   // Create local variables.
   extract(array_intersect_key($variables, drupal_map_assoc(array(
           'object', 'limit', 'pager', 'columns'))));
@@ -622,7 +623,7 @@ function theme_islandora_critical_edition_container_collations_table(array &$var
   $offset = $page * $limit;
   // Build Rows.
   $rows = array();
-  $collations = islandora_critical_edition_container_collation_table_data($object, tablesort_get_sort($headers), $offset, $limit);
+  $collations = islandora_calliope_find_mvds($object, tablesort_get_sort($headers), $limit, $offset);
   foreach ($collations as $pid => $collation) {
     $cells = array(
       'collation_name' => array(
@@ -630,7 +631,7 @@ function theme_islandora_critical_edition_container_collations_table(array &$var
                    array('attributes' => array('title' => $collation['label']))),
       ),
       'transcriptions' => islandora_critical_edition_container_table_transcriptions_cell($pid, $collation['transcriptions'], array('edit')),
-      'operations' => islandora_critical_edition_container_collation_table_operations_cell($pid, $collation['transcriptions']),
+      'operations' => islandora_critical_edition_container_collation_table_operations_cell($pid, $object->id, $collation['transcriptions']),
     );
     // Only include cells which have headers.
     $cells = array_intersect_key($cells, $headers);
@@ -725,7 +726,7 @@ EOT;
  * @return array
  *   A renderable array containing the links the user has access to.
  */
-function islandora_critical_edition_container_collation_table_operations_cell($collation, array $transcriptions) {
+function islandora_critical_edition_container_collation_table_operations_cell($collation, $critical_edition_pid, array $transcriptions) {
   $permissions = islandora_critical_edition_container_collation_table_operations_permissions();
   // If we can't render any links skip the rest of the logic.
   if (count(array_filter($permissions)) == 0) {
@@ -734,27 +735,19 @@ function islandora_critical_edition_container_collation_table_operations_cell($c
   $links = array(
     'refresh' => array(
       'title' => t('Refresh'),
-      'href' => '',
-      'external' => TRUE,
-      'fragment' => 'not_implemented',
+      'href' => "islandora/collation/$critical_edition_pid/$collation/refresh",
     ),
     'compare' => array(
       'title' => t('Compare'),
-      'href' => '',
-      'external' => TRUE,
-      'fragment' => 'not_implemented',
+      'href' => "islandora/collation/$critical_edition_pid/$collation/compare",
     ),
     'table_view' => array(
       'title' => t('Table'),
-      'href' => '',
-      'external' => TRUE,
-      'fragment' => 'not_implemented',
+      'href' => "islandora/collation/$critical_edition_pid/$collation/compare",
     ),
     'delete' => array(
       'title' => t('Delete'),
-      'href' => '',
-      'external' => TRUE,
-      'fragment' => 'not_implemented',
+      'href' => "islandora/collation/$critical_edition_pid/$collation/delete",
     ),
   );
   return array(

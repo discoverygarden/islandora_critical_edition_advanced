@@ -369,7 +369,7 @@ function islandora_critical_edition_number_of_child_transcriptions(AbstractObjec
         fedora-model:hasModel <info:fedora/islandora:transcriptionCModel> .
       }
 EOT;
- return $object->repository->ri->countQuery($query, 'sparql');
+  return $object->repository->ri->countQuery($query, 'sparql');
 }
 
 /**
