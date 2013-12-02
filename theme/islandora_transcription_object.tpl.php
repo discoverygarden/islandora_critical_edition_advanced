@@ -11,11 +11,16 @@ if (isset($variables['transcriptions'])) {
   }
 }
 // Fallback if Transcription object is viewed directly.
-else{
+else {
   $objects[] = $variables['islandora_object'];
 }
 $object = $objects[key($objects)];
-$transcription = str_replace("\n", "<br />", $object['TRANSCRIPTION']->content);
+if ($object['TRANSCRIPTION']) {
+  $transcription = str_replace("\n", "<br />", $object['TRANSCRIPTION']->content);
+}
+else{
+  $transcription = t("This file has no transcription datastream");
+}
 module_load_include('inc', 'islandora', 'includes/breadcrumb');
 drupal_set_breadcrumb(islandora_get_breadcrumbs($object));
 drupal_set_title($object->label);

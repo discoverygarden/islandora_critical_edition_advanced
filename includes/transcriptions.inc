@@ -312,12 +312,16 @@ function islandora_critical_transcription_edit_form($form, $form_state, $transcr
   module_load_include('inc', 'islandora', 'includes/breadcrumb');
   drupal_set_breadcrumb(islandora_get_breadcrumbs($transcription));
   drupal_set_title($transcription->label);
+  $content = "";
+  if ($transcription['TRANSCRIPTION']) {
+    $content = $transcription['TRANSCRIPTION']->content;
+  }
   $form = array();
   $form['transcription'] = array(
     '#title' => t('Current Transcription'),
     '#type' => 'text_format',
     '#base_type' => 'textarea',
-    '#default_value' => $transcription['TRANSCRIPTION']->content,
+    '#default_value' => $content,
     '#rows' => 40,
     '#cols' => 20,
     '#attributes' => array('class' => array('transcription_window')),
