@@ -296,8 +296,9 @@ function islandora_critical_edition_advanced_elastislide_view(AbstractObject $ob
 function islandora_critical_edition_advanced_preprocess_islandora_critical_edition_advanced_elastislide_view(&$variables) {
   $module_path = drupal_get_path('module', 'islandora_critical_edition_advanced');
   // Use the jquery out of islandora_critical_edition, because we can.
-//   $islandora_critical_edition = drupal_get_path('module', 'islandora_critical_edition');
+   $islandora_critical_edition = drupal_get_path('module', 'islandora_critical_edition');
 //   drupal_add_js("$islandora_critical_edition/CWRC-Writer/src/js/lib/jquery/jquery-1.8.3.js");
+
   drupal_add_js("$module_path/js/Elastislide/js/modernizr.custom.17475.js");
   drupal_add_js("$module_path/js/Elastislide/js/jquerypp.custom.js");
   drupal_add_js("$module_path/js/Elastislide/js/jquery.elastislide.js");
@@ -318,6 +319,10 @@ function islandora_critical_edition_advanced_preprocess_islandora_critical_editi
   // Include the jQuery UI Switch Button dependancies.
   drupal_add_css("$module_path/js/jQuery-switchButton/jquery.switchButton.css");
   drupal_add_js("$module_path/js/jQuery-switchButton/jquery.switchButton.js");
+  
+  // Include the jstree dependancies.
+ 
+  drupal_add_js("$module_path/js/jstree/dist/jstree.js");
 }
 
 function islandora_critical_edition_advanced_preprocess_islandora_critical_edition_advanced_aparatus_pager(&$variables) {
