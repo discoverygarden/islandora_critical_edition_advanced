@@ -622,7 +622,8 @@ function theme_islandora_critical_edition_container_collations_table(array &$var
   $columns['operations'] = isset($columns['operations']) && $columns['operations'] && count(array_filter($permissions));
   $headers = array_intersect_key($headers, array_filter($columns));
   // Init Pager.
-  $total = islandora_critical_edition_number_of_child_versionable_objects($object);
+  $mvds = islandora_calliope_find_mvds($object);
+  $total = count($mvds);
   $page = pager_default_initialize($total, $limit, $pager['element']);
   $offset = $page * $limit;
   // Build Rows.
