@@ -206,8 +206,8 @@ function islandora_critical_edition_advanced_mvd_crud($critical_edition_pid, $mv
       drupal_goto("collationtools/compare", array('fragment' =>$mvd_label));
       break;
 
-    case 'table':
-      drupal_goto("collationtools/table", array('fragment' =>$mvd_label));
+    case 'apparatus':
+      drupal_goto("collationtools/apparatus", array('fragment' =>$mvd_label));
       break;
     
     default:
