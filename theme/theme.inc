@@ -268,16 +268,16 @@ function theme_islandora_critical_edition_container_table(array &$variables) {
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/utilities');
   // Create local variables.
   extract(array_intersect_key($variables, drupal_map_assoc(array(
-          'title', 'header', 'rows', 'offset', 'limit', 'total', 'pager'))));
+    'title', 'header', 'rows', 'offset', 'limit', 'total', 'pager'))));
   // Render the table.
   $element = array(
     '#type' => 'fieldset',
     '#title' => t('@title (@start-@end of @total)', array(
-                '@title' => $title,
-                '@start' => $offset,
-                '@end' => min($offset + $limit, $total),
-                '@total' => $total,
-              )),
+      '@title' => $title,
+      '@start' => $offset,
+      '@end' => min($offset + $limit, $total),
+      '@total' => $total,
+    )),
     'table' => array(
       '#theme' => 'table',
       '#header' => $header,
@@ -302,7 +302,7 @@ function theme_islandora_critical_edition_container_versions_table(array &$varia
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/utilities');
   // Create local variables.
   extract(array_intersect_key($variables, drupal_map_assoc(array(
-          'object', 'limit', 'pager', 'columns'))));
+    'object', 'limit', 'pager', 'columns'))));
   // Build Header.
   $headers = array(
     'version_name' => array('data' => t('Version Name'), 'field' => 'version_name'),
@@ -325,12 +325,10 @@ function theme_islandora_critical_edition_container_versions_table(array &$varia
     $source = $version['source'];
     $cells = array(
       'version_name' => array(
-        '#markup' => l($version['label'], "islandora/object/{$pid}",
-                   array('attributes' => array('title' => $version['label']))),
+        '#markup' => l($version['label'], "islandora/object/{$pid}", array('attributes' => array('title' => $version['label']))),
       ),
       'source_name' => array(
-        '#markup' => l($source->label, "islandora/object/{$source->id}",
-                   array('attributes' => array('title' => $source->label))),
+        '#markup' => l($source->label, "islandora/object/{$source->id}", array('attributes' => array('title' => $source->label))),
       ),
       'transcriptions' => islandora_critical_edition_container_table_transcriptions_cell($pid, $version['transcriptions']),
       'operations' => islandora_critical_edition_container_versions_table_operations_cell($pid, $version),
@@ -343,14 +341,14 @@ function theme_islandora_critical_edition_container_versions_table(array &$varia
     }
   }
   return theme('islandora_critical_edition_container_table', array(
-      'title' => t('Versions'),
-      'header' => $headers,
-      'rows' => $rows,
-      'limit' => $limit,
-      'offset' => $offset,
-      'total' => $total,
-      'pager' => $pager,
-    ));
+    'title' => t('Versions'),
+    'header' => $headers,
+    'rows' => $rows,
+    'limit' => $limit,
+    'offset' => $offset,
+    'total' => $total,
+    'pager' => $pager,
+  ));
 }
 
 /**
@@ -610,7 +608,7 @@ function theme_islandora_critical_edition_container_collations_table(array &$var
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/calliope');
   // Create local variables.
   extract(array_intersect_key($variables, drupal_map_assoc(array(
-          'object', 'limit', 'pager', 'columns'))));
+    'object', 'limit', 'pager', 'columns'))));
   // Build Header.
   $headers = array(
     'collation_name' => array('data' => t('Collation Name'), 'field' => 'collation_name'),
@@ -632,8 +630,7 @@ function theme_islandora_critical_edition_container_collations_table(array &$var
   foreach ($collations as $pid => $collation) {
     $cells = array(
       'collation_name' => array(
-        '#markup' => l($collation['label'], "islandora/object/{$pid}",
-                   array('attributes' => array('title' => $collation['label']))),
+        '#markup' => l($collation['label'], "islandora/object/{$pid}", array('attributes' => array('title' => $collation['label']))),
       ),
       'transcriptions' => islandora_critical_edition_container_table_transcriptions_cell($pid, $collation['transcriptions'], array('edit')),
       'operations' => islandora_critical_edition_container_collation_table_operations_cell($pid, $object->id, $collation['transcriptions']),
@@ -646,14 +643,14 @@ function theme_islandora_critical_edition_container_collations_table(array &$var
     }
   }
   return theme('islandora_critical_edition_container_table', array(
-      'title' => t('Collations'),
-      'header' => $headers,
-      'rows' => $rows,
-      'limit' => $limit,
-      'offset' => $offset,
-      'total' => $total,
-      'pager' => $pager,
-    ));
+    'title' => t('Collations'),
+    'header' => $headers,
+    'rows' => $rows,
+    'limit' => $limit,
+    'offset' => $offset,
+    'total' => $total,
+    'pager' => $pager,
+  ));
 }
 
 /**
@@ -738,10 +735,6 @@ function islandora_critical_edition_container_collation_table_operations_cell($c
     return NULL;
   }
   $links = array(
-    'refresh' => array(
-      'title' => t('Refresh'),
-      'href' => "islandora/collation/$critical_edition_pid/$collation/refresh",
-    ),
     'compare' => array(
       'title' => t('Compare'),
       'href' => "islandora/collation/$critical_edition_pid/$collation/compare",
@@ -749,6 +742,10 @@ function islandora_critical_edition_container_collation_table_operations_cell($c
     'table_view' => array(
       'title' => t('Table'),
       'href' => "islandora/collation/$critical_edition_pid/$collation/table",
+    ),
+    'refresh' => array(
+      'title' => t('Refresh'),
+      'href' => "islandora/collation/$critical_edition_pid/$collation/refresh",
     ),
     'delete' => array(
       'title' => t('Delete'),
