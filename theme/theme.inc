@@ -748,7 +748,7 @@ function islandora_critical_edition_container_collation_table_operations_cell($c
     ),
     'table_view' => array(
       'title' => t('Table'),
-      'href' => "islandora/collation/$critical_edition_pid/$collation/compare",
+      'href' => "islandora/collation/$critical_edition_pid/$collation/table",
     ),
     'delete' => array(
       'title' => t('Delete'),

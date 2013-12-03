@@ -209,6 +209,7 @@ function islandora_critical_edition_advanced_mvd_crud($critical_edition_pid, $mv
     case 'table':
       drupal_goto("collationtools/table", array('fragment' =>$mvd_label));
       break;
+    
     default:
       break;
   }
