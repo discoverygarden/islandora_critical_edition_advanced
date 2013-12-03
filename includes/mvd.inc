@@ -191,7 +191,6 @@ function islandora_critical_edition_advanced_mvd_crud($critical_edition_pid, $mv
       }
       $filter = $mvd['metadata']['filter'];
       islandora_calliope_create_mvd($critical_edition_pid, $mvd_label, $resource_ids, $filter);
-      drupal_set_message(t("Collation successfully refreshed"));
       drupal_goto("islandora/object/$critical_edition_pid");
 
       break;
@@ -203,13 +202,13 @@ function islandora_critical_edition_advanced_mvd_crud($critical_edition_pid, $mv
       break;
 
     case 'compare':
-      drupal_goto("collationtools/compare", array('fragment' =>$mvd_label));
+      drupal_goto("collationtools/compare", array('fragment' => $mvd_label));
       break;
 
     case 'apparatus':
-      drupal_goto("collationtools/apparatus", array('fragment' =>$mvd_label));
+      drupal_goto("collationtools/apparatus", array('fragment' => $mvd_label));
       break;
-    
+
     default:
       break;
   }

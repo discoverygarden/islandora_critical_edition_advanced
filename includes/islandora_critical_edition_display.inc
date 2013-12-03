@@ -22,6 +22,14 @@ function islandora_critical_edition_display($object) {
   return $output;
 }
 
+/**
+ * Displays apparatus.
+ *
+ * @param AbstractObject $critical_edition_object
+ *  Object representing critical edition object
+ * @return String
+ *   HTML output
+ */
 function islandora_critical_edition_mvd_display($critical_edition_object) {
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/calliope');
   module_load_include('module', 'collationtools');

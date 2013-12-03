@@ -134,6 +134,7 @@ function islandora_calliope_delete_mvd($id) {
     exit;
   }
 }
+
 /**
  * Send selected documents to calliope to create MVD.
  *
@@ -155,6 +156,7 @@ function islandora_calliope_create_mvd($project, $mvd_title, $resource_ids = NUL
   global $base_url;
   $mvd_url = "$base_url/calliope";
   $calliope_import_url = "$mvd_url/import/";
+  $verb = t('created');
 
   // Remove spaces from doc path.
   $docpath = str_replace(' ', '_', "$mvd_title");
@@ -229,38 +231,19 @@ function islandora_calliope_create_mvd($project, $mvd_title, $resource_ids = NUL
       // Try to fetch json for created mvd.
       $hriterror = preg_match('/HritServer Error/', $response);
       if ($hriterror == 0) {
-        // Store MVD details in db for now.
-        // Parse existing mvd results to check if one exists with same name.
-        // Get id and delete.
-        $mvdsearchurl = $base_url . "/" . drupal_get_path('module', 'repository') . "/api/mvds/?searchField=name&query=" . $docpath . "$";
-        $mvdsearch = file_get_contents($mvdsearchurl);
-        $mvdsearchjson = json_decode($mvdsearch, TRUE);
-        $existingmvdcount = $mvdsearchjson['count'];
-        if ($existingmvdcount != 0) {
-          $existingmvd = $mvdsearchjson['results'][0]['id'];
-          $ch3 = curl_init();
-          curl_setopt($ch3, CURLOPT_CUSTOMREQUEST, 'DELETE');
-          curl_setopt($ch3, CURLOPT_RETURNTRANSFER, TRUE);
-          curl_setopt($ch3, CURLOPT_URL, trim($base_url . "/" . drupal_get_path('module', 'repository') . "/api/mvds/" . $existingmvd));
-          $dbresponse = curl_exec($ch3);
-          $dberr = curl_errno($ch3);
-          $dberror = curl_error($ch3);
-          $info3 = curl_getinfo($ch3);
-          curl_close($ch3);
-          if ($dberr) {
-            return t("Error: @dberr @dberror @dbresponse", array(
-              '@dberr' => $dberr,
-              '@dberror' => $dberror,
-              '@dbresponse' => $dbresponse));
+        $query = array(
+          'metadata.critical_edition' => $project,
+          'metadata.name' => $docpath,
+        );
+        $mvds = islandora_calliope_find_mvd($query);
+        if (!empty($mvds)) {
+          foreach ($mvds as $mvd) {
+            islandora_calliope_delete_mvd($mvd['_id']);
           }
-          if ($info3['http_code'] !== 204) {
-            // Success with No Content.
-            return t('Error deleting old mvd record: @dbresponse', array('@dbresponse' => $dbresponse));
-          }
+          $verb = t('updated');
         }
         // Post new MVD details to db.
         $mvddburl = $base_url . "/" . drupal_get_path('module', 'repository') . "/api/mvds/";
-
         $newmvd = array(
           'name' => $origdocpath,
           'resources' => $id_array,
@@ -275,7 +258,6 @@ function islandora_calliope_create_mvd($project, $mvd_title, $resource_ids = NUL
         curl_setopt($ch2, CURLOPT_POST, 1);
         curl_setopt($ch2, CURLOPT_POSTFIELDS, json_encode($newmvd));
         curl_setopt($ch2, CURLOPT_HTTPHEADER, array("Content-type: application/json;"));
-
         $dbresponse = curl_exec($ch2);
         $dberr = curl_errno($ch2);
         $dberror = curl_error($ch2);
@@ -287,32 +269,9 @@ function islandora_calliope_create_mvd($project, $mvd_title, $resource_ids = NUL
             '@dberror' => $dberror,
             '@dbresponse' => $dbresponse));
         }
-        if ($info['http_code'] !== 201) {
-          // Success with No Content.
-          return t("Error creating mvd record: @response", array('@response' => $dbresponse));
-        }
-
-        // Message is success message.
-        $project_param = '';
-        if ($project) {
-          $project_param = "?project= $project";
-        }
-        $message = "<p>MVD created. You may now view <a href='/collationtools/apparatus$project_param#$docpath'>table apparatus</a> or <a href='/collationtools/compare$project_param#$docpath'>side-by-side comparison</a></p>";
-      }
-      else {
-        $message = "<p>MVD was not created. Refer to the log above for the cause.";
       }
     }
-    else {
-      // Else message is failure message.
-      $message = "<p>There was an error creating the MVD. Refer to the log above for the cause. If the log does not indicate a reason, the operation may have failed as a result of versions being too large or too much variation between versions. Try splitting larger transcriptions into smaller sections.</p>";
-    }
-    $breadcrumb = array();
-    $breadcrumb[] = l(t('Home'), '<front>');
-    _add_project_or_repository($breadcrumb);
-    $breadcrumb[] = drupal_get_title();
-    drupal_set_breadcrumb($breadcrumb);
-    drupal_set_message(t("Collation successfully created."));
+    drupal_set_message(t("Collation successfully @verb.", array('@verb' => $verb)));
   }
 }
 
