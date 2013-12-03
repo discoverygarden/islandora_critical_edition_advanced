@@ -613,6 +613,7 @@ function theme_islandora_critical_edition_container_collations_table(array &$var
   $headers = array(
     'collation_name' => array('data' => t('Collation Name'), 'field' => 'collation_name'),
     'transcriptions' => array('data' => t('Transcriptions')),
+    'collation_filter' => array('data' => t('Filter')),
     'operations' => array('data' => t('Operations')),
   );
   // Operations may be hidden if the user doesn't have permission for any.
@@ -629,10 +630,9 @@ function theme_islandora_critical_edition_container_collations_table(array &$var
   $collations = islandora_calliope_find_mvds($object, tablesort_get_sort($headers), $limit, $offset);
   foreach ($collations as $pid => $collation) {
     $cells = array(
-      'collation_name' => array(
-        '#markup' => l($collation['label'], "islandora/object/{$pid}", array('attributes' => array('title' => $collation['label']))),
-      ),
-      'transcriptions' => islandora_critical_edition_container_table_transcriptions_cell($pid, $collation['transcriptions'], array('edit')),
+      'collation_name' => array('#markup' => $collation['label']),
+      'transcriptions' => islandora_critical_edition_container_table_transcriptions_cell($pid, $collation['transcriptions'], array('')),
+      'collation_filter' => array('#markup' => $collation['filter']),
       'operations' => islandora_critical_edition_container_collation_table_operations_cell($pid, $object->id, $collation['transcriptions']),
     );
     // Only include cells which have headers.
@@ -653,71 +653,6 @@ function theme_islandora_critical_edition_container_collations_table(array &$var
   ));
 }
 
-/**
- * Gets all the required data for populating the collation table.
- *
- * For the versions table in the critical edition container display.
- *
- * @param AbstractObject $object
- *   The critical edition containter object.
- * @param string $sort
- *   Either 'DESC' or 'ASC'.
- * @param int $offset
- *   The offset from which to return the version table data.
- * @param int $limit
- *   The limit on the number of versions returned.
- *
- * @return array
- *   An associative array containing relevent data for building the collation
- *   display table.
- */
-function islandora_critical_edition_container_collation_table_data(AbstractObject $object, $sort = 'DESC', $offset = 0, $limit = 25) {
-  // Sort must be uppercase in SPARQL.
-  $sort = strtoupper($sort);
-  // Do a query for all collations we require.
-  $query = <<<EOT
-PREFIX fedora-rels-ext: <info:fedora/fedora-system:def/relations-external#>
-PREFIX fedora-model: <info:fedora/fedora-system:def/model#>
-PREFIX islandora: <http://islandora.ca/ontology/relsext#>
-SELECT DISTINCT ?object ?label FROM <#ri> WHERE {
- ?object fedora-rels-ext:isMemberOf <info:fedora/$object->id> ;
-         fedora-model:hasModel <info:fedora/islandora:mvdCModel> .
- OPTIONAL { ?object fedora-model:label  ?label. }
-}
-ORDER BY $sort(?label)
-OFFSET $offset
-LIMIT $limit
-EOT;
-  $collations = array();
-  $results = $object->repository->ri->sparqlQuery($query, $limit);
-  foreach ($results as $result) {
-    $pid = $result['object']['value'];
-    $collations[$pid] = array(
-      'label' => $result['label']['value'],
-      'transcriptions' => array(),
-    );
-  }
-  // Add the transcription to the collation array.
-  $query = <<<EOT
-PREFIX fedora-rels-ext: <info:fedora/fedora-system:def/relations-external#>
-PREFIX fedora-model: <info:fedora/fedora-system:def/model#>
-SELECT DISTINCT ?collation ?transcription ?transcription_label FROM <#ri> WHERE {
- ?collation fedora-rels-ext:isMemberOf <info:fedora/$object->id> ;
-            fedora-model:hasModel <info:fedora/islandora:mvdCModel> .
- ?transcription fedora-rels-ext:isPartOf ?collation ;
-                fedora-model:hasModel <info:fedora/islandora:transcriptionCModel> .
- OPTIONAL { ?transcription fedora-model:label ?transcription_label . }
-}
-EOT;
-  // Add the transcription and TEI-RDF objects info to the versions array.
-  $results = $object->repository->ri->sparqlQuery($query, 'unlimited');
-  foreach ($results as $result) {
-    $collation = $result['collation']['value'];
-    $transcription = $result['transcription']['value'];
-    $collations[$pid]['transcriptions'][$transcription] = $result['transcription_label']['value'];
-  }
-  return $collations;
-}
 
 /**
  * Generates the operations cell for the given collation.
@@ -753,7 +688,6 @@ function islandora_critical_edition_container_collation_table_operations_cell($c
     ),
   );
   return array(
-    '#theme' => 'links__ctools_dropbutton',
     '#prefix' => '<div class="operations-container">',
     '#suffix' => '</div>',
     '#theme' => 'links__ctools_dropbutton',

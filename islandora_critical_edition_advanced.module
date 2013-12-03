@@ -166,6 +166,7 @@ function islandora_critical_edition_advanced_theme($existing, $type, $theme, $pa
         'columns' => array(
           'collation_name' => TRUE,
           'transcriptions' => TRUE,
+          'collation_filter' => TRUE,
           'operations' => TRUE,
         ),
         'pager' => array(

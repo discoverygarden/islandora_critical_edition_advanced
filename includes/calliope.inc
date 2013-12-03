@@ -329,6 +329,7 @@ function islandora_calliope_find_mvds($critical_edition_object, $sort = "asc", $
           $transcriptions[$transcription['id']] = $transcription['name'];
         }
         $mvd_data[$mvd['metadata']['name']]['label'] = $mvd['metadata']['name'];
+        $mvd_data[$mvd['metadata']['name']]['filter'] = $mvd['metadata']['filter'];
         $mvd_data[$mvd['metadata']['name']]['transcriptions'] = $transcriptions;
       }
     }
