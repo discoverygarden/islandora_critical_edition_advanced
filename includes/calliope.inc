@@ -222,8 +222,6 @@ function islandora_calliope_create_mvd($project, $mvd_title, $resource_ids = NUL
     ));
   }
   else {
-    $message = "";
-
     // Unfortunately HRIT Server does not use HTTP status to indicate errors.
     // Look for 'rror' in response instead.
     $hriterror = preg_match('/rror/', $response);
@@ -243,35 +241,18 @@ function islandora_calliope_create_mvd($project, $mvd_title, $resource_ids = NUL
           $verb = t('updated');
         }
         // Post new MVD details to db.
-        $mvddburl = $base_url . "/" . drupal_get_path('module', 'repository') . "/api/mvds/";
         $newmvd = array(
           'name' => $origdocpath,
           'resources' => $id_array,
           'filter' => $filter,
           'critical_edition' => $project,
         );
-
-        $ch2 = curl_init();
-        curl_setopt($ch2, CURLOPT_URL, trim($mvddburl));
-        curl_setopt($ch2, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch2, CURLOPT_FOLLOWLOCATION, 1);
-        curl_setopt($ch2, CURLOPT_POST, 1);
-        curl_setopt($ch2, CURLOPT_POSTFIELDS, json_encode($newmvd));
-        curl_setopt($ch2, CURLOPT_HTTPHEADER, array("Content-type: application/json;"));
-        $dbresponse = curl_exec($ch2);
-        $dberr = curl_errno($ch2);
-        $dberror = curl_error($ch2);
-        $info = curl_getinfo($ch2);
-        curl_close($ch2);
-        if ($dberr) {
-          return t("Error: @dberr @dberror @dbresponse", array(
-            '@dberr' => $dberr,
-            '@dberror' => $dberror,
-            '@dbresponse' => $dbresponse));
-        }
+        $mvd_success = islandora_calliope_write_mvd($newmvd);
       }
     }
-    drupal_set_message(t("Collation successfully @verb.", array('@verb' => $verb)));
+    if ($mvd_success) {
+      drupal_set_message(t("Collation successfully @verb.", array('@verb' => $verb)));
+    }
   }
 }
 
@@ -383,4 +364,25 @@ function islandora_calliope_find_mvd($query) {
     exit;
   }
   return $mvd_data;
+}
+
+/**
+ * Writes new MVD to Mongo.
+ *
+ * @param array $newmvd
+ *   All paramaters to build new MVD
+ *
+ * @return Boolean
+ *   Success indicator
+ */
+function islandora_calliope_write_mvd($newmvd) {
+  $success = FALSE;
+  $newobj = array('_revisions' => array($newmvd), 'metadata' => $newmvd);
+  $db = islandora_calliope_create_mongo_db();
+  $coll = $db->selectCollection('mvds');
+  $inserted = $coll->insert($newobj, array('safe' => TRUE));
+  if ($inserted) {
+    $success = TRUE;
+  }
+  return $inserted;
 }
