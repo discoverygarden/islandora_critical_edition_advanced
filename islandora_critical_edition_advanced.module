@@ -92,16 +92,6 @@ function islandora_critical_edition_advanced_menu() {
     'file' => 'includes/islandora_critical_edition_display.inc',
   );
 
-  $items['islandora/object/%islandora_object/mvd'] = array(
-    'title' => 'Comparisons',
-    'page callback' => 'islandora_critical_edition_mvd_display',
-    'page arguments' => array(2),
-    'type' => MENU_LOCAL_TASK,
-    'access callback' => 'islandora_critical_edition_advanced_object_management_access',
-    'access arguments' => array(2, 'view_critical_edition'),
-    'file' => 'includes/islandora_critical_edition_display.inc',
-  );
-
   $items['islandora/object/%islandora_object/tei'] = array(
     'title' => 'TEI',
     'page callback' => 'islandora_critical_edition_advanced_display_tei',

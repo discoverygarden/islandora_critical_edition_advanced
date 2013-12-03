@@ -50,10 +50,10 @@ function islandora_calliope_create_mongo_grid() {
  *
  * @param String $pid
  *   PID of Transcription Object
- * @param String $project
+ * @param String $critical_edition
  *   Optional project associated with transcription
  */
-function islandora_calliope_write_file($pid, $project = '') {
+function islandora_calliope_write_file($pid, $critical_edition = '') {
   module_load_include('inc', 'islandora', 'includes/utilities');
   $transcription_object = islandora_object_load($pid);
   $transcription_ds = $transcription_object['TRANSCRIPTION'];
@@ -75,8 +75,8 @@ function islandora_calliope_write_file($pid, $project = '') {
       $grid->remove($query);
     }
     $metadata['filetype'] = $transcription_ds->mimetype;
-    if ($project) {
-      $metadata['project'] = $project;
+    if ($critical_edition) {
+      $metadata['project'] = $critical_edition;
     }
 
     $storedfile = $grid->storeFile($real_path, array('metadata' => $metadata));
@@ -140,7 +140,7 @@ function islandora_calliope_delete_mvd($id) {
  *
  * @global type $base_url
  *
- * @param String $project
+ * @param String $critical_edition
  *   MVD's Project
  * @param String $mvd_title
  *   Title for MVD
@@ -152,7 +152,7 @@ function islandora_calliope_delete_mvd($id) {
  * @return String
  *   Status message
  */
-function islandora_calliope_create_mvd($project, $mvd_title, $resource_ids = NULL, $filter = "Empty") {
+function islandora_calliope_create_mvd($critical_edition, $mvd_title, $resource_ids = NULL, $filter = "Empty") {
   global $base_url;
   $mvd_url = "$base_url/calliope";
   $calliope_import_url = "$mvd_url/import/";
@@ -230,7 +230,7 @@ function islandora_calliope_create_mvd($project, $mvd_title, $resource_ids = NUL
       $hriterror = preg_match('/HritServer Error/', $response);
       if ($hriterror == 0) {
         $query = array(
-          'metadata.critical_edition' => $project,
+          'metadata.critical_edition' => $critical_edition,
           'metadata.name' => $docpath,
         );
         $mvds = islandora_calliope_find_mvd($query);
@@ -245,7 +245,7 @@ function islandora_calliope_create_mvd($project, $mvd_title, $resource_ids = NUL
           'name' => $origdocpath,
           'resources' => $id_array,
           'filter' => $filter,
-          'critical_edition' => $project,
+          'critical_edition' => $critical_edition,
         );
         $mvd_success = islandora_calliope_write_mvd($newmvd);
       }
