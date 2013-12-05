@@ -630,7 +630,7 @@ function theme_islandora_critical_edition_container_collations_table(array &$var
   $collations = islandora_calliope_find_mvds($object, tablesort_get_sort($headers), $limit, $offset);
   foreach ($collations as $pid => $collation) {
     $cells = array(
-      'collation_name' => array('#markup' => $collation['label']),
+      'collation_name' => array('#markup' => $collation['name']),
       'transcriptions' => islandora_critical_edition_container_table_transcriptions_cell($pid, $collation['transcriptions'], array('')),
       'collation_filter' => array('#markup' => $collation['filter']),
       'operations' => islandora_critical_edition_container_collation_table_operations_cell($pid, $object->id, $collation['transcriptions']),

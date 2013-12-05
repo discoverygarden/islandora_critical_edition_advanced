@@ -202,11 +202,20 @@ function islandora_critical_edition_advanced_mvd_crud($critical_edition_pid, $mv
       break;
 
     case 'compare':
-      drupal_goto("collationtools/compare", array('fragment' => $mvd_label));
+      drupal_goto("collationtools/compare", array('fragment' => "$mvd_label/$critical_edition_pid"));
       break;
 
     case 'apparatus':
       drupal_goto("collationtools/apparatus", array('fragment' => $mvd_label));
+      break;
+
+    case 'list':
+      $cursor = islandora_calliope_compare_callback($critical_edition_pid);
+      $results = array();
+      foreach ($cursor as $obj) {
+        $results['results'][] = $obj['metadata'];
+      }
+      echo json_encode($results);
       break;
 
     default:

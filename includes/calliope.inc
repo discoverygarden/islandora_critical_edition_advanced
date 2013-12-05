@@ -328,7 +328,7 @@ function islandora_calliope_find_mvds($critical_edition_object, $sort = "asc", $
         foreach ($mvd['metadata']['resources'] as $transcription) {
           $transcriptions[$transcription['id']] = $transcription['name'];
         }
-        $mvd_data[$mvd['metadata']['name']]['label'] = $mvd['metadata']['name'];
+        $mvd_data[$mvd['metadata']['name']]['name'] = $mvd['metadata']['name'];
         $mvd_data[$mvd['metadata']['name']]['filter'] = $mvd['metadata']['filter'];
         $mvd_data[$mvd['metadata']['name']]['transcriptions'] = $transcriptions;
       }
@@ -386,4 +386,20 @@ function islandora_calliope_write_mvd($newmvd) {
     $success = TRUE;
   }
   return $inserted;
+}
+
+/**
+ * Brings back basic mvd information filtered by Critical Edition.
+ *
+ * @param string $critical_edition_pid
+ *   PID of critical edition
+ *
+ * @return MongoCursor
+ *   Query results
+ */
+function islandora_calliope_compare_callback($critical_edition_pid) {
+  $query = array('metadata.critical_edition' => $critical_edition_pid);
+  $db = islandora_calliope_create_mongo_db();
+  $collection = $db->selectCollection('mvds');
+  return $collection->find($query);
 }
