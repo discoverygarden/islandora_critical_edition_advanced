@@ -89,7 +89,7 @@ body {
 }
 
 #full-window-button {
-	  visibility: hidden !important;
+  visibility: hidden !important;
   display: none !important;
 }
 
@@ -104,4 +104,9 @@ body {
 
 html {
   height: 100% !important;
+}
+
+.messages--warning, .messages, .warning {
+  visibility: hidden !important;
+  display: none !important;
 }

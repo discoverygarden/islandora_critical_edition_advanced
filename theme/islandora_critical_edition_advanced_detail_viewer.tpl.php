@@ -9,13 +9,13 @@
 <div id="AudioLayout" class="easyui-layout" style="width:100%;height:100%;">
 	<div style="width:100%;height:30px;border:1px solid red;">
 		<div style="float:left;">
-			<a class="data_anchor" id ="detail_meta" href="#">Metadata |</a>
+			<a class="data_anchor" id ="detail_meta" href="#">Metadata | </a>
 		</div>
 		<div style="float:left;">
-			<a class="data_anchor" href="#"> Transcript |</a>
+			<a class="data_anchor" style="font-weight:bold;" id="detail_tran" href="#"> Transcript | </a>
 		</div>
 		<div style="float:left;">
-			<a class="data_anchor" href="#"> Permalink</a>
+			<a class="data_anchor" id="detail_perm" href="#"> Permalink</a>
 		</div>
 	</div>
 	<?php if (!$player_params || !$media_viewer || !$transcription_text): ?>

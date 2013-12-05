@@ -8,11 +8,24 @@
 }
 
 .aparatus_tab_previous{
+	background:url('../img/prev.png') no-repeat;
+	text-indent:30px;
     float:left;
     margin-left:5px;
 }
-
+#aparatus_next_anchor{
+	   border:solid 1px red;
+    margin:5px;
+    color:#000000;
+    font-weight:bold;
+    padding-top:3px;
+    padding-bottom:3px;
+    padding-left:3px;
+    padding-right:18px;
+}
 .aparatus_tab_next{
+	background:url('../img/next.png') right no-repeat;
+	text-indent:-40px;
     float:right;
     margin-right:5px;
     margin-left:5px;
@@ -67,26 +80,6 @@
     display: none;
     float: left;
 }
-
-/* iframe preloader specific styling */
-/* #loadImg { */
-/* 	position:absolute; */
-/* 	z-index:999; */
-/* 	} */
-/* #loadImg div { */
-/* 	display:table-cell; */
-/* 	background:#fff; */
-/* 	text-align:center; */
-/* 	vertical-align:middle; */
-/* } */
-
-/* .dilbert-container { */
-/* width: 100%; */
-/* height: 633px; */
-/* padding: none; */
-/* margin-left: auto; */
-/* margin-right: auto; */
-/* } */
 
 .loader-background-image {
 position: absolute;
