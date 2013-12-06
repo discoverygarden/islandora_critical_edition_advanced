@@ -5,6 +5,7 @@
  * Add advanced data modeling options to Islandora Critical Editions.
  */
 
+
 define('ISLANDORA_CRITICAL_EDITION_ADVANCED_MANAGE_CONTAINER', 'manage critical edition');
 define('ISLANDORA_CRITICAL_EDITION_ADVANCED_CREATE', 'create critical editions');
 define('ISLANDORA_CRITICAL_EDITION_ADVANCED_READ', 'read critical editions');
@@ -17,7 +18,7 @@ define('ISLANDORA_CRITICAL_EDITION_ADVANCED_DELETE', 'delete critical editions')
 function islandora_critical_edition_advanced_menu() {
   $items['admin/islandora/critical_edition'] = array(
     'title' => 'Islandora Critical Edition',
-    'description' => 'Configure the Critical Edition Solution Pack.',
+    'description' => 'Configure the Critical Edition Advanced Solution Pack.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('islandora_critical_edition_admin_settings_form'),
     'access arguments' => array('administer site configuration'),
@@ -149,6 +150,15 @@ function islandora_critical_edition_advanced_menu() {
     'page arguments' => array(3),
     'type' => MENU_CALLBACK,
     'access arguments' => TRUE,
+  );
+
+    $items['islandora/collation'] = array(
+    'title' => 'Collation',
+    'page callback' => 'islandora_critical_edition_advanced_mvd_crud',
+    'type' => MENU_CALLBACK,
+    'access callback' => 'user_access',
+    'access arguments' =>array(ISLANDORA_CRITICAL_EDITION_ADVANCED_MODIFY),
+    'file' => 'includes/mvd.inc',
   );
 
   return $items;
@@ -590,6 +600,7 @@ function islandora_critical_edition_advanced_theme($existing, $type, $theme, $pa
         'columns' => array(
           'collation_name' => TRUE,
           'transcriptions' => TRUE,
+          'collation_filter' => TRUE,
           'operations' => TRUE,
         ),
         'pager' => array(
@@ -893,6 +904,12 @@ function islandora_critical_edition_advanced_object_management_access($object, $
         if (!empty($tei_rdfs)) {
           $access = TRUE;
         }
+      }
+      break;
+
+    case 'view_critical_edition':
+      if (in_array('islandora:criticalEditionContainerCModel', $content_models)) {
+          $access = TRUE;
       }
       break;
 

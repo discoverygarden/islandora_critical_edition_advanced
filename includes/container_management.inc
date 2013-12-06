@@ -23,13 +23,6 @@ function islandora_critical_edition_attach_versionable(array $form, array &$form
   $empty_message = t("There are no versionable objects in this Fedora Repository.");
   $objects = islandora_get_versionable_objects();
   $chosen = array_keys(islandora_critical_edition_get_members($object->id, 'islandora:versionableObjectCModel'));
-  if (is_array($chosen)) {
-    foreach ($chosen as $choice) {
-      unset($objects[$choice]);
-    }
-    $empty_message = t("There are no versionable objects in this Fedora Repository which are not already attached to this Critical Edition.");
-  }
-
   $comparator = function ($a, $b) use ($chosen) {
     $a_val = $b_val = 0;
     if (in_array($a, $chosen)) {
@@ -63,10 +56,7 @@ function islandora_critical_edition_attach_versionable(array $form, array &$form
     '#empty' => $empty_message,
     '#js' => FALSE,
   );
-  $form['intro'] = array(
-    '#type' => 'markup',
-    '#markup' => t("Choose existing versionable object to associate with @label.", array('@label' => $object->label)),
-  );
+
   $form['versionable_objects'] = $table_element;
   $form['next'] = array(
     '#type' => 'submit',
@@ -104,13 +94,13 @@ function islandora_critical_edition_attach_versionable_submit($form, $form_state
   if ($to_add) {
     foreach ($to_add as $candidate) {
       $temp_object = islandora_object_load($candidate);
-      $temp_object->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOfCollection', $form_state['values']['pid']);
+      $temp_object->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOf', $form_state['values']['pid']);
     }
   }
   if ($to_remove) {
     foreach ($to_remove as $candidate) {
       $temp_object = islandora_object_load($candidate);
-      $temp_object->relationships->remove(FEDORA_RELS_EXT_URI, 'isMemberOfCollection', $form_state['values']['pid']);
+      $temp_object->relationships->remove(FEDORA_RELS_EXT_URI, 'isMemberOf', $form_state['values']['pid']);
     }
   }
 }
@@ -251,7 +241,7 @@ function islandora_critical_edition_management_menu(AbstractObject $object) {
   $output['manage_critical_edition']['create_vo'] = array(
     '#id' => 'create-vo',
     '#access' => user_access(ISLANDORA_ADD_DS),
-    '#title' => t('Create new Versionable Object'),
+    '#title' => t('Create empty Versionable Object'),
     '#description' => t("Create Versionable object and associate it with this Critical Edition."),
     '#type' => 'fieldset',
     'form' => drupal_get_form('islandora_critical_edition_create_versionable_object', $object),
@@ -261,7 +251,7 @@ function islandora_critical_edition_management_menu(AbstractObject $object) {
     '#id' => 'attach-vo',
     '#access' => user_access(ISLANDORA_ADD_DS),
     '#title' => t('Associate existing Versionable Object'),
-    '#description' => t('Associate existing Versionable Object with this Critical Edition'),
+    '#description' => t('Manage Versionable Object associations'),
     '#type' => 'fieldset',
     'form' => drupal_get_form('islandora_critical_edition_attach_versionable', $object),
     '#group' => 'manage_critical_edition',

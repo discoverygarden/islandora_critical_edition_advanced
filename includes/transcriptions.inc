@@ -59,7 +59,7 @@ function islandora_critical_edition_create_transcription_form(array $form, array
     '#options' => $input_types,
     '#default_value' => 'none',
   );
-  if ($tei_rdf) {
+  if ($tei_rdf && $count > 1) {
     $form['page'] = array(
       '#type' => 'fieldset',
       '#title' => t('Select page range'),
@@ -132,11 +132,12 @@ function islandora_critical_edition_create_transcription_form(array $form, array
 function islandora_critical_edition_create_transcription_form_validate($form, $form_state) {
   $versionable_object_pid = $form_state['values']['versionable_object_pid'];
   $current_transcriptions = islandora_critical_get_related_transcriptions($versionable_object_pid);
+  $page_count = $form_state['values']['page_counts'];
   if (in_array($form_state['values']['transcription'], $current_transcriptions)) {
     form_set_error('transcription', t('A transcription with this name is already associated with this versionable object.'));
   }
 
-  if ($form_state['values']['content_source'] == 'tei_rdf') {
+  if ($form_state['values']['content_source'] == 'tei_rdf' && $page_count > 1) {
     $start_page = $form_state['values']['first_page'];
     $last_page = $form_state['values']['last_page'];
     $length = $form_state['values']['last_page'];
@@ -172,6 +173,7 @@ function islandora_critical_edition_create_transcription_form_submit(array $form
   $control_group = "M";
   $transcription_datastream = $transcription->constructDatastream($datastream_id, $control_group);
   $transcription_datastream->mimetype = 'text/plain';
+  $transcription_datastream->label = 'Transcription';
   if ($content_source == 'tei_rdf') {
     $start_page = NULL;
     $end_page = NULL;
@@ -225,7 +227,7 @@ function islandora_critical_edition_manage_transcriptions_form(array $form, arra
     'pid' => array('data' => t('PID')),
   );
   // Build and return table element.
-  $book_element = array(
+  $table_element = array(
     '#type' => 'tableselect',
     '#header' => $header,
     '#options' => $rows,
@@ -237,7 +239,7 @@ function islandora_critical_edition_manage_transcriptions_form(array $form, arra
     '#type' => 'markup',
     '#markup' => t('Choose transcription.'),
   );
-  $form['transcription'] = $book_element;
+  $form['transcription'] = $table_element;
   $form['delete'] = array(
     '#type' => 'submit',
     '#value' => t('Delete Transcription'),
@@ -311,12 +313,16 @@ function islandora_critical_transcription_edit_form($form, $form_state, $transcr
   module_load_include('inc', 'islandora', 'includes/breadcrumb');
   drupal_set_breadcrumb(islandora_get_breadcrumbs($transcription));
   drupal_set_title($transcription->label);
+  $content = "";
+  if ($transcription['TRANSCRIPTION']) {
+    $content = $transcription['TRANSCRIPTION']->content;
+  }
   $form = array();
   $form['transcription'] = array(
     '#title' => t('Current Transcription'),
     '#type' => 'text_format',
     '#base_type' => 'textarea',
-    '#default_value' => $transcription['TRANSCRIPTION']->content,
+    '#default_value' => $content,
     '#rows' => 40,
     '#cols' => 20,
     '#attributes' => array('class' => array('transcription_window')),
@@ -343,6 +349,7 @@ function islandora_critical_transcription_edit_form($form, $form_state, $transcr
 function islandora_critical_transcription_edit_form_submit($form, $form_state) {
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/calliope');
   $transcription_object = islandora_object_load($form_state['values']['pid']);
+  $success = FALSE;
   if (isset($form_state['values']['transcription']['value'])) {
     $content = $form_state['values']['transcription']['value'];
   }
@@ -350,7 +357,18 @@ function islandora_critical_transcription_edit_form_submit($form, $form_state) {
     $content = $form_state['values']['transcription'];
   }
   try {
-    $success = $transcription_object['TRANSCRIPTION']->content = $content;
+    if ($transcription_object['TRANSCRIPTION']) {
+      $success = $transcription_object['TRANSCRIPTION']->content = $content;
+    }
+    else {
+      $datastream_id = "TRANSCRIPTION";
+      $control_group = "M";
+      $transcription_datastream = $transcription_object->constructDatastream($datastream_id, $control_group);
+      $transcription_datastream->mimetype = 'text/plain';
+      $transcription_datastream->label = 'Transcription';
+      $transcription_datastream->setContentFromString($content);
+      $success = $transcription_object->ingestDatastream($transcription_datastream);
+    }
   }
   catch (Exception $exc) {
     watchdog_exception("islandora critical edition advanced", $exc);
@@ -414,7 +432,7 @@ function add_derived_transcription($tei_rdf_object, $versionable_object_pid, $tr
  *   Temp file to hold data
  */
 function islandora_critical_edition_build_text_file($page_object, $filename) {
-    // @codingStandardsIgnoreStart
+  // @codingStandardsIgnoreStart
   $replace_candidates = array(
     '<br>',
     '<br />',
@@ -448,12 +466,10 @@ function islandora_critical_edition_build_text_file($page_object, $filename) {
  */
 function islandora_transcription_file_add($transcription, $transcription_datastream, $filename) {
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/calliope');
-  $tuque = new IslandoraTuque();
   $transcription_datastream->setContentFromFile($filename);
   $transcription->ingestDatastream($transcription_datastream);
   islandora_calliope_write_file($transcription->id);
   unlink($filename);
-
 }
 
 /**

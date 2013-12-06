@@ -276,16 +276,16 @@ function theme_islandora_critical_edition_container_table(array &$variables) {
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/utilities');
   // Create local variables.
   extract(array_intersect_key($variables, drupal_map_assoc(array(
-          'title', 'header', 'rows', 'offset', 'limit', 'total', 'pager'))));
+    'title', 'header', 'rows', 'offset', 'limit', 'total', 'pager'))));
   // Render the table.
   $element = array(
     '#type' => 'fieldset',
     '#title' => t('@title (@start-@end of @total)', array(
-                '@title' => $title,
-                '@start' => $offset,
-                '@end' => min($offset + $limit, $total),
-                '@total' => $total,
-              )),
+      '@title' => $title,
+      '@start' => $offset,
+      '@end' => min($offset + $limit, $total),
+      '@total' => $total,
+    )),
     'table' => array(
       '#theme' => 'table',
       '#header' => $header,
@@ -310,7 +310,7 @@ function theme_islandora_critical_edition_container_versions_table(array &$varia
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/utilities');
   // Create local variables.
   extract(array_intersect_key($variables, drupal_map_assoc(array(
-          'object', 'limit', 'pager', 'columns'))));
+    'object', 'limit', 'pager', 'columns'))));
   // Build Header.
   $headers = array(
     'version_name' => array('data' => t('Version Name'), 'field' => 'version_name'),
@@ -335,14 +335,17 @@ function theme_islandora_critical_edition_container_versions_table(array &$varia
     $cells = array(
       'version_name' => array(
         '#markup' => l($version['label'], "islandora/object/{$pid}",
-                   array(
-                     'attributes' => array(
-                       'title' => $version['label'],
-                       'data-pid' => $pid))),
+          array(
+            'attributes' =>
+              array(
+                'title' => $version['label'],
+                'data-pid' => $pid
+              )
+           )
+        ),
       ),
       'source_name' => array(
-        '#markup' => l($source->label, "islandora/object/{$source->id}",
-                   array('attributes' => array('title' => $source->label))),
+        '#markup' => l($source->label, "islandora/object/{$source->id}", array('attributes' => array('title' => $source->label))),
       ),
       'transcriptions' => islandora_critical_edition_container_table_transcriptions_cell($pid, $version['transcriptions']),
       'operations' => islandora_critical_edition_container_versions_table_operations_cell($pid, $version),
@@ -359,14 +362,14 @@ function theme_islandora_critical_edition_container_versions_table(array &$varia
     }
   }
   return theme('islandora_critical_edition_container_table', array(
-      'title' => t('Versions'),
-      'header' => $headers,
-      'rows' => $rows,
-      'limit' => $limit,
-      'offset' => $offset,
-      'total' => $total,
-      'pager' => $pager,
-    ));
+    'title' => t('Versions'),
+    'header' => $headers,
+    'rows' => $rows,
+    'limit' => $limit,
+    'offset' => $offset,
+    'total' => $total,
+    'pager' => $pager,
+  ));
 }
 
 /**
@@ -485,14 +488,12 @@ EOT;
  * @return array
  *   An associative array of boolean values indicating the user can perform the
  *   action.
- *   - partial: Create Partial versions from an existing version.
  *   - consolidate: Consolitate the TEI-RDF associated with a version.
  *   - edit: Edit the version metadata.
  *   - delete: Purge the version and it's children.
  */
 function islandora_critical_edition_container_versions_table_operations_permissions() {
   return array(
-    'partial' => user_access(ISLANDORA_INGEST),
     'consolidate' => user_access(ISLANDORA_ADD_DS),
     'edit' => user_access(ISLANDORA_METADATA_EDIT),
     'delete' => user_access(ISLANDORA_PURGE),
@@ -615,7 +616,7 @@ function islandora_critical_edition_container_versions_table_operations_cell($pi
       'fragment' => 'update-datastreams',
     ),
     'edit' => array(
-      'title' => t('Edit'),
+      'title' => t("Edit Object's Metadata"),
       'href' => "islandora/object/{$pid}/datastream/MODS/edit",
     ),
     'delete' => array(
@@ -640,13 +641,15 @@ function islandora_critical_edition_container_versions_table_operations_cell($pi
  */
 function theme_islandora_critical_edition_container_collations_table(array &$variables) {
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/utilities');
+  module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/calliope');
   // Create local variables.
   extract(array_intersect_key($variables, drupal_map_assoc(array(
-          'object', 'limit', 'pager', 'columns'))));
+    'object', 'limit', 'pager', 'columns'))));
   // Build Header.
   $headers = array(
     'collation_name' => array('data' => t('Collation Name'), 'field' => 'collation_name'),
     'transcriptions' => array('data' => t('Transcriptions')),
+    'collation_filter' => array('data' => t('Filter')),
     'operations' => array('data' => t('Operations')),
   );
   // Operations may be hidden if the user doesn't have permission for any.
@@ -654,20 +657,19 @@ function theme_islandora_critical_edition_container_collations_table(array &$var
   $columns['operations'] = isset($columns['operations']) && $columns['operations'] && count(array_filter($permissions));
   $headers = array_intersect_key($headers, array_filter($columns));
   // Init Pager.
-  $total = islandora_critical_edition_number_of_child_versionable_objects($object);
+  $mvds = islandora_calliope_find_mvds($object);
+  $total = count($mvds);
   $page = pager_default_initialize($total, $limit, $pager['element']);
   $offset = $page * $limit;
   // Build Rows.
   $rows = array();
-  $collations = islandora_critical_edition_container_collation_table_data($object, tablesort_get_sort($headers), $offset, $limit);
+  $collations = islandora_calliope_find_mvds($object, tablesort_get_sort($headers), $limit, $offset);
   foreach ($collations as $pid => $collation) {
     $cells = array(
-      'collation_name' => array(
-        '#markup' => l($collation['label'], "islandora/object/{$pid}",
-                   array('attributes' => array('title' => $collation['label']))),
-      ),
-      'transcriptions' => islandora_critical_edition_container_table_transcriptions_cell($pid, $collation['transcriptions'], array('edit')),
-      'operations' => islandora_critical_edition_container_collation_table_operations_cell($pid, $collation['transcriptions']),
+      'collation_name' => array('#markup' => $collation['name']),
+      'transcriptions' => islandora_critical_edition_container_table_transcriptions_cell($pid, $collation['transcriptions'], array(FALSE)),
+      'collation_filter' => array('#markup' => $collation['filter']),
+      'operations' => islandora_critical_edition_container_collation_table_operations_cell($pid, $object->id, $collation['transcriptions']),
     );
     // Only include cells which have headers.
     $cells = array_intersect_key($cells, $headers);
@@ -677,81 +679,16 @@ function theme_islandora_critical_edition_container_collations_table(array &$var
     }
   }
   return theme('islandora_critical_edition_container_table', array(
-      'title' => t('Collations'),
-      'header' => $headers,
-      'rows' => $rows,
-      'limit' => $limit,
-      'offset' => $offset,
-      'total' => $total,
-      'pager' => $pager,
-    ));
+    'title' => t('Collations'),
+    'header' => $headers,
+    'rows' => $rows,
+    'limit' => $limit,
+    'offset' => $offset,
+    'total' => $total,
+    'pager' => $pager,
+  ));
 }
 
-/**
- * Gets all the required data for populating the collation table.
- *
- * For the versions table in the critical edition container display.
- *
- * @param AbstractObject $object
- *   The critical edition containter object.
- * @param string $sort
- *   Either 'DESC' or 'ASC'.
- * @param int $offset
- *   The offset from which to return the version table data.
- * @param int $limit
- *   The limit on the number of versions returned.
- *
- * @return array
- *   An associative array containing relevent data for building the collation
- *   display table.
- */
-function islandora_critical_edition_container_collation_table_data(AbstractObject $object, $sort = 'DESC', $offset = 0, $limit = 25) {
-  // Sort must be uppercase in SPARQL.
-  $sort = strtoupper($sort);
-  // Do a query for all collations we require.
-  $query = <<<EOT
-PREFIX fedora-rels-ext: <info:fedora/fedora-system:def/relations-external#>
-PREFIX fedora-model: <info:fedora/fedora-system:def/model#>
-PREFIX islandora: <http://islandora.ca/ontology/relsext#>
-SELECT DISTINCT ?object ?label FROM <#ri> WHERE {
- ?object fedora-rels-ext:isMemberOf <info:fedora/$object->id> ;
-         fedora-model:hasModel <info:fedora/islandora:mvdCModel> .
- OPTIONAL { ?object fedora-model:label  ?label. }
-}
-ORDER BY $sort(?label)
-OFFSET $offset
-LIMIT $limit
-EOT;
-  $collations = array();
-  $results = $object->repository->ri->sparqlQuery($query, $limit);
-  foreach ($results as $result) {
-    $pid = $result['object']['value'];
-    $collations[$pid] = array(
-      'label' => $result['label']['value'],
-      'transcriptions' => array(),
-    );
-  }
-  // Add the transcription to the collation array.
-  $query = <<<EOT
-PREFIX fedora-rels-ext: <info:fedora/fedora-system:def/relations-external#>
-PREFIX fedora-model: <info:fedora/fedora-system:def/model#>
-SELECT DISTINCT ?collation ?transcription ?transcription_label FROM <#ri> WHERE {
- ?collation fedora-rels-ext:isMemberOf <info:fedora/$object->id> ;
-            fedora-model:hasModel <info:fedora/islandora:mvdCModel> .
- ?transcription fedora-rels-ext:isPartOf ?collation ;
-                fedora-model:hasModel <info:fedora/islandora:transcriptionCModel> .
- OPTIONAL { ?transcription fedora-model:label ?transcription_label . }
-}
-EOT;
-  // Add the transcription and TEI-RDF objects info to the versions array.
-  $results = $object->repository->ri->sparqlQuery($query, 'unlimited');
-  foreach ($results as $result) {
-    $collation = $result['collation']['value'];
-    $transcription = $result['transcription']['value'];
-    $collations[$pid]['transcriptions'][$transcription] = $result['transcription_label']['value'];
-  }
-  return $collations;
-}
 
 /**
  * Generates the operations cell for the given collation.
@@ -762,40 +699,31 @@ EOT;
  * @return array
  *   A renderable array containing the links the user has access to.
  */
-function islandora_critical_edition_container_collation_table_operations_cell($collation, array $transcriptions) {
+function islandora_critical_edition_container_collation_table_operations_cell($collation, $critical_edition_pid, array $transcriptions) {
   $permissions = islandora_critical_edition_container_collation_table_operations_permissions();
   // If we can't render any links skip the rest of the logic.
   if (count(array_filter($permissions)) == 0) {
     return NULL;
   }
   $links = array(
-    'refresh' => array(
-      'title' => t('Refresh'),
-      'href' => '',
-      'external' => TRUE,
-      'fragment' => 'not_implemented',
-    ),
     'compare' => array(
       'title' => t('Compare'),
-      'href' => '',
-      'external' => TRUE,
-      'fragment' => 'not_implemented',
+      'href' => "islandora/collation/$critical_edition_pid/$collation/compare",
     ),
     'table_view' => array(
       'title' => t('Table'),
-      'href' => '',
-      'external' => TRUE,
-      'fragment' => 'not_implemented',
+      'href' => "islandora/collation/$critical_edition_pid/$collation/apparatus",
+    ),
+    'refresh' => array(
+      'title' => t('Refresh'),
+      'href' => "islandora/collation/$critical_edition_pid/$collation/refresh",
     ),
     'delete' => array(
       'title' => t('Delete'),
-      'href' => '',
-      'external' => TRUE,
-      'fragment' => 'not_implemented',
+      'href' => "islandora/collation/$critical_edition_pid/$collation/delete",
     ),
   );
   return array(
-    '#theme' => 'links__ctools_dropbutton',
     '#prefix' => '<div class="operations-container">',
     '#suffix' => '</div>',
     '#theme' => 'links__ctools_dropbutton',
