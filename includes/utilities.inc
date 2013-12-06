@@ -210,6 +210,19 @@ function islandora_critical_edition_prep_form($object, $content_model) {
 }
 
 /**
+ * Theme callback to theme the trimmed editor.
+ *
+ * @param AbstractObject $object
+ *   The object to process in the simple viewer.
+ */
+function islandora_critical_edition_advanced_view_trimmed_editor(AbstractObject $object) {
+  $module_path = drupal_get_path('module', 'islandora_critical_edition_advanced');
+  // Hide what we dont need to see in the plain viewer.
+  drupal_add_css("$module_path/css/show_plain.css");
+  return theme("islandora_critical_edition", array('islandora_object' => $object));
+}
+
+/**
  * Base form for All/Audio/Video associate TEI-RDF forms.
  *
  * @param array $form
