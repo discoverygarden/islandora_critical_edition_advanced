@@ -337,11 +337,11 @@ function theme_islandora_critical_edition_container_versions_table(array &$varia
         '#markup' => l($version['label'], "islandora/object/{$pid}",
           array(
             'attributes' =>
-              array(
-                'title' => $version['label'],
-                'data-pid' => $pid
-              )
-           )
+            array(
+              'title' => $version['label'],
+              'data-pid' => $pid,
+            ),
+          )
         ),
       ),
       'source_name' => array(

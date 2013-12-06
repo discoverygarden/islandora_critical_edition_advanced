@@ -302,9 +302,9 @@ function islandora_calliope_get_file($pid) {
  *   Object representing Critical Edition
  * @param String $sort
  *   Sort type
- * @param integer $limit
+ * @param int $limit
  *   Size of resultset
- * @param integer $offset
+ * @param int $offset
  *   Offset for db call
  *
  * @return array

@@ -51,7 +51,6 @@ function islandora_critical_edition_admin_settings_form(array $form, array &$for
     '#default_value' => variable_get('islandora_critical_edition_mongo_db', "test"),
   );
 
-
   $form['apparatus_streams'] = array(
     '#type' => 'textarea',
     '#title' => t('Apparatus Components'),

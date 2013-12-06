@@ -5,7 +5,6 @@
  * Add advanced data modeling options to Islandora Critical Editions.
  */
 
-
 define('ISLANDORA_CRITICAL_EDITION_ADVANCED_MANAGE_CONTAINER', 'manage critical edition');
 define('ISLANDORA_CRITICAL_EDITION_ADVANCED_CREATE', 'create critical editions');
 define('ISLANDORA_CRITICAL_EDITION_ADVANCED_READ', 'read critical editions');
@@ -152,12 +151,12 @@ function islandora_critical_edition_advanced_menu() {
     'access arguments' => TRUE,
   );
 
-    $items['islandora/collation'] = array(
+  $items['islandora/collation'] = array(
     'title' => 'Collation',
     'page callback' => 'islandora_critical_edition_advanced_mvd_crud',
     'type' => MENU_CALLBACK,
     'access callback' => 'user_access',
-    'access arguments' =>array(ISLANDORA_CRITICAL_EDITION_ADVANCED_MODIFY),
+    'access arguments' => array(ISLANDORA_CRITICAL_EDITION_ADVANCED_MODIFY),
     'file' => 'includes/mvd.inc',
   );
 
@@ -251,7 +250,7 @@ function islandora_critical_edition_advanced_prepare_advanced($object) {
             'player_params' => NULL,
             'transcription_text' => islandora_critical_edition_advanced_display_tei($test_obj, 'CWRC'),
             'module_base' => url($module_path),
-            )));
+          )));
           drupal_exit();
         }
         else {
@@ -340,12 +339,11 @@ function islandora_critical_edition_publish_access($fedora_object) {
  */
 function islandora_critical_edition_publish_view(AbstractObject $object) {
   $module_path = drupal_get_path('module', 'islandora_critical_edition_advanced');
-  return theme('islandora_critical_edition_publish_view',
-    array(
-      'islandora_object' => $object,
-      'publish_form' => NULL,
-      'path' => url($module_path))
-    );
+  return theme('islandora_critical_edition_publish_view', array(
+    'islandora_object' => $object,
+    'publish_form' => NULL,
+    'path' => url($module_path))
+  );
 }
 
 /**
@@ -376,7 +374,6 @@ function islandora_critical_edition_advanced_preprocess_islandora_critical_editi
   drupal_add_css("$module_path/js/Elastislide/css/custom.css");
 
   drupal_add_css("$module_path/css/jquery-ui.css");
-  // drupal_add_js("$module_path/js/jquery-ui.js");
   drupal_add_js("$module_path/js/startup.js");
 
   // Include the pagenation script/styles on the advanced detail viewer.
@@ -387,9 +384,7 @@ function islandora_critical_edition_advanced_preprocess_islandora_critical_editi
   // Include the jQuery UI Switch Button dependancies.
   drupal_add_css("$module_path/js/jQuery-switchButton/jquery.switchButton.css");
   drupal_add_js("$module_path/js/jQuery-switchButton/jquery.switchButton.js");
-
   // Include the jstree dependancies.
-  // drupal_add_js("$module_path/js/jstree/dist/jstree.js");
 }
 
 /**
@@ -422,12 +417,12 @@ function islandora_critical_edition_advanced_preprocess_islandora_critical_editi
   drupal_add_js("$module_path/js/zoom-master/jquery.zoom.js");
   drupal_add_css("$module_path/js/jQuery-switchButton/jquery.switchButton.css");
   drupal_add_js(
-    array(
-      'islandora_critical_edition_advanced' =>
       array(
-        'module_base' => $module_path,
-      ),
-    ), 'setting');
+        'islandora_critical_edition_advanced' =>
+        array(
+          'module_base' => $module_path,
+        ),
+      ), 'setting');
   // Include the jstree dependancies.
   $obj = islandora_object_load($variables['islandora_object']);
   $associated_objects = islandora_critical_edition_get_members($variables['islandora_object']);
@@ -489,30 +484,27 @@ function islandora_critical_edition_advanced_preprocess_islandora_critical_editi
           '#type' => 'markup',
           '#title' => $aparatus_datastreams[$element],
           '#markup' => theme(
-            "islandora_critical_edition_advanced_critical_aparatus",
-            array(
-              'islandora_object' => $variables['islandora_object'],
-              'text_body' => theme("islandora_critical_edition_container_{$element}_table",
-                array(
-                  "object" => $variables['islandora_object'],
-                  'columns' => array(
-                    'version_name' => TRUE,
-                    'source_name' => TRUE,
-                    'transcriptions' => FALSE,
-                    'operations' => FALSE,
-                    'descriptions' => TRUE,
-                  ),
+              "islandora_critical_edition_advanced_critical_aparatus", array(
+                'islandora_object' => $variables['islandora_object'],
+                'text_body' => theme("islandora_critical_edition_container_{$element}_table", array(
+              "object" => $variables['islandora_object'],
+              'columns' => array(
+                'version_name' => TRUE,
+                'source_name' => TRUE,
+                'transcriptions' => FALSE,
+                'operations' => FALSE,
+                'descriptions' => TRUE,
+              ),
                 )
-              ),
-              'text_header' => $aparatus_datastreams[$element],
-              'text_pager' => theme("islandora_critical_edition_advanced_aparatus_pager",
-               array(
-                 'islandora_object' => $variables['islandora_object'],
-                 'tab_previous' => (isset($all_keys[$entry]) ? substr($aparatus_datastreams[$all_keys[$entry]], 0, 16) : "_blank_"),
-                 'tab_next' => (isset($all_keys[$entry + 2]) ? substr($aparatus_datastreams[$all_keys[$entry + 2]], 0, 16) : "_blank_"),
-               )
-              ),
-            )
+                ),
+                'text_header' => $aparatus_datastreams[$element],
+                'text_pager' => theme("islandora_critical_edition_advanced_aparatus_pager", array(
+              'islandora_object' => $variables['islandora_object'],
+              'tab_previous' => (isset($all_keys[$entry]) ? substr($aparatus_datastreams[$all_keys[$entry]], 0, 16) : "_blank_"),
+              'tab_next' => (isset($all_keys[$entry + 2]) ? substr($aparatus_datastreams[$all_keys[$entry + 2]], 0, 16) : "_blank_"),
+                )
+                ),
+              )
           ),
         );
       }
@@ -524,17 +516,15 @@ function islandora_critical_edition_advanced_preprocess_islandora_critical_editi
           '#type' => 'markup',
           '#title' => $aparatus_datastreams[$element],
           '#markup' => theme(
-            'islandora_critical_edition_advanced_critical_aparatus',
-              array(
+              'islandora_critical_edition_advanced_critical_aparatus', array(
                 'islandora_object' => $variables['islandora_object'],
                 'text_body' => (isset($to_construct[$element]) ? $to_construct[$element] : ""),
                 'text_header' => $aparatus_datastreams[$element],
-                'text_pager' => theme("islandora_critical_edition_advanced_aparatus_pager",
-                  array(
-                    'islandora_object' => $variables['islandora_object'],
-                    'tab_previous' => (isset($all_keys[$entry]) ? substr($aparatus_datastreams[$all_keys[$entry]], 0, 16) : "_blank_"),
-                    'tab_next' => (isset($all_keys[$entry + 2]) ? substr($aparatus_datastreams[$all_keys[$entry + 2]], 0, 16) : "_blank_"),
-                  )
+                'text_pager' => theme("islandora_critical_edition_advanced_aparatus_pager", array(
+              'islandora_object' => $variables['islandora_object'],
+              'tab_previous' => (isset($all_keys[$entry]) ? substr($aparatus_datastreams[$all_keys[$entry]], 0, 16) : "_blank_"),
+              'tab_next' => (isset($all_keys[$entry + 2]) ? substr($aparatus_datastreams[$all_keys[$entry + 2]], 0, 16) : "_blank_"),
+                )
                 ),
               )
           ),
@@ -723,11 +713,10 @@ function islandora_critical_edition_islandora_versionableobjectcmodel_islandora_
         $output = theme('islandora_critical_edition', array('islandora_object' => $tei_rdf));
       }
       if (in_array($content_model, $media_cmodels)) {
-        $output = theme('islandora_critical_media_object',
-          array(
-            'islandora_object' => $tei_rdf,
-            'reference_object' => $reference_object,
-            'content_model' => $content_model)
+        $output = theme('islandora_critical_media_object', array(
+          'islandora_object' => $tei_rdf,
+          'reference_object' => $reference_object,
+          'content_model' => $content_model)
         );
       }
     }
@@ -909,7 +898,7 @@ function islandora_critical_edition_advanced_object_management_access($object, $
 
     case 'view_critical_edition':
       if (in_array('islandora:criticalEditionContainerCModel', $content_models)) {
-          $access = TRUE;
+        $access = TRUE;
       }
       break;
 
