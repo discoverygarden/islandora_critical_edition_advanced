@@ -168,7 +168,14 @@ function islandora_critical_edition_preprocess_islandora_critical_edition_contai
   $link = l(t('Apparatus'), "islandora/object/$apparatus");
   $message = t('Manage !Apparatus', array('!Apparatus' => $link));
   $variables['apparatus_link'] = array('#markup' => "<div><strong>$message</strong></div>");
-  $variables['apparatus'] = array('#markup' => theme('islandora_critical_edition_publish_view', array('islandora_object' => $object, 'publish_form' => NULL)));
+  $variables['apparatus'] = array(
+    '#markup' => theme('islandora_critical_edition_publish_view',
+      array(
+        'islandora_object' => $object,
+        'publish_form' => NULL,
+      )
+    ),
+  );
   $variables['edition_actions'] = islandora_critical_edition_container_editor_links($object);
   $variables['version_actions'] = islandora_critical_edition_container_version_links($object);
   $variables['collation_actions'] = islandora_critical_edition_container_collation_links($object);
@@ -340,7 +347,7 @@ function theme_islandora_critical_edition_container_versions_table(array &$varia
       'transcriptions' => islandora_critical_edition_container_table_transcriptions_cell($pid, $version['transcriptions']),
       'operations' => islandora_critical_edition_container_versions_table_operations_cell($pid, $version),
       'descriptions' => array(
-          // TODO: feel like this should come from the description of the versionable object, not source..
+        // TODO: should come from the description of the versionable object.
         '#markup' => islandora_critical_edition_container_versions_table_descriptions_cell($source->id),
       ),
     );
@@ -362,13 +369,23 @@ function theme_islandora_critical_edition_container_versions_table(array &$varia
     ));
 }
 
+/**
+ * Returns DC description of an object.
+ *
+ * @param unknown $source_id
+ *   The pid to retrieve the description for
+ *
+ * @return string
+ *   Returns the description cell.
+ */
 function islandora_critical_edition_container_versions_table_descriptions_cell($source_id) {
   module_load_include('inc', 'islandora', 'includes/dublin_core');
   $object = islandora_object_load($source_id);
   $dc = new DublinCore($object['DC']->content);
   $description = $dc->dc->dc['dc:description'];
-  return (isset($description[0]) ? $description[0]: "");
+  return (isset($description[0]) ? $description[0] : "");
 }
+
 /**
  * Gets all the required data for populating the Versions table.
  *
@@ -803,23 +820,3 @@ function islandora_critical_edition_container_collation_table_operations_permiss
     'delete' => user_access(ISLANDORA_PURGE),
   );
 }
-
-// function theme_islandora_critical_edition_advanced_critical_aparatus_collations(array &$variables) {
-//   return theme('islandora_critical_edition_container_table', array(
-//       'title' => t('Collations'),
-//       'header' => array(),
-//       'rows' => array(),
-//       'limit' => 25,
-//       'offset' => 0,
-//       'total' => 0,
-//       'pager' => $pager,
-//   ));
-// }
-
-// function theme_islandora_critical_edition_advanced_critical_aparatus_versions(array &$variables) {
-
-// }
-
-// function theme_islandora_critical_edition_advanced_critical_aparatus_appendix(array &$variables) {
-
-// }
