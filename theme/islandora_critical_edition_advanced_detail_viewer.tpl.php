@@ -18,7 +18,7 @@
 			<a class="data_anchor" id="detail_perm" href="#"> Permalink</a>
 		</div>
 	</div>
-	<?php if (!$player_params || !$media_viewer || !$transcription_text): ?>
+	<?php if (!$player_params || !$media_viewer): ?>
 	<div style="width:100%;height:40px;border:1px solid red;">
 			<div style="float:left;" class="action_img">
 				<img id="tei_plain_text" title="Plain Text" class="work_action_img" style="cursor: pointer;"src="<?php print $module_base;?>/img/text_plain.png" alt="image" />
@@ -45,7 +45,7 @@
 	</div>
 	<?php endif; ?>
 	<div id="view_box" style="width:100%;height:100%;border:1px solid green;overflow:auto;position: relative;">
-	<?php if ($player_params || $media_viewer || $transcription_text): ?>
+	<?php if ($player_params || $media_viewer): ?>
 		<div style="width:49%;height:100%;border:1px solid blue;float:left;overflow:auto;">
 		<p><pre><?php print $transcription_text;?></pre></p>
 		</div>

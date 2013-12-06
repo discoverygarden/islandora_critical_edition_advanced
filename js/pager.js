@@ -1,17 +1,29 @@
 (function($) {
   $('document').ready(function() {
-    $('.aparatus_tab_previous').click(function() {
-      if($(this).first().text().trim() != '_blank_' && $(this).first().text() != "") {
-        select_vertical_tab('previous');
-      }
-      return true;
-    });
-    $('.aparatus_tab_next').click(function() {
-      if($(this).first().text().trim() != '_blank_' && $(this).first().text() != "") {
-        select_vertical_tab('next');
-      }
-      return true;
-    });
+	  console.log($(".vertical-tabs-list").length);
+	  if($(".vertical-tabs-list").children().length > 1) {
+	    $('.aparatus_tab_previous').click(function(e) {
+	    	e.preventDefault();
+	      if($(this).first().text().trim() != '_blank_' && $(this).first().text() != "") {
+	        select_vertical_tab('previous');
+	      }
+	      return true;
+	    });
+	    $('.aparatus_tab_next').click(function(e) {
+	    	e.preventDefault();
+	      if($(this).first().text().trim() != '_blank_' && $(this).first().text() != "") {
+	        select_vertical_tab('next');
+	      }
+	      return true;
+	    });
+	  } else {
+		  // Hide the pager, its not required.
+		  $('#aparatus_pager').addClass('hide_content');
+		  //.hide_content
+	  }
+	  
+	  
+    
   });
 
   function select_vertical_tab(direction) {

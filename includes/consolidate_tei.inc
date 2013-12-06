@@ -11,7 +11,7 @@
  * @param AbstractObject $object
  *   Object representing either TEI-RDF object, or enclosing Versionable Object
  */
-function islandora_critical_edition_consolidate_tei($object) {
+function islandora_critical_edition_consolidate_tei($object, $dsid = 'CWRC') {
   module_load_include('inc', 'islandora_paged_content', 'includes/utilities');
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/utilities');
 
@@ -38,11 +38,11 @@ function islandora_critical_edition_consolidate_tei($object) {
 
   foreach ($pids_to_add as $pid) {
     $fedora_object = islandora_object_load($pid);
-    if ($fedora_object['CWRC']) {
+    if ($fedora_object[$dsid]) {
       $new_dom = new DOMDocument();
       $new_dom->formatOutput = TRUE;
       $new_dom->preserveWhiteSpace = TRUE;
-      $new_dom->loadXML($fedora_object['CWRC']->content);
+      $new_dom->loadXML($fedora_object[$dsid]->content);
       $text_node = $new_dom->getElementsByTagName('text')->item(0);
       $content_nodes = $text_node->childNodes;
       foreach ($content_nodes as $content_node) {
@@ -126,7 +126,7 @@ function islandora_critical_edition_upsert_tei($tei_rdf, $tei) {
  * @return String
  *   Converted TEI
  */
-function islandora_critical_edition_advanced_display_tei($object) {
+function islandora_critical_edition_advanced_display_tei($object, $dsid = 'TEI') {
   module_load_include('inc', 'islandora', 'includes/authtokens');
   module_load_include('inc', 'islandora_paged_content', 'includes/utilities');
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/utilities');
@@ -140,16 +140,16 @@ function islandora_critical_edition_advanced_display_tei($object) {
   $islandora_url = variable_get('islandora_base_url', 'http://localhost:8080/fedora');
   $tomcat_url = str_replace('/fedora', '', $islandora_url);
   $pid = $object->id;
-  if (!$object['TEI']) {
+  if (!$object[$dsid]) {
     islandora_critical_edition_consolidate_tei($object);
   }
   $path = drupal_get_path('module', 'islandora_critical_edition_advanced');
-  $xml_path = url("islandora/object/$pid/datastream/TEI/view", array(
+  $xml_path = url("islandora/object/$pid/datastream/$dsid/view", array(
     'absolute' => TRUE,
     'query' => array(
-      'token' => islandora_get_object_token($pid, 'TEI'),
+      'token' => islandora_get_object_token($pid, $dsid),
     ),
   ));
-  $xslt_path = "$base_url/$path/xml/basic_format.xsl";
+  $xslt_path = "$base_url/$path/xml/EMiC_test_XSLT.xsl";
   return file_get_contents("$tomcat_url/saxon/SaxonServlet?source=$xml_path&style=$xslt_path");
 }

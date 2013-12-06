@@ -165,8 +165,9 @@ function islandora_critical_edition_preprocess_islandora_critical_edition_contai
 
   $object = $variables['object'];
   $apparatus = islandora_critical_edition_get_apparatus($object);
-  $link = l(t('Here'), "islandora/object/$apparatus");
-  $message = t('Apparatus Goes !here', array('!here' => $link));
+  $link = l(t('Apparatus'), "islandora/object/$apparatus");
+  $message = t('Manage !Apparatus', array('!Apparatus' => $link));
+  $variables['apparatus_link'] = array('#markup' => "<div><strong>$message</strong></div>");
   $variables['apparatus'] = array('#markup' => theme('islandora_critical_edition_publish_view', array('islandora_object' => $object, 'publish_form' => NULL)));
   $variables['edition_actions'] = islandora_critical_edition_container_editor_links($object);
   $variables['version_actions'] = islandora_critical_edition_container_version_links($object);

@@ -65,6 +65,23 @@ var CriticalEditionViewer = {
 	current_zoom: 0,
 	pager_data: new Array(),
 	Viewer: {
+		get_page_transformed_tei: function(page) {
+			$jq.ajax({
+	            type: 'POST',
+	            url: Drupal.settings.basePath + 'islandora/cwrc_viewer/transformed_page/' + page,
+	            data:{
+		              "versionable_object": CriticalEditionViewer.data_pid,
+		        },
+	            success: function(data, status, xhr) {
+	              console.log(data);
+//	              CriticalEditionViewer.data_pid = pid;
+//	              CriticalEditionViewer.Viewer.build(data);
+	            },
+	            error: function(xhRequest, ErrorText, thrownError) {
+	              console.log(ErrorText + ":" + thrownError);
+	            },
+	          });
+		},
 		show_preloader: function() {
 			$jq("#loadImg").css('z-index','800');
 			$jq("#loadImg").css('display','inherit');
@@ -77,7 +94,6 @@ var CriticalEditionViewer = {
 			CriticalEditionViewer.cwrc_writer.layout.close("west");
 			CriticalEditionViewer.cwrc_writer.layout.close("north");
 			CriticalEditionViewer.cwrc_writer.layout.sizePane("east", $jq('#CriticalEditionViewer').width());
-			
 			CriticalEditionViewer.Viewer.toggle_text_image_linking(0);
 		},
 		show_tei_text: function() {
@@ -149,9 +165,9 @@ var CriticalEditionViewer = {
 			var entity_list = '<ul>';
 			var text_image_list = '<ul>'
 			$jq('.entitiesList li', window.frames[0].document).each(function() {
+				//console.log($jq(this));
 				// If a class is found, its an entity entry.
 				if($jq(this).attr("class")) {
-					console.log($jq(this).attr("class"));
 					if($jq(this).attr("class") == "txtimglnk") {
 						text_image_list += '<li id="phtml_2">';
 						text_image_list += '<a href="#">' + 'Text Image Links' + '</a>';
@@ -185,8 +201,9 @@ var CriticalEditionViewer = {
 				}
 				var idx = $jq(this).find('div[class="islandora_comment_type_title"]').text();
 				$jq(this).find('div[class="islandora_comment_type_content"]').children().each(function() {
+					console.log($jq(this).attr('urn'));
 					anno_arr[idx].push($jq(this).find('div[class="comment_content"]').text());
-					anno_list += '<ul><li id="' + $jq(this).find('div[class="comment_content"]').text() + '"><a href="#">' + $jq(this).find('div[class="comment_content"]').text() + '</a></li></ul>'
+					anno_list += '<ul><li id="' + $jq(this).attr('urn') + '"><a href="#">' + $jq(this).find('div[class="comment_content"]').text() + '</a></li></ul>'
 				});
 				anno_list += '</li>';
 			});
@@ -217,6 +234,8 @@ var CriticalEditionViewer = {
 				// Hate this, but this version of jstree kinda
 				// requires it.
 				var data_stuff = $jq('.jstree-clicked');
+				
+				// The following highlights entity's
 				for(var i = 0;i<data_stuff.length;i++) {
 					if($jq(data_stuff[i]).closest("li").attr("id")) {
 						var li_id = $jq(data_stuff[i]).closest("li").attr("id");
@@ -225,17 +244,54 @@ var CriticalEditionViewer = {
 						}
 					}
 				}
+				for(var x = 0;x<data_stuff.length;x++) {
+					if($jq(data_stuff[x]).closest("li").attr("id")) {
+						var uuid = $jq(data_stuff[x]).closest("li").attr("id");
+						console.log("id: " + uuid);
+						if(uuid.indexOf("annos_") === -1) {
+							// Show the annotation.console.log(document.getElementById('viewer_iframe').contentWindow);
+							document.getElementById('viewer_iframe').contentWindow.paint_commentAnnoTargets($jq('#anno_' + uuid, window.frames[0].document), 'canvas_0', uuid, "TextImageLink");
+					
+						}
+					}
+				}
+				
 				console.log(data_stuff);
 			}).bind('deselect_node.jstree', function() {
+				console.log("deselect");
 				var data_stuff = $jq('.jstree-anchor');
-				for(var i = 0;i<data_stuff.length;i++) {
-					if($jq(data_stuff[i]).closest("li").attr("id")) {
-						var li_id = $jq(data_stuff[i]).closest("li").attr("id");
-						if(li_id.indexOf("ent_") !== -1) {
-							CriticalEditionViewer.Viewer.annos_click(li_id);
+				
+				$jq('#entities > ul > li', window.frames[0].document).each(function(index, el) {
+					$jq(this).removeClass('selected').css('background-color', '').find('div[class="info"]').hide();
+					CriticalEditionViewer.cwrc_writer.delegator.editorCallback('highlightEntity_looseFocus', $jq(this));
+				});
+				
+				for(var x = 0;x<data_stuff.length;x++) {
+					if($jq(data_stuff[x]).closest("li").attr("id")) {
+						var uuid = $jq(data_stuff[x]).closest("li").attr("id");
+						console.log("id: " + uuid);
+						if(uuid.indexOf("annos_") === -1) {
+							// Show the annotation.console.log(document.getElementById('viewer_iframe').contentWindow);
+							//document.getElementById('viewer_iframe').contentWindow.paint_commentAnnoTargets($jq('#anno_' + uuid, window.frames[0].document), 'canvas_0', uuid, "TextImageLink");
+							$jq('.svg_' + uuid, window.frames[0].document).remove();
 						}
 					}
 				}
+				
+				// Hide the image annotations
+				
+				
+				
+//				for(var i = 0;i<data_stuff.length;i++) {
+//					if($jq(data_stuff[i]).closest("li").attr("id")) {
+//						var li_id = $jq(data_stuff[i]).closest("li").attr("id");
+//						if(li_id.indexOf("ent_") !== -1) {
+//							console.log(li_id);
+//							CriticalEditionViewer.Viewer.annos_click(li_id);
+//							//CriticalEditionViewer.cwrc_writer.editor.$('body', window.frames[0].document).toggleClass('showEntityBrackets');
+//						}
+//					}
+//				}
 			});
 		},
 		show_versionable_meta: function() {
@@ -269,7 +325,8 @@ var CriticalEditionViewer = {
 			    }, 700);
 		},
 		show_versionable_permalink: function() {
-			
+			// The current menu path is the permalink...
+			location.reload();
 		},
 		zoom_plus_click: function() {
 			console.log("plus clicked");
@@ -367,7 +424,7 @@ var CriticalEditionViewer = {
 				switch ($jq(this).attr('id')) {
 				case "detail_meta":
 					// Show the preloader while we retrieve the data.
-					CriticalEditionViewer.Viewer.show_preloader();
+					//CriticalEditionViewer.Viewer.show_preloader();
 					CriticalEditionViewer.Viewer.show_versionable_meta();
 					break;
 				case "detail_tran":
@@ -442,6 +499,9 @@ var CriticalEditionViewer = {
 					});
 					console.log("pager length: " + CriticalEditionViewer.pager_data.length);
 					
+					console.log(CriticalEditionViewer.cwrc_params.pages[ CriticalEditionViewer.cwrc_params.position]);
+					
+					CriticalEditionViewer.Viewer.get_page_transformed_tei(CriticalEditionViewer.cwrc_params.pages[ CriticalEditionViewer.cwrc_params.position]);
 					
 					$pg('.pagination').jqPagination({
 						max_page: CriticalEditionViewer.pager_data.length,
@@ -454,6 +514,7 @@ var CriticalEditionViewer = {
 					    	$jq("#page_choose option[value="+page+"]", window.frames[0].document).attr('selected',true);
 					    	CriticalEditionViewer.cwrc_params.position = $jq('#page_choose :selected', window.frames[0].document).attr('value');
 					    	document.getElementById('viewer_iframe').contentWindow['PID'] = CriticalEditionViewer.cwrc_params.pages[ CriticalEditionViewer.cwrc_params.position];
+					    	
 					    	CriticalEditionViewer.cwrc_writer_helper.Writer.load_next_anno_page();
 					    	console.log("after load next anno");
 					    	//~~~
@@ -493,6 +554,7 @@ var CriticalEditionViewer = {
 					// Build entity/anno tree off of existing.
 					CriticalEditionViewer.Viewer.get_entities();
 					CriticalEditionViewer.Viewer.build_tree_view();
+					
 					
 				});
 			}
