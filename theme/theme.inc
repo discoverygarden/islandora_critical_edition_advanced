@@ -450,14 +450,12 @@ EOT;
  * @return array
  *   An associative array of boolean values indicating the user can perform the
  *   action.
- *   - partial: Create Partial versions from an existing version.
  *   - consolidate: Consolitate the TEI-RDF associated with a version.
  *   - edit: Edit the version metadata.
  *   - delete: Purge the version and it's children.
  */
 function islandora_critical_edition_container_versions_table_operations_permissions() {
   return array(
-    'partial' => user_access(ISLANDORA_INGEST),
     'consolidate' => user_access(ISLANDORA_ADD_DS),
     'edit' => user_access(ISLANDORA_METADATA_EDIT),
     'delete' => user_access(ISLANDORA_PURGE),
@@ -580,7 +578,7 @@ function islandora_critical_edition_container_versions_table_operations_cell($pi
       'fragment' => 'update-datastreams',
     ),
     'edit' => array(
-      'title' => t('Edit'),
+      'title' => t("Edit Object's Metadata"),
       'href' => "islandora/object/{$pid}/datastream/MODS/edit",
     ),
     'delete' => array(
@@ -631,7 +629,7 @@ function theme_islandora_critical_edition_container_collations_table(array &$var
   foreach ($collations as $pid => $collation) {
     $cells = array(
       'collation_name' => array('#markup' => $collation['name']),
-      'transcriptions' => islandora_critical_edition_container_table_transcriptions_cell($pid, $collation['transcriptions'], array('')),
+      'transcriptions' => islandora_critical_edition_container_table_transcriptions_cell($pid, $collation['transcriptions'], array(FALSE)),
       'collation_filter' => array('#markup' => $collation['filter']),
       'operations' => islandora_critical_edition_container_collation_table_operations_cell($pid, $object->id, $collation['transcriptions']),
     );

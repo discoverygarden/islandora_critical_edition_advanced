@@ -241,7 +241,7 @@ function islandora_critical_edition_management_menu(AbstractObject $object) {
   $output['manage_critical_edition']['create_vo'] = array(
     '#id' => 'create-vo',
     '#access' => user_access(ISLANDORA_ADD_DS),
-    '#title' => t('Create new Versionable Object'),
+    '#title' => t('Create empty Versionable Object'),
     '#description' => t("Create Versionable object and associate it with this Critical Edition."),
     '#type' => 'fieldset',
     'form' => drupal_get_form('islandora_critical_edition_create_versionable_object', $object),
@@ -251,7 +251,7 @@ function islandora_critical_edition_management_menu(AbstractObject $object) {
     '#id' => 'attach-vo',
     '#access' => user_access(ISLANDORA_ADD_DS),
     '#title' => t('Associate existing Versionable Object'),
-    '#description' => t('Associate existing Versionable Object with this Critical Edition'),
+    '#description' => t('Manage Versionable Object associations'),
     '#type' => 'fieldset',
     'form' => drupal_get_form('islandora_critical_edition_attach_versionable', $object),
     '#group' => 'manage_critical_edition',

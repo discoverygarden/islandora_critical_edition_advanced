@@ -206,7 +206,7 @@ function islandora_critical_edition_advanced_mvd_crud($critical_edition_pid, $mv
       break;
 
     case 'apparatus':
-      drupal_goto("collationtools/apparatus", array('fragment' => $mvd_label));
+      drupal_goto("collationtools/apparatus", array('fragment' => "$mvd_label/$critical_edition_pid"));
       break;
 
     case 'list':
