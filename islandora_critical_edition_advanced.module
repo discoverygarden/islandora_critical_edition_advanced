@@ -59,16 +59,16 @@ function islandora_critical_edition_advanced_menu() {
     'type' => MENU_LOCAL_TASK,
     'access callback' => 'user_access',
     'access arguments' => array(ISLANDORA_CRITICAL_EDITION_ADVANCED_MODIFY),
-    'file' => 'includes/calliope.inc',
+    'file' => 'includes/calliope.inc', 
   );
 
   $items['islandora/critical_edition/viewer/trimed/%islandora_object'] = array(
     'title' => 'View Trimmed editor',
     'page callback' => 'islandora_critical_edition_advanced_view_trimmed_editor',
     'page arguments' => array(4),
-    'type' => MENU_CALLBACK,
+    'type' => MENU_CALLBACK, 
     'access callback' => 'user_access',
-    'access arguments' => array(ISLANDORA_CRITICAL_EDITION_MODIFY),
+    'access arguments' => array(ISLANDORA_CRITICAL_EDITION_ADVANCED_MODIFY),
     'file' => 'includes/utilities.inc',
   );
 
