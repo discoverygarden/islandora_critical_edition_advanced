@@ -174,7 +174,6 @@ var CriticalEditionViewer = {
 						text_image_list += '<ul><li id="' + $jq(this).attr("name") + '"><a href="#">' + $jq(this).children('.entityTitle').first().text() + '</a></li></ul>';
 						text_image_list += '</li>';
 					} else {
-						//console.log($jq(this).children('.entityTitle').first().text());
 						entity_list += '<li id="phtml_2">';
 						entity_list += '<a href="#">' + $jq(this).attr("class") + '</a>';
 						entity_list += '<ul><li id="' + $jq(this).attr("name") + '"><a href="#">' + $jq(this).children('.entityTitle').first().text() + '</a></li></ul>';
@@ -201,7 +200,6 @@ var CriticalEditionViewer = {
 				}
 				var idx = $jq(this).find('div[class="islandora_comment_type_title"]').text();
 				$jq(this).find('div[class="islandora_comment_type_content"]').children().each(function() {
-					console.log($jq(this).attr('urn'));
 					anno_arr[idx].push($jq(this).find('div[class="comment_content"]').text());
 					anno_list += '<ul><li id="' + $jq(this).attr('urn') + '"><a href="#">' + $jq(this).find('div[class="comment_content"]').text() + '</a></li></ul>'
 				});
@@ -247,7 +245,6 @@ var CriticalEditionViewer = {
 				for(var x = 0;x<data_stuff.length;x++) {
 					if($jq(data_stuff[x]).closest("li").attr("id")) {
 						var uuid = $jq(data_stuff[x]).closest("li").attr("id");
-						console.log("id: " + uuid);
 						if(uuid.indexOf("annos_") === -1) {
 							// Show the annotation.console.log(document.getElementById('viewer_iframe').contentWindow);
 							document.getElementById('viewer_iframe').contentWindow.paint_commentAnnoTargets($jq('#anno_' + uuid, window.frames[0].document), 'canvas_0', uuid, "TextImageLink");
@@ -278,20 +275,6 @@ var CriticalEditionViewer = {
 					}
 				}
 				
-				// Hide the image annotations
-				
-				
-				
-//				for(var i = 0;i<data_stuff.length;i++) {
-//					if($jq(data_stuff[i]).closest("li").attr("id")) {
-//						var li_id = $jq(data_stuff[i]).closest("li").attr("id");
-//						if(li_id.indexOf("ent_") !== -1) {
-//							console.log(li_id);
-//							CriticalEditionViewer.Viewer.annos_click(li_id);
-//							//CriticalEditionViewer.cwrc_writer.editor.$('body', window.frames[0].document).toggleClass('showEntityBrackets');
-//						}
-//					}
-//				}
 			});
 		},
 		show_versionable_meta: function() {
@@ -378,6 +361,26 @@ var CriticalEditionViewer = {
 			var img = $jq('#annotations', window.frames[0].document).find('div[class="base_img"]').children(0);
 			$zm(img).trigger('zoom.destroy');
 		},
+		add_transcription_pager: function() {
+			var pager = 
+				'<div id="tr_pagination" class="pagination img_pager">' +
+				    '<a href="#" class="first" data-action="first">&laquo;</a>'+
+				    '<a href="#" class="previous" data-action="previous">&lsaquo;</a>'+
+				    '<input id="tr_pagination_input" type="text" readonly="readonly" data-max-page="0" />'+
+				    '<a href="#" class="next" data-action="next">&rsaquo;</a>'+
+				    '<a href="#" class="last" data-action="last">&raquo;</a>'+
+			    '</div>';
+			$jq("#view_box_header").append(pager);
+			$pg('#tr_pagination').jqPagination({
+				max_page: $jq(".versionable_transcription_text").length,
+			    paged: function(page) {
+			    	$jq(".versionable_transcription_text").css("visibility", "hidden");
+			    	$jq(".versionable_transcription_text").css("display", "none");
+			    	$jq("#versionable_transcription_" + (page - 1)).css("visibility", "visible");
+			    	$jq("#versionable_transcription_" + (page - 1)).css("display", "block");
+			    }
+			});
+		},
 		build: function(json_html) {
 			
 			
@@ -386,6 +389,16 @@ var CriticalEditionViewer = {
 			}
 			$jq('#CriticalEditionViewer').css("height", "80%")
 			$jq('#CriticalEditionViewer').append(json_html);
+			
+			// Hide all transcriptions, showing only the first.
+			$jq(".versionable_transcription_text").toggle();
+			if($jq("#versionable_transcription_0").length > 0) {
+				$jq("#versionable_transcription_0").toggle();
+				
+				// Now, set up the pager for the transcriptions.
+				CriticalEditionViewer.Viewer.add_transcription_pager();
+			}
+			
 			
 			console.log($jq('#view_box').width());
 			$jq('#loadImg div').width($jq('#view_box').width());

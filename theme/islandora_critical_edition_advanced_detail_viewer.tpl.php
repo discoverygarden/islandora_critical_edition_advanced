@@ -7,7 +7,7 @@
  */
 ?>
 <div id="AudioLayout" class="easyui-layout" style="width:100%;height:100%;">
-	<div style="width:100%;height:30px;border:1px solid red;">
+	<div id="view_box_header" style="width:100%;height:30px;border:1px solid red;">
 		<div style="float:left;">
 			<a class="data_anchor" id ="detail_meta" href="#">Metadata | </a>
 		</div>
@@ -46,9 +46,12 @@
 	<?php endif; ?>
 	<div id="view_box" style="width:100%;height:100%;border:1px solid green;overflow:auto;position: relative;">
 	<?php if ($player_params || $media_viewer): ?>
-		<div style="width:49%;height:100%;border:1px solid blue;float:left;overflow:auto;">
-		<p><pre><?php print $transcription_text;?></pre></p>
-		</div>
+		<?php foreach ($transcription_text as $key => $value):?>
+			<div id="versionable_transcription_<?php print $key;?>" class="versionable_transcription_text" style="width:49%;height:100%;border:1px solid blue;float:left;overflow:auto;position: absolute;">
+				<h2><?php print $transcription_text[$key]['title'];?></h2>
+				<p><pre><?php print $transcription_text[$key]['text'];?></pre></p>
+			</div>
+		<?php endforeach;?>
 		<?php if ($player_params): ?>
 		  <div id="MediaPlayer" style="width:50%;height:100%;border:1px solid blue;float:right;"
 			data-url="<?php print $player_params['url'];?>" 
@@ -61,7 +64,7 @@
 		<?php endif; ?>
 		<?php if ($media_viewer): ?>
 		  <div id="MediaPlayer" style="width:50%;height:100%;border:1px solid blue;float:right;">
-		    <img style="width: 100%;height:100%" class="associated_tn_img" src="<?php print $media_viewer;?>" alt="image" />
+		    <img style="width: 100%;height:100%" class="associated_tn_img" src="<?php print $media_viewer;?>
 		  </div>
 		<?php endif; ?>
 	<?php else: ?>
@@ -76,4 +79,9 @@
 		  
 	<?php endif;?>
 	</div>
+	<?php 
+	print '<pre>';
+  var_dump(get_defined_vars());
+print '</pre>';
+?>
 </div>
