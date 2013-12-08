@@ -164,7 +164,7 @@ function islandora_critical_edition_advanced_menu() {
 }
 
 /**
- * Prepares consoladated tei info.
+ * Prepares consolidated tei info.
  *
  * @param unknown $object
  *   The object to prepare transformed TEI on.
