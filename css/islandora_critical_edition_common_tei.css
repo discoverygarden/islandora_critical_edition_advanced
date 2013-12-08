@@ -1,0 +1,78 @@
+/* 
+    Document   : islandora_critical_edition_tei
+    Created on : Dec 7, 2013, 12:46:42 PM
+    Author     : astanley
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+
+
+.bold{
+  font-weight:bold;
+}
+.italic{
+  font-style: italic;
+}
+.underline{
+  text-decoration:underline;
+}
+.center{
+  text-align: center;
+}
+.small caps{
+  font-variant:small-caps;
+}
+.strikethrough{
+  text-decoration:line-through;
+  color: slategray;
+}
+.superscript, superlinear{
+ 	position: relative;
+  bottom: 0.5em;
+  color: red;
+  font-size: 0.8em;
+}
+.subscript, sublinear{
+  position: relative;
+  top: 0.3em;
+  color: blue;
+  font-size: 0.8em;
+}
+.indent1{
+  text-indent: 25px;
+}
+.indent2{
+  text-indent: 50px;
+}
+.indent3{
+  text-indent: 75px;
+}
+.indent4{
+  text-indent: 100px;
+}
+.right{
+  text-align: right;
+}
+.no_indent{
+  text-indent : 0;
+}
+
+
+illegible:before, inaudible:before {
+   content: "<";
+}
+illegible:after, inaudible:after {
+   content: ">";
+}
+
+.bibl {
+    padding-left: 22px ;
+    text-indent: -22px ;
+}
+.single:before, .single:after{
+  content: "'";
+}
+double:before, .double:after {
+  content: '"';
+}
