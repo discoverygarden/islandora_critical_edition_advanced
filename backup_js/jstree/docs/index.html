@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<title>jsTree API documentation</title>
+
+	<link rel="stylesheet" href="./bootstrap.min.css" />
+	<link rel="stylesheet" href="./default.css" />
+	<!--[if lt IE 7]><meta http-equiv="imagetoolbar" content="false" /><![endif]-->
+	<style>
+	html, body { height:100%; }
+	html { overflow-y:scroll; background:#D9E3CB url('./img/tree.png') left bottom fixed no-repeat; }
+	body { background:transparent; }
+	.container { width:100%; background:white; background:rgba(255,255,255,0.4); margin:0px auto; max-width:1020px; min-width:320px; min-height:100%; }
+	.inner { background:white; border-radius:5px; box-shadow:0 0 5px rgba(0,0,0,0.5); margin:60px 20px 20px 20px; position:relative; }
+	.item { margin:0px; margin:0 0 0px 0; padding:20px; }
+	.first { padding-bottom : 60px; }
+	h2 { font-family:Georgia, serif; }
+	h3 { margin:20px 0px -10px 0px; font-family:Georgia, serif; padding:20px; border-top:1px dotted silver; }
+	.docs { padding-top:10px; width:48%; }
+	.code { float:right; width:50%; }
+	.code pre { overflow:auto; }
+	code.selected { background:#DD1144; border-color:#DD1144; color:white; }
+	pre code { background:transparent; }
+	.head { background:#333; position:absolute; top:0; left:0; width:100%; height:75px; border-bottom:4px solid #73796B; }
+	.head h2 { background:url('./img/logo.png') 20px 3px no-repeat; margin:0 auto; height:75px; line-height:50px; text-align:right; max-width:960px; min-width:280px; font-weight:normal; font-family:Tahoma; padding:0 20px; }
+	.head h2 a { margin-left:8px; margin-bottom:8px; }
+	.head .logo { float:left; height:65px; width:160px; text-decoration:none; margin:0; display:block; }
+	@media (max-width: 600px) {
+		.inner { margin:0; }
+		.code { display:none; }
+		.docs { width:auto; }
+		.first { padding-bottom:0 !important; }
+		.input-append { display:none; }
+		.head { position:static; height:auto; width:auto; }
+		.head .logo { float:none; margin:0 auto 5px auto; }
+		.head h2 { height:auto; padding-bottom:0px; background-position:center 5px; text-align:center; line-height:24px; }
+	}
+	</style>
+</head>
+<body>
+	<div class="container" role="main">
+		<div class="head"></div>
+		<div class="inner">
+		</div>
+	</div>
+
+	<script src="./jquery.1.9.1.min.js"></script>
+	<script src="./highlight.pack.js"></script>
+	<script>
+	$.expr[':'].icontains = $.expr.createPseudo(function(search) {
+		return function(a) {
+			return (a.textContent || a.innerText || "").toLowerCase().indexOf(search.toLowerCase())>=0;
+		};
+	});
+	$(function () {
+		var container = $('.inner');
+		$.getJSON('./jstree.json', function (data) {
+			var first = true;
+			$.each(data, function (i, v) {
+				if(first) {
+					container.append('<div style="text-align:center;" class="item clearfix first">' + v.description.full + '</div>');
+					//container.append('<div style="text-align:center;" class="item clearfix first">' + v.description.full + '</div>');
+					first = false;
+					return true;
+				}
+				if(!v.ignore) {
+					if(!v.code) {
+						v.code = '';
+					}
+					if(v.code.indexOf('\n') > 0) {
+						var l = 0,
+							s = v.code.split('\n')[1];
+						while(s[l] === '\t') { l++; }
+						v.code = new Array(l).join('\t') + v.code;
+						v.code = v.code.replace(new RegExp('^\t{'+(l-1)+'}','mg'), '');
+						v.code = v.code.replace(/\t+\:/g, ' :');
+					}
+					v.code = v.code.replace(/\t/g,'    ')
+					container.append('<div class="item clearfix"><div class="code"><pre><code>' + v.code + '</code></pre></div><div class="docs">' + v.description.full + '</div></div>');
+				}
+				//container.append(v.description.full);
+			});
+			$('h2').appendTo('.head').each(function () {
+				//https://github.com/vakata/jstree/archive/2.0.0-alpha.zip
+				var t = $(this),
+					a = t.text().replace(/jstree /ig,'');
+				t.html('<a href="http://jstree.com" class="logo" style="">&nbsp;</a><a class="btn btn-warning" href="https://github.com/vakata/jstree/archive/' + a + '.zip"><i class="icon-leaf"></i>&nbsp;&nbsp;Fork jsTree</a> <a class="btn btn-success" href="https://github.com/vakata/jstree/archive/' + a + '.zip"><i class="icon-download"></i>&nbsp;&nbsp;Download ' + a + '</a>');
+			});
+			container.append('<div style="text-align:center; border-top:1px dotted silver;" class="item clearfix last">' + $('.first').html() + '</div>');
+			$('.first').html(' ');
+			$('.docs > h3').each(function () {
+				$(this).closest('.item').before($(this));
+			});
+			$('.item:eq(0)').append('<div class="input-append" style="transition: box-shadow 0.2s linear 0s; width:260px; text-align:center; border-radius:0 0 10px 10px; margin:0 auto; margin-left:-140px; left:50%; top:20px; position:absolute; padding:10px; background:white;"><input class="search" id="q" value="" placeholder="Begin typing to search" type="text" /><button class="btn" type="button" id="cls" onclick="$(this).prev().val(\'\').keypress();" title="Clear search">&times;</button></div>');
+			var q = $('#q').parent(),
+				t = q.offset().top,
+				d = $(document);
+			q.data('fixed', false);
+			d.bind('scroll', function () {
+				if(d.scrollTop() > t) {
+					if(q.data('fixed') === false) {
+						q.css({'position':'fixed', 'top':'0', 'boxShadow':'0 0 5px gray'}).data('fixed', true);
+					}
+				}
+				else {
+					if(q.data('fixed') === true) {
+						q.css({'position':'absolute', 'top':'20px', 'boxShadow':'none'}).data('fixed', false);
+					}
+				}
+			});
+			var to = false;
+			if(document.location.hash && document.location.hash.length) {
+				$('#q').val(document.location.hash.replace(/^#/,''));
+			}
+			var last = false;
+			$('#q').on('keypress', function (e) {
+				//e.preventDefault();
+				if(to) { clearTimeout(to); }
+				to = setTimeout(function () {
+					var s = $.trim($('#q').val().replace(/[^a-z0-9_.\(\)\$]+/i,''));
+					if(s !== last) {
+						$('.alert').remove();
+						$('.selected').removeClass('selected');
+						if(s.length) {
+							var i = $('.docs code:icontains("' + s + '")').addClass('selected').closest('.item'),
+								t = $();
+							
+							i.each(function () {
+								t = t.add($(this));
+								t = t.add($(this).prevAll('h3:eq(0)'));
+							});
+							t.show();
+							$('.item:gt(0), h3').not(t).hide();
+
+							if(t.length == 0) {
+								$('.inner').append('<div class="alert alert-error" style="margin:20px; text-align:center; padding:20px;">No methods or properties matching `' + s + '`</div>');
+								$("html, body").animate({ scrollTop: 0 }, 200);
+							}
+							else {
+								$("html, body").animate({ scrollTop: t.eq(0).offset().top });
+							}
+							$('#cls').prop('disabled', false);
+						}
+						else {
+							$('.item, h3').show();
+							$('#cls').prop('disabled', true);
+							$("html, body").animate({ scrollTop: 0 });
+						}
+						document.location.hash = last = s;
+						$('.last').appendTo(container).show();
+					}
+				}, 500);
+			}).select().keypress();
+			$('pre').each(function () { hljs.highlightBlock(this); });
+		});
+	});
+	</script>
+</body>
+</html>
