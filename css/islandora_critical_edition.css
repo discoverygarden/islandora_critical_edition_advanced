@@ -1,0 +1,8 @@
+
+.islandora_crited_list {
+  list-style-type: none;
+}
+
+.islandora_crited_list * {
+  text-decoration: none;
+}
