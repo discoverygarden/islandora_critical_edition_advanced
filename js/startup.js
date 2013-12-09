@@ -96,6 +96,12 @@ var CriticalEditionViewer = {
 			CriticalEditionViewer.cwrc_writer.layout.sizePane("east", $jq('#CriticalEditionViewer').width());
 			CriticalEditionViewer.Viewer.toggle_text_image_linking(0);
 		},
+		show_versionable_transcriptions: function() {
+//			CriticalEditionViewer.cwrc_writer.layout.close("west");
+//			CriticalEditionViewer.cwrc_writer.layout.close("north");
+//			CriticalEditionViewer.cwrc_writer.layout.sizePane("east", $jq('#CriticalEditionViewer').width());
+//			CriticalEditionViewer.Viewer.toggle_text_image_linking(0);
+		},
 		show_tei_text: function() {
 			// TODO:
 			if($jq('navi')) {
@@ -466,6 +472,9 @@ var CriticalEditionViewer = {
 						break;
 					case "Image":
 						CriticalEditionViewer.Viewer.show_plain_image();
+						break;
+					case "Transcriptions":
+						CriticalEditionViewer.Viewer.show_versionable_transcriptions();
 						break;
 				}
 			});
