@@ -2,11 +2,11 @@
 
 /**
  * @file
- * Handles the association of an Audio object.
+ * Handles the association of an Video object.
  */
 
 /**
- * Form to associate existing Audio object.
+ * Form to associate existing Video object.
  *
  * @param array $form
  *   Drupal form
@@ -84,19 +84,23 @@ function make_video_tei_rdf($versionable_object, $video_object) {
   $ocr_datastream = $new_page_object->constructDatastream("OCR", 'M');
   $ocr_datastream->mimetype = 'text/plain';
   $ocr_datastream->label = "Default Transcription";
-  $ocr_datastream->setContentFromString = "Default transcription";
+  $ocr_datastream->setContentFromString(t("Transcription"));
   $page_object->ingestDatastream($ocr_datastream);
   islandora_critical_edition_add_cwrc_datastream($page_object);
 }
 
 /**
- * Unsure of what this does.
- * @todo Document
+ * Creates default blank transcription for new Versionable Object.
+ *
+ * @param AbstactObject $versionable_object
+ *   Object representing versionable object
+ * @param String $vudio_object_pid
+ *   PID of ausio object being transcribed
  */
 function make_video_transcription($versionable_object, $video_object_pid) {
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/calliope');
   $video_object = islandora_object_load($video_object_pid);
-  $label = t('Transcription of') . " " . $video_object->label;
+  $label = $video_object->label;
   $transcription_object = islandora_critical_edition_advanced_build_transcription($versionable_object, $label);
   $transcription_datastream = $transcription_object->constructDatastream("TRANSCRIPTION", 'M');
   $transcription_datastream->mimetype = 'text/plain';

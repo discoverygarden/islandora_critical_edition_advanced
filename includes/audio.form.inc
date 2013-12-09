@@ -85,19 +85,23 @@ function make_audio_tei_rdf($versionable_object, $audio_object) {
   $ocr_datastream = $new_page_object->constructDatastream("OCR", 'M');
   $ocr_datastream->mimetype = 'text/plain';
   $ocr_datastream->label = "Default Transcription";
-  $ocr_datastream->setContentFromString = "Default transcription";
+  $ocr_datastream->setContentFromString(t("Transcription"));
   $page_object->ingestDatastream($ocr_datastream);
   islandora_critical_edition_add_cwrc_datastream($page_object);
 }
 
 /**
- * Unsure of what this does.
- * @todo Document
+ * Creates default blank transcription for new Versionable Object.
+ *
+ * @param AbstactObject $versionable_object
+ *   Object representing versionable object
+ * @param String $audio_object_pid
+ *   PID of ausio object being transcribed
  */
 function make_audio_transcription($versionable_object, $audio_object_pid) {
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/calliope');
   $audio_object = islandora_object_load($audio_object_pid);
-  $label = t('Transcription of') . " " . $audio_object->label;
+  $label = $audio_object->label;
   $transcription_object = islandora_critical_edition_advanced_build_transcription($versionable_object, $label);
   $transcription_datastream = $transcription_object->constructDatastream("TRANSCRIPTION", 'M');
   $transcription_datastream->mimetype = 'text/plain';
