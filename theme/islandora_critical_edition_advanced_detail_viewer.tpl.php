@@ -24,10 +24,13 @@
 				<img id="tei_plain_text" title="Plain Text" class="work_action_img" style="cursor: pointer;"src="<?php print $module_base;?>/img/text_plain.png" alt="image" />
 			</div>
 			<div style="float:left;" class="action_img">
-				<img id="tei_text_img" title="TEI Text" class="work_action_img" style="cursor: pointer;" src="<?php print $module_base;?>/img/text_tei.png" alt="image" />
+				<img id="tei_text_img" title="TEI Text" class="work_action_img" style="cursor: pdointer;" src="<?php print $module_base;?>/img/text_tei.png" alt="image" />
 			</div>
 			<div style="float:left;" class="action_img">
 				<img id="img_title" title="Image" class="work_action_img img_selected" style="cursor: pointer;" src="<?php print $module_base;?>/img/picture.png" alt="image" />
+			</div>
+			<div style="float:left;" class="action_img">
+				<img id="img_transcriptions" title="Transcriptions" class="work_action_img" style="cursor: pointer;" src="<?php print $module_base;?>/img/list_transcriptions.png" alt="image" />
 			</div>
 			<div class="switch-wrapper" style="height:100%;border:1px solid green;float:left">
 				<label style="float:left;" for="anno_entity_switch">Annotations and Entitys</label><input class="switch " id="anno_entity_switch" type="checkbox" value="0">
@@ -79,4 +82,9 @@
 		  
 	<?php endif;?>
 	</div>
+	<?php
+  print '<pre>';
+  var_dump(get_defined_vars());
+print '</pre>';
+?>
 </div>

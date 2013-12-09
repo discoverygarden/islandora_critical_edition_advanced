@@ -259,7 +259,7 @@ function islandora_critical_edition_advanced_prepare_advanced($object) {
             'islandora_object' => $tei_rdf,
             'media_viewer' => NULL,
             'player_params' => NULL,
-            'transcription_text' => islandora_critical_edition_advanced_display_tei($test_obj, 'CWRC'),
+            'transcription_text' => $transcriptions,//islandora_critical_edition_advanced_display_tei($test_obj, 'CWRC'),
             'module_base' => url($module_path),
             )));
           drupal_exit();
