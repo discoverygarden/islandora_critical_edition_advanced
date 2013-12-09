@@ -1,6 +1,0 @@
-name = "Islandora Advanced Critical Editions"
-description = "Create advanced critical editions of Islandora objects."
-package = Islandora
-dependencies[] = islandora_critical_edition
-version = 7.x-dev
-core = 7.x
