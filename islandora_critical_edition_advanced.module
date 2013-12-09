@@ -431,7 +431,7 @@ function islandora_critical_edition_advanced_preprocess_islandora_critical_editi
   drupal_add_js("$module_path/js/jqPagination/js/scripts.js");
 
   drupal_add_js("$module_path/js/zoom-master/jquery.zoom.js");
-  drupal_add_css("$module_path/js/jQuery_switchButton/jquery.switchButton.css");
+  drupal_add_css("$module_path/js/jQuery-switchButton/jquery.switchButton.css");
   drupal_add_js(
     array(
       'islandora_critical_edition_advanced' =>
