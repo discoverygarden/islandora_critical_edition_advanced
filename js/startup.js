@@ -505,7 +505,7 @@ var CriticalEditionViewer = {
 					console.log("iframe load complete");
 					
 					$jq('#cwrc_wrapper', window.frames[0].document).height($jq('#view_box').height());
-					
+					console.log(document.getElementById('viewer_iframe').contentWindow);
 					// Set the writer object for access later
 					CriticalEditionViewer.cwrc_writer = document.getElementById('viewer_iframe').contentWindow['writer'];
 					CriticalEditionViewer.cwrc_writer_helper = document.getElementById('viewer_iframe').contentWindow['islandoraCWRCWriter'];

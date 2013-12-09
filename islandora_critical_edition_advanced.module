@@ -253,6 +253,7 @@ function islandora_critical_edition_advanced_prepare_advanced($object) {
       if ($reference_object) {
         $content_models = $reference_object->relationships->get(FEDORA_MODEL_URI, 'hasModel');
         $content_model = $content_models[0]['object']['value'];
+        dsm($content_model);
         if ($content_model == 'islandora:bookCModel') {
           // This is a ....sigh.. iFrame.
           $output = drupal_json_output(theme("islandora_critical_edition_advanced_detail_viewer", array(
@@ -430,7 +431,7 @@ function islandora_critical_edition_advanced_preprocess_islandora_critical_editi
   drupal_add_js("$module_path/js/jqPagination/js/scripts.js");
 
   drupal_add_js("$module_path/js/zoom-master/jquery.zoom.js");
-  drupal_add_css("$module_path/js/jQuery-switchButton/jquery.switchButton.css");
+  drupal_add_css("$module_path/js/jQuery_switchButton/jquery.switchButton.css");
   drupal_add_js(
     array(
       'islandora_critical_edition_advanced' =>
@@ -453,12 +454,13 @@ function islandora_critical_edition_advanced_preprocess_islandora_critical_editi
   $to_construct;
   foreach ($critical_aparatus as $datastream) {
     // Access individual datastreams and its content.
-    $to_construct[$datastream->id] = $datastream->content;
+    if($datastream->id != "DC" && $datastream->id != "TN" && $datastream->id != "RELS-EXT") {
+      $to_construct[$datastream->id] = $datastream->content;
+    }
   }
 
   $to_construct['appendix'] = 'Appendix';
   $to_construct['versions'] = 'Versions';
-
   $tn_array = array();
   // Build the TN array for the elastislide viewer.
   foreach (array_keys($associated_object_keys) as $element) {
@@ -481,6 +483,7 @@ function islandora_critical_edition_advanced_preprocess_islandora_critical_editi
   foreach (array_keys($aparatus_datastreams) as $element) {
     if (isset($to_construct[$element]) || $show_all == TRUE) {
       $entry = (array_search($element, $construct_keys, TRUE) - 1);
+      
       $form_state['publish_viewer']["{$element}_tab"] = array(
         '#id' => "{$element}-tab",
         '#group' => "{$element}_viewer",
@@ -491,6 +494,8 @@ function islandora_critical_edition_advanced_preprocess_islandora_critical_editi
       );
       if ($element == 'appendix' || $element == 'versions' || $element == 'collations') {
         $body_tt = theme("islandora_critical_edition_container_{$element}_table", array("object" => $variables['islandora_object']));
+
+        //dsm($construct_keys[$entry], "entry");
         $form_state['publish_viewer']["{$element}_tab"]['body'] = array(
           '#id' => "{$element}-tab",
           '#group' => "{$element}_viewer",
@@ -541,8 +546,8 @@ function islandora_critical_edition_advanced_preprocess_islandora_critical_editi
                 'text_pager' => theme("islandora_critical_edition_advanced_aparatus_pager",
                   array(
                     'islandora_object' => $variables['islandora_object'],
-                    'tab_previous' => (isset($aparatus_datastreams[$construct_keys[$entry]]) ? substr($aparatus_datastreams[$construct_keys[$entry]], 0, 16) : "_blank_"),
-                    'tab_next' => (isset($aparatus_datastreams[$construct_keys[$entry + 2]]) ? substr($aparatus_datastreams[$construct_keys[$entry + 2]], 0, 16) : "_blank_"),
+                    'tab_previous' => (isset($construct_keys[$entry]) ? substr($aparatus_datastreams[$construct_keys[$entry]], 0, 16) : "_blank_"),
+                    'tab_next' => (isset($construct_keys[$entry + 2]) ? substr($aparatus_datastreams[$construct_keys[$entry + 2]], 0, 16) : "_blank_"),
                   )
                 ),
               )

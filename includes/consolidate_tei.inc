@@ -164,7 +164,7 @@ function islandora_critical_edition_advanced_display_page_tei($object, $dsid = '
 	$tomcat_url = str_replace('/fedora', '', $islandora_url);
 	$pid = $object->id;
 	if (!$object['TEI']) {
-		islandora_critical_edition_consolidate_tei($object);
+		islandora_critical_edition_consolidate_page_tei($object);
 	}
 	$path = drupal_get_path('module', 'islandora_critical_edition_advanced');
 	$xml_path = url("islandora/object/$pid/datastream/TEI/view", array(
@@ -177,3 +177,36 @@ function islandora_critical_edition_advanced_display_page_tei($object, $dsid = '
 	return file_get_contents("$tomcat_url/saxon/SaxonServlet?source=$xml_path&style=$xslt_path");
 }
 
+
+function islandora_critical_edition_consolidate_page_tei($object, $dsid = 'CWRC') {
+	module_load_include('inc', 'islandora_paged_content', 'includes/utilities');
+	module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/utilities');
+
+	$title = $object->label;
+
+	$master = new DOMDocument();
+	$master->formatOutput = TRUE;
+	$master->preserveWhiteSpace = TRUE;
+	$master->loadXML(islandora_critical_edition_advanced_get_blank_tei($title));
+	$master_content_nodes = array();
+	$master_content_nodes['front'] = $master->getElementsByTagName('front')->item(0);
+	$master_content_nodes['body'] = $master->getElementsByTagName('body')->item(0);
+	$master_content_nodes['back'] = $master->getElementsByTagName('back')->item(0);
+
+		if ($object[$dsid]) {
+			$new_dom = new DOMDocument();
+			$new_dom->formatOutput = TRUE;
+			$new_dom->preserveWhiteSpace = TRUE;
+			$new_dom->loadXML($object[$dsid]->content);
+			$text_node = $new_dom->getElementsByTagName('text')->item(0);
+			$content_nodes = $text_node->childNodes;
+			foreach ($content_nodes as $content_node) {
+				$content_node = $master->importNode($content_node, TRUE);
+				$children = $content_node->childNodes;
+				foreach ($children as $child) {
+					$master_content_nodes[$content_node->tagName]->appendChild($child);
+				}
+			}
+		}
+	islandora_critical_edition_upsert_tei($object, $master->saveXML());
+}
