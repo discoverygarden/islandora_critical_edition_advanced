@@ -181,7 +181,7 @@ function islandora_critical_edition_advanced_display_page_tei($object, $dsid = '
     islandora_critical_edition_consolidate_tei($object);
   }
   $path = drupal_get_path('module', 'islandora_critical_edition_advanced');
-  $xml_path = url("islandora/object/$pid/datastream/TEI/view", array(
+  $xml_path = url("islandora/object/$pid/datastream/$dsid/view", array(
     'absolute' => TRUE,
     'query' => array(
       'token' => islandora_get_object_token($pid, $dsid),

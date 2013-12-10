@@ -721,7 +721,7 @@ function islandora_critical_edition_islandora_versionableobjectcmodel_islandora_
       $content_models = $reference_object->relationships->get(FEDORA_MODEL_URI, 'hasModel');
       $content_model = $content_models[0]['object']['value'];
       if ($content_model == 'islandora:bookCModel') {
-        $output = theme('islandora_critical_edition', array('islandora_object' => $tei_rdf));
+        $output = theme('islandora_critical_edition', array('islandora_object' => $tei_rdf, 'suppress_button' => TRUE));
       }
       if (in_array($content_model, $media_cmodels)) {
         $output = theme('islandora_critical_media_object', array(
