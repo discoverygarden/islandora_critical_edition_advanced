@@ -19,33 +19,35 @@
 		</div>
 	</div>
 	<?php if (!$player_params || !$media_viewer): ?>
-	<div style="width:100%;height:40px;border:1px solid red;">
-			<div style="float:left;" class="action_img">
-				<img id="tei_plain_text" title="Plain Text" class="work_action_img" style="cursor: pointer;"src="<?php print $module_base;?>/img/text_plain.png" alt="image" />
+		<?php if ($player_ready == NULL): ?>
+			<div style="width:100%;height:40px;border:1px solid red;">
+				<div style="float:left;" class="action_img">
+					<img id="tei_plain_text" title="Plain Text" class="work_action_img" style="cursor: pointer;"src="<?php print $module_base;?>/img/text_plain.png" alt="image" />
+				</div>
+				<div style="float:left;" class="action_img">
+					<img id="tei_text_img" title="TEI Text" class="work_action_img" style="cursor: pdointer;" src="<?php print $module_base;?>/img/text_tei.png" alt="image" />
+				</div>
+				<div style="float:left;" class="action_img">
+					<img id="img_title" title="Image" class="work_action_img img_selected" style="cursor: pointer;" src="<?php print $module_base;?>/img/picture.png" alt="image" />
+				</div>
+				<div style="float:left;" class="action_img">
+					<img id="img_transcriptions" title="Transcriptions" class="work_action_img" style="cursor: pointer;" src="<?php print $module_base;?>/img/list_transcriptions.png" alt="image" />
+				</div>
+				<div class="switch-wrapper" style="height:100%;border:1px solid green;float:left">
+					<label style="float:left;" for="anno_entity_switch">Annotations and Entitys</label><input class="switch " id="anno_entity_switch" type="checkbox" value="0">
+				</div>
+				<div class="switch-wrapper" style="height:100%;border:1px solid green;float:left">
+					<label style="float:left;" for="til_switch">Text-Image Linking</label><input class="switch" id="til_switch" type="checkbox" value="0">
+				</div>
+				<div id="jqpagination" class="pagination img_pager">
+				    <a href="#" class="first" data-action="first">&laquo;</a>
+				    <a href="#" class="previous" data-action="previous">&lsaquo;</a>
+				    <input id="jqpagination_input" type="text" readonly="readonly" data-max-page="0" />
+				    <a href="#" class="next" data-action="next">&rsaquo;</a>
+				    <a href="#" class="last" data-action="last">&raquo;</a>
+			    </div>
 			</div>
-			<div style="float:left;" class="action_img">
-				<img id="tei_text_img" title="TEI Text" class="work_action_img" style="cursor: pdointer;" src="<?php print $module_base;?>/img/text_tei.png" alt="image" />
-			</div>
-			<div style="float:left;" class="action_img">
-				<img id="img_title" title="Image" class="work_action_img img_selected" style="cursor: pointer;" src="<?php print $module_base;?>/img/picture.png" alt="image" />
-			</div>
-			<div style="float:left;" class="action_img">
-				<img id="img_transcriptions" title="Transcriptions" class="work_action_img" style="cursor: pointer;" src="<?php print $module_base;?>/img/list_transcriptions.png" alt="image" />
-			</div>
-			<div class="switch-wrapper" style="height:100%;border:1px solid green;float:left">
-				<label style="float:left;" for="anno_entity_switch">Annotations and Entitys</label><input class="switch " id="anno_entity_switch" type="checkbox" value="0">
-			</div>
-			<div class="switch-wrapper" style="height:100%;border:1px solid green;float:left">
-				<label style="float:left;" for="til_switch">Text-Image Linking</label><input class="switch" id="til_switch" type="checkbox" value="0">
-			</div>
-			<div id="jqpagination" class="pagination img_pager">
-			    <a href="#" class="first" data-action="first">&laquo;</a>
-			    <a href="#" class="previous" data-action="previous">&lsaquo;</a>
-			    <input id="jqpagination_input" type="text" readonly="readonly" data-max-page="0" />
-			    <a href="#" class="next" data-action="next">&rsaquo;</a>
-			    <a href="#" class="last" data-action="last">&raquo;</a>
-		    </div>
-	</div>
+		<?php endif;?>
 	<?php endif; ?>
 	<div id="view_box" style="width:100%;height:100%;border:1px solid green;overflow:auto;position: relative;">
 	<?php if ($player_params || $media_viewer): ?>
@@ -67,7 +69,7 @@
 		<?php endif; ?>
 		<?php if ($media_viewer): ?>
 		  <div id="MediaPlayer" style="width:50%;height:100%;border:1px solid blue;float:right;">
-		    <img style="width: 100%;height:100%" class="associated_tn_img" src="<?php print $media_viewer;?>
+		    <img style="width: 100%;height:100%" class="associated_tn_img" src="<?php print $media_viewer;?>" alt=""/>
 		  </div>
 		<?php endif; ?>
 	<?php else: ?>
@@ -82,9 +84,6 @@
 		  
 	<?php endif;?>
 	</div>
-	<?php
-  print '<pre>';
-  var_dump(get_defined_vars());
-print '</pre>';
-?>
+		<div id="append_data">
+	</div>
 </div>

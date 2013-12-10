@@ -73,7 +73,8 @@ var CriticalEditionViewer = {
 		              "versionable_object": CriticalEditionViewer.data_pid,
 		        },
 	            success: function(data, status, xhr) {
-	              console.log(data);
+	              //console.log(data);
+	              //$jq('#append_data').append(data);
 //	              CriticalEditionViewer.data_pid = pid;
 //	              CriticalEditionViewer.Viewer.build(data);
 	            },
@@ -505,7 +506,7 @@ var CriticalEditionViewer = {
 					console.log("iframe load complete");
 					
 					$jq('#cwrc_wrapper', window.frames[0].document).height($jq('#view_box').height());
-					
+					console.log(document.getElementById('viewer_iframe').contentWindow);
 					// Set the writer object for access later
 					CriticalEditionViewer.cwrc_writer = document.getElementById('viewer_iframe').contentWindow['writer'];
 					CriticalEditionViewer.cwrc_writer_helper = document.getElementById('viewer_iframe').contentWindow['islandoraCWRCWriter'];
@@ -555,18 +556,6 @@ var CriticalEditionViewer = {
 					$jq('#create_annotation', window.frames[0].document).css("visibility", "hidden");
 					$jq('#create_annotation', window.frames[0].document).css("display", "none");
 					CriticalEditionViewer.Viewer.show_plain_image();
-					
-					// Lets make this image zoomable.
-//					$jq('#east_div', window.frames[0].document).append('<div><a id="zoom" class="zoom_image" href="#">Zoom</a><div>');
-//					$jq("#zoom", window.frames[0].document).css("border","1px solid red");
-//					$jq("#zoom", window.frames[0].document).css("margin-right","20px");
-//					$jq("#zoom", window.frames[0].document).css("float","right");
-//					$jq("#zoom", window.frames[0].document).css("position","absolute");
-//					$jq("#zoom", window.frames[0].document).css("right","5px");
-//					$jq("#zoom", window.frames[0].document).css("top","5px");
-//					$jq("#zoom", window.frames[0].document).css("z-index","30");
-					
-					//$jq('#annotations', window.frames[0].document).find('div[class="base_img"]').children(0).draggable();
 					
 					CriticalEditionViewer.Viewer.build_zoom();
 					
