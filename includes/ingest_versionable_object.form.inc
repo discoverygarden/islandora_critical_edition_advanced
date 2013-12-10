@@ -323,11 +323,16 @@ function islandora_critical_edition_advanced_versionable_object_form_validate(ar
     $page_count = count(islandora_paged_content_get_pages($source));
     foreach (array('first', 'last') as $element) {
       $numeric = is_numeric($values[$element]);
-      $in_range = $numeric ? $values[$element] < 1 || $values[$element] > $page_count : FALSE;
-      if ($in_range) {
+      $out_of_range = $numeric ? $values[$element] < 1 || $values[$element] > $page_count : FALSE;
+      if ($out_of_range) {
         $element = $form['source_ajax_wrapper']['page_range'][$element];
         form_error($element, t('@name must be a number between 1 - @max.', array('@name' => $element['#title'], '@max' => $page_count)));
       }
+    }
+    if ((int) $values['last'] < (int) $values['first']) {
+      $last = $form['source_ajax_wrapper']['page_range']['last'];
+      $first = $form['source_ajax_wrapper']['page_range']['first'];
+      form_error($last, t('@last must be less than @first.', array('@last' => $last['#title'], '@first' => $first['#title'])));
     }
   }
   // Validate Upload.
