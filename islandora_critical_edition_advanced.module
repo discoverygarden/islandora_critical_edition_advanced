@@ -59,14 +59,14 @@ function islandora_critical_edition_advanced_menu() {
     'type' => MENU_LOCAL_TASK,
     'access callback' => 'user_access',
     'access arguments' => array(ISLANDORA_CRITICAL_EDITION_ADVANCED_MODIFY),
-    'file' => 'includes/calliope.inc', 
+    'file' => 'includes/calliope.inc',
   );
 
   $items['islandora/critical_edition/viewer/trimed/%islandora_object'] = array(
     'title' => 'View Trimmed editor',
     'page callback' => 'islandora_critical_edition_advanced_view_trimmed_editor',
     'page arguments' => array(4),
-    'type' => MENU_CALLBACK, 
+    'type' => MENU_CALLBACK,
     'access callback' => 'user_access',
     'access arguments' => array(ISLANDORA_CRITICAL_EDITION_ADVANCED_MODIFY),
     'file' => 'includes/utilities.inc',
@@ -172,9 +172,7 @@ function islandora_critical_edition_advanced_menu() {
 function islandora_critical_edition_advanced_prepare_page_tei_consolidated($object) {
   // Return page level consolidated TEI.
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/consolidate_tei');
-
   $versionable_object = islandora_object_load(html_entity_decode(stripslashes($_POST['versionable_object']), ENT_QUOTES, 'UTF-8'));
-//  islandora_critical_edition_consolidate_tei($versionable_object);
   $transformed_tei = islandora_critical_edition_advanced_display_page_tei($object);
   echo $transformed_tei;
 }
@@ -213,20 +211,20 @@ function islandora_critical_edition_advanced_prepare_advanced($object) {
 
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/utilities');
   $data = $object->id;
-  
+
   $transcriptions_data = islandora_critical_get_related_transcriptions($data);
-  
+
   $transcriptions = array();
   foreach ($transcriptions_data as $key => $value) {
-  	$trans = islandora_object_load($key);
-  	$transcription_details['title'] = $transcriptions_data[$key];
-  	$transcription_details['text'] = $trans['TRANSCRIPTION']->content;
-  	array_push($transcriptions, $transcription_details);
+    $trans = islandora_object_load($key);
+    $transcription_details['title'] = $transcriptions_data[$key];
+    $transcription_details['text'] = $trans['TRANSCRIPTION']->content;
+    array_push($transcriptions, $transcription_details);
   }
   $data_object = islandora_object_load($data);
   $reference_object;
 
-  
+
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/consolidate_tei');
 
   // Load the transcription related to this object, if required.
@@ -258,7 +256,7 @@ function islandora_critical_edition_advanced_prepare_advanced($object) {
             'islandora_object' => $tei_rdf,
             'media_viewer' => NULL,
             'player_params' => NULL,
-            'transcription_text' => $transcriptions,//islandora_critical_edition_advanced_display_tei($test_obj, 'CWRC'),
+            'transcription_text' => $transcriptions,
             'module_base' => url($module_path),
           )));
           drupal_exit();
@@ -300,7 +298,7 @@ function islandora_critical_edition_advanced_prepare_advanced($object) {
       'islandora_object' => $data,
       'media_viewer' => $viewer,
       'player_params' => $player_params,
-      'transcription_text' => $transcriptions,//(isset($transcription_text->content) ? $transcription_text->content : NULL),
+      'transcription_text' => $transcriptions,
       'module_base' => url($module_path),
     )));
   }
@@ -309,7 +307,7 @@ function islandora_critical_edition_advanced_prepare_advanced($object) {
       'islandora_object' => $data,
       'media_viewer' => url("islandora/object/$data/datastream/TN/view"),
       'player_params' => NULL,
-      'transcription_text' => $transcriptions,//(isset($transcription_text->content) ? $transcription_text->content : NULL),
+      'transcription_text' => $transcriptions,
       'module_base' => url($module_path),
     )));
   }
@@ -426,13 +424,7 @@ function islandora_critical_edition_advanced_preprocess_islandora_critical_editi
 
   drupal_add_js("$module_path/js/zoom-master/jquery.zoom.js");
   drupal_add_css("$module_path/js/jQuery-switchButton/jquery.switchButton.css");
-  drupal_add_js(
-      array(
-        'islandora_critical_edition_advanced' =>
-        array(
-          'module_base' => $module_path,
-        ),
-      ), 'setting');
+  drupal_add_js(array('islandora_critical_edition_advanced' => array('module_base' => $module_path)), 'setting');
   // Include the jstree dependancies.
   $obj = islandora_object_load($variables['islandora_object']);
   $associated_objects = islandora_critical_edition_get_members($variables['islandora_object']);
@@ -512,17 +504,16 @@ function islandora_critical_edition_advanced_preprocess_islandora_critical_editi
               'tab_previous' => (isset($all_keys[$entry]) ? substr($aparatus_datastreams[$all_keys[$entry]], 0, 16) : "_blank_"),
               'tab_next' => (isset($all_keys[$entry + 2]) ? substr($aparatus_datastreams[$all_keys[$entry + 2]], 0, 16) : "_blank_"),
                 )
-
-              ),
-              'text_header' => $aparatus_datastreams[$element],
-              'text_pager' => theme("islandora_critical_edition_advanced_aparatus_pager",
+                ),
+                'text_header' => $aparatus_datastreams[$element],
+                'text_pager' => theme("islandora_critical_edition_advanced_aparatus_pager",
                array(
                  'islandora_object' => $variables['islandora_object'],
                  'tab_previous' => (isset($construct_keys[$entry]) ? substr($aparatus_datastreams[$construct_keys[$entry]], 0, 16) : "_blank_"),
                  'tab_next' => (isset($construct_keys[$entry + 2]) ? substr($aparatus_datastreams[$construct_keys[$entry + 2]], 0, 16) : "_blank_"),
                )
-              ),
-            )
+                ),
+              )
           ),
         );
       }

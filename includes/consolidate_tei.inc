@@ -155,6 +155,19 @@ function islandora_critical_edition_advanced_display_tei($object, $dsid = 'TEI')
   return file_get_contents("$tomcat_url/saxon/SaxonServlet?source=$xml_path&style=$xslt_path");
 }
 
+/**
+ * Returns transformed TEI fro CWRC datatstream.
+ *
+ * @global type $base_url
+ *
+ * @param AbstractObject $object
+ *   Object representing fedora page object
+ * @param String $dsid
+ *   Datastream ID of object
+ *
+ * @return String
+ *   transformed xml
+ */
 function islandora_critical_edition_advanced_display_page_tei($object, $dsid = 'CWRC') {
   module_load_include('inc', 'islandora', 'includes/authtokens');
   module_load_include('inc', 'islandora_paged_content', 'includes/utilities');
@@ -177,4 +190,3 @@ function islandora_critical_edition_advanced_display_page_tei($object, $dsid = '
   $xslt_path = "$base_url/$path/xml/EMiC_test_XSLT.xsl";
   return file_get_contents("$tomcat_url/saxon/SaxonServlet?source=$xml_path&style=$xslt_path");
 }
-

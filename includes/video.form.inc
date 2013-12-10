@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Handles the association of an Video object.
+ * Handles the association of a Video object.
  */
 
 /**
@@ -94,7 +94,7 @@ function make_video_tei_rdf($versionable_object, $video_object) {
  *
  * @param AbstactObject $versionable_object
  *   Object representing versionable object
- * @param String $vudio_object_pid
+ * @param String $video_object_pid
  *   PID of ausio object being transcribed
  */
 function make_video_transcription($versionable_object, $video_object_pid) {
