@@ -1278,3 +1278,15 @@ EOT;
     'container' => drupal_render($content),
   );
 }
+
+/**
+ * Implements hook_form_alter();
+ *
+ * Prevent the disabling of the default bookmark list.
+ */
+function islandora_critical_edition_advanced_form_islandora_bookmark_admin_settings_alter(array &$form, array &$form_state) {
+  $form['create_user_default_lists']['#disabled'] = TRUE;
+  $form['create_user_default_lists']['#default_value'] = TRUE;
+  $form['default_list_name']['#disabled'] = TRUE;
+  $form['default_list_name']['#default_value'] = t('@username\'s Workbench');
+}
