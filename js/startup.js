@@ -66,6 +66,7 @@ var CriticalEditionViewer = {
 	pager_data: new Array(),
 	Viewer: {
 		get_page_transformed_tei: function(page) {
+			console.log("page: " + page);
 			$jq.ajax({
 	            type: 'POST',
 	            url: Drupal.settings.basePath + 'islandora/cwrc_viewer/transformed_page/' + page,
@@ -74,7 +75,7 @@ var CriticalEditionViewer = {
 		        },
 	            success: function(data, status, xhr) {
 	              //console.log(data);
-	              //$jq('#append_data').append(data);
+	              $jq('#append_data').append(data);
 //	              CriticalEditionViewer.data_pid = pid;
 //	              CriticalEditionViewer.Viewer.build(data);
 	            },
