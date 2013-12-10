@@ -154,7 +154,7 @@ function islandora_critical_edition_advanced_display_tei($object, $dsid = 'TEI')
   return file_get_contents("$tomcat_url/saxon/SaxonServlet?source=$xml_path&style=$xslt_path");
 }
 
-function islandora_critical_edition_advanced_display_page_tei($object, $dsid = 'CWRC') {
+function islandora_critical_edition_advanced_display_page_tei($object, $dsid = 'TEI') {
 	module_load_include('inc', 'islandora', 'includes/authtokens');
 	module_load_include('inc', 'islandora_paged_content', 'includes/utilities');
 	module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/utilities');

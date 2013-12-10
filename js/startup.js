@@ -73,7 +73,8 @@ var CriticalEditionViewer = {
 		              "versionable_object": CriticalEditionViewer.data_pid,
 		        },
 	            success: function(data, status, xhr) {
-	              console.log(data);
+	              //console.log(data);
+	              //$jq('#append_data').append(data);
 //	              CriticalEditionViewer.data_pid = pid;
 //	              CriticalEditionViewer.Viewer.build(data);
 	            },

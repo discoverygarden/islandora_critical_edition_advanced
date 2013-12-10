@@ -69,7 +69,7 @@
 		<?php endif; ?>
 		<?php if ($media_viewer): ?>
 		  <div id="MediaPlayer" style="width:50%;height:100%;border:1px solid blue;float:right;">
-		    <img style="width: 100%;height:100%" class="associated_tn_img" src="<?php print $media_viewer;?>
+		    <img style="width: 100%;height:100%" class="associated_tn_img" src="<?php print $media_viewer;?>" alt=""/>
 		  </div>
 		<?php endif; ?>
 	<?php else: ?>
@@ -84,12 +84,6 @@
 		  
 	<?php endif;?>
 	</div>
-	<div>
-	<?php
-  print '<pre>';
-  var_dump(get_defined_vars());
-print '</pre>';
-?>
+		<div id="append_data">
 	</div>
-	
 </div>
