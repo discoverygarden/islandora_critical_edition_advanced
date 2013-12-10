@@ -236,7 +236,7 @@ function islandora_critical_edition_container_version_links(AbstractObject $obje
   $links = array(
     'add' => array(
       'title' => t('Add New Version'),
-      'href' => "islandora/object/{$object->id}/manage/edition_container",
+      'href' => "islandora/object/{$object->id}/manage/edition_container/ingest",
       'fragment' => 'create-vo',
     ),
     'import' => array(
