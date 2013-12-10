@@ -156,7 +156,7 @@ function islandora_critical_edition_advanced_display_tei($object, $dsid = 'TEI')
 }
 
 /**
- * Returns transformed TEI fro CWRC datatstream.
+ * Returns transformed from CWRC datatstream.
  *
  * @global type $base_url
  *
@@ -177,9 +177,7 @@ function islandora_critical_edition_advanced_display_page_tei($object, $dsid = '
   $islandora_url = variable_get('islandora_base_url', 'http://localhost:8080/fedora');
   $tomcat_url = str_replace('/fedora', '', $islandora_url);
   $pid = $object->id;
-  if (!$object['TEI']) {
-    islandora_critical_edition_consolidate_page_tei($object);
-  }
+
   $path = drupal_get_path('module', 'islandora_critical_edition_advanced');
   $xml_path = url("islandora/object/$pid/datastream/$dsid/view", array(
     'absolute' => TRUE,
@@ -187,7 +185,8 @@ function islandora_critical_edition_advanced_display_page_tei($object, $dsid = '
       'token' => islandora_get_object_token($pid, $dsid),
     ),
   ));
-  $xslt_path = "$base_url/$path/xml/EMiC_test_XSLT.xsl";
+  $xslt_path = "$base_url/$path/xml/EMiC_test_XSLTv2.xsl";
+  drupal_set_message("get contents url: " + "$tomcat_url/saxon/SaxonServlet?source=$xml_path&style=$xslt_path", "status");
   return file_get_contents("$tomcat_url/saxon/SaxonServlet?source=$xml_path&style=$xslt_path");
 }
 
@@ -231,3 +230,4 @@ function islandora_critical_edition_consolidate_page_tei($object, $dsid = 'CWRC'
   }
   islandora_critical_edition_upsert_tei($object, $master->saveXML());
 }
+>>>>>>> 403f01780d31de8ecda47837762715e6acd30d9a

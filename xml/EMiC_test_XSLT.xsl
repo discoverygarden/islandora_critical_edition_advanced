@@ -7,7 +7,7 @@
   <xsl:template match="/">
     <html>
       <head>
-        <title>This is a test.</title>
+        <title></title>
       </head>
       <body>
         <xsl:apply-templates/>
