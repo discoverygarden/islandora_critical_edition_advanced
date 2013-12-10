@@ -440,31 +440,16 @@ function add_derived_transcription($tei_rdf_object, $versionable_object_pid, $tr
 /**
  * Builds temp file with TEI-RDF data from page level objects.
  *
- * @param AbstractObject $page_object
+ * @param AbstractObject $object
  *   Object representing page
  * @param String $filename
  *   Temp file to hold data
  */
-function islandora_critical_edition_build_text_file($page_object, $filename) {
-  // @codingStandardsIgnoreStart
-  $replace_candidates = array(
-    '<br>',
-    '<br />',
-    '<lb></lb>',
-    '<lb/>',
-    '</l>',
-    '</lg>',
-  );
-  // @codingStandardsIgnoreEnd
-  if ($page_object['CWRC']) {
-    $raw_cwrc = $page_object['CWRC']->content;
-    $simple = $simple = simplexml_load_string($raw_cwrc);
-    $raw_text = $simple->text[0]->asXML();
-    foreach ($replace_candidates as $candidate) {
-      $raw_text = str_replace($candidate, "$candidate\n", $raw_text);
-    }
-    $cleaned_text = strip_tags($raw_text);
-    file_put_contents($filename, $cleaned_text, FILE_APPEND | LOCK_EX);
+function islandora_critical_edition_build_text_file($object, $filename) {
+  module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/utilities');
+  if (isset($object['CWRC'])) {
+    $text = islandora_critical_edition_convert_tei_to_plain_text($object['CWRC']->content);
+    file_put_contents($filename, $text, FILE_APPEND | LOCK_EX);
   }
 }
 
@@ -547,13 +532,29 @@ function islandora_transcription_file_update($transcription, $filename) {
  *   Transcription object
  */
 function islandora_critical_edition_advanced_build_transcription($versionable_object, $label) {
-  $tuque = new IslandoraTuque();
+  $transcription = islandora_critical_edition_advanced_construct_transcription($versionable_object, $label);
+  $versionable_object->repository->ingestObject($transcription);
+  return $transcription;
+}
+
+/**
+ * Builds a transcription object.
+ *
+ * @param AbstractObject $versionable_object
+ *   object representing enclising Versionable Object
+ * @param String $label
+ *   Label for new Transcription
+ *
+ * @return AbsgtractObject
+ *   Transcription object
+ */
+function islandora_critical_edition_advanced_construct_transcription(AbstractObject $versionable_object, $label) {
+  module_load_include('inc', 'islandora', 'includes/utilities');
   $namespace = islandora_get_namespace($versionable_object->id);
-  $transcription = $tuque->repository->constructObject($namespace);
+  $transcription = $versionable_object->repository->constructObject($namespace);
   $transcription->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOf', $versionable_object->id);
   $transcription->relationships->add(FEDORA_MODEL_URI, 'hasModel', 'islandora:transcriptionCModel');
   $transcription->label = $label;
   $transcription->owner = $versionable_object->owner;
-  $transcription_object = $tuque->repository->ingestObject($transcription);
-  return $transcription_object;
+  return $transcription;
 }
