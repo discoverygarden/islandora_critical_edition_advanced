@@ -28,7 +28,7 @@
 					<img id="img_title" title="Image" class="work_action_img" style="cursor: pointer;" src="<?php print $module_base;?>/img/picture.png" alt="image" />
 				</div>
 				<div style="float:left;" class="action_img">
-					<img id="tei_text_img" title="TEI Text" class="work_action_img" style="cursor: pdointer;" src="<?php print $module_base;?>/img/text_tei.png" alt="image" />
+					<img id="tei_text_img" title="TEI Text" class="work_action_img" style="cursor: pdointer;" src="<?php print $module_base;?>/img/TEI_logo.jpg" alt="image" />
 				</div>
 				<div style="float:left;" class="action_img">
 					<img id="img_transcriptions" title="Diplomatic Transcriptions" class="work_action_img img_selected" style="cursor: pointer;" src="<?php print $module_base;?>/img/list_transcriptions.png" alt="image" />
