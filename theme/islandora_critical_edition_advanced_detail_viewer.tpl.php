@@ -12,7 +12,7 @@
 			<a class="data_anchor" id ="detail_meta" href="#">Metadata | </a>
 		</div>
 		<div style="float:left;">
-			<a class="data_anchor" style="font-weight:bold;" id="detail_tran" href="#"> Transcript | </a>
+			<a class="data_anchor" style="font-weight:bold;" id="detail_tran" href="#"> Transcriptions | </a>
 		</div>
 		<div style="float:left;">
 			<a class="data_anchor" id="detail_perm" href="#"> Permalink</a>
@@ -22,19 +22,19 @@
 		<?php if ($player_ready == NULL): ?>
 			<div style="width:100%;height:40px;border:1px solid red;">
 				<div style="float:left;" class="action_img">
-					<img id="tei_plain_text" title="Plain Text" class="work_action_img" style="cursor: pointer;"src="<?php print $module_base;?>/img/text_plain.png" alt="image" />
+					<img id="tei_plain_text" title="Transcription" class="work_action_img" style="cursor: pointer;"src="<?php print $module_base;?>/img/text_plain.png" alt="image" />
+				</div>
+				<div style="float:left;" class="action_img">
+					<img id="img_title" title="Image" class="work_action_img" style="cursor: pointer;" src="<?php print $module_base;?>/img/picture.png" alt="image" />
 				</div>
 				<div style="float:left;" class="action_img">
 					<img id="tei_text_img" title="TEI Text" class="work_action_img" style="cursor: pdointer;" src="<?php print $module_base;?>/img/text_tei.png" alt="image" />
 				</div>
 				<div style="float:left;" class="action_img">
-					<img id="img_title" title="Image" class="work_action_img img_selected" style="cursor: pointer;" src="<?php print $module_base;?>/img/picture.png" alt="image" />
-				</div>
-				<div style="float:left;" class="action_img">
-					<img id="img_transcriptions" title="Transcriptions" class="work_action_img" style="cursor: pointer;" src="<?php print $module_base;?>/img/list_transcriptions.png" alt="image" />
+					<img id="img_transcriptions" title="Diplomatic Transcriptions" class="work_action_img img_selected" style="cursor: pointer;" src="<?php print $module_base;?>/img/list_transcriptions.png" alt="image" />
 				</div>
 				<div class="switch-wrapper" style="height:100%;border:1px solid green;float:left">
-					<label style="float:left;" for="anno_entity_switch">Annotations and Entitys</label><input class="switch " id="anno_entity_switch" type="checkbox" value="0">
+					<label style="float:left;" for="anno_entity_switch">Annotations & Entities</label><input class="switch " id="anno_entity_switch" type="checkbox" value="0">
 				</div>
 				<div class="switch-wrapper" style="height:100%;border:1px solid green;float:left">
 					<label style="float:left;" for="til_switch">Text-Image Linking</label><input class="switch" id="til_switch" type="checkbox" value="0">
