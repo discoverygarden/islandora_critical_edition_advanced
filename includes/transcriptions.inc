@@ -198,7 +198,7 @@ function islandora_critical_edition_create_transcription_form_submit(array $form
 
   $transcription->ingestDatastream($transcription_datastream);
   islandora_calliope_write_file($transcription->id);
-  drupal_set_message(t("Transaction object created"));
+  drupal_set_message(t("Transcription object created"));
 }
 
 /**
@@ -263,6 +263,20 @@ function islandora_critical_edition_manage_transcriptions_form(array $form, arra
     );
   }
   return $form;
+}
+
+/**
+ * Drupal Form Validation.
+ *
+ * @param array $form
+ *   Drupal Form
+ * @param array $form_state
+ *   Drupal Form State
+ */
+function islandora_critical_edition_manage_transcriptions_form_validate(array $form, array &$form_state) {
+  if (!$form_state['values']['transcription']) {
+    form_set_error('transcription', t('Please select a transcription.'));
+  }
 }
 
 /**
