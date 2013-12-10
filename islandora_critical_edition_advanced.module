@@ -33,6 +33,15 @@ function islandora_critical_edition_advanced_menu() {
     'access arguments' => array(2, 'manage_container'),
     'file' => 'includes/container_management.inc',
   );
+  $items['islandora/object/%islandora_object/manage/edition_container/ingest'] = array(
+    'title' => 'Add New Version',
+    'page callback' => 'islandora_critical_edition_advanced_ingest_versionable_object_page',
+    'page arguments' => array(2),
+    'type' => MENU_LOCAL_ACTION,
+    'access callback' => 'islandora_object_access',
+    'access arguments' => array(ISLANDORA_INGEST, 2),
+    'file' => 'includes/ingest_versionable_object.form.inc',
+  );
   $items['islandora/object/%islandora_object/manage/apparatus'] = array(
     'title' => 'Critical Edition Apparatus',
     'page callback' => 'drupal_get_form',
@@ -160,6 +169,12 @@ function islandora_critical_edition_advanced_menu() {
     'file' => 'includes/mvd.inc',
   );
 
+  $items['islandora/critical_edition_advanced_source/autocomplete'] = array(
+    'page callback' => 'islandora_critical_edition_advanced_versionable_object_form_source_autocomplete',
+    'access arguments' => array(ISLANDORA_VIEW_OBJECTS),
+    'file' => 'includes/ingest_versionable_object.form.inc',
+    'type' => MENU_CALLBACK,
+  );
   return $items;
 }
 
@@ -172,7 +187,6 @@ function islandora_critical_edition_advanced_menu() {
 function islandora_critical_edition_advanced_prepare_page_tei_consolidated($object) {
   // Return page level consolidated TEI.
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/consolidate_tei');
-  $versionable_object = islandora_object_load(html_entity_decode(stripslashes($_POST['versionable_object']), ENT_QUOTES, 'UTF-8'));
   $transformed_tei = islandora_critical_edition_advanced_display_page_tei($object);
   echo $transformed_tei;
 }
@@ -207,11 +221,14 @@ function islandora_critical_edition_advanced_prepare_detail_meta_data() {
 function islandora_critical_edition_advanced_prepare_advanced($object) {
   global $base_url;
   module_load_include('inc', 'islandora', 'includes/solution_packs');
+  module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/consolidate_tei');
+  module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/utilities');
+
   $module_path = drupal_get_path('module', 'islandora_critical_edition_advanced');
 
-  module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/utilities');
   $data = $object->id;
 
+  // Gather all transcriptions for this versionable object.
   $transcriptions_data = islandora_critical_get_related_transcriptions($data);
 
   $transcriptions = array();
@@ -221,18 +238,9 @@ function islandora_critical_edition_advanced_prepare_advanced($object) {
     $transcription_details['text'] = $trans['TRANSCRIPTION']->content;
     array_push($transcriptions, $transcription_details);
   }
-  $data_object = islandora_object_load($data);
   $reference_object;
 
-
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/consolidate_tei');
-
-  // Load the transcription related to this object, if required.
-  module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/utilities');
-  $members = islandora_critical_edition_get_members($data);
-  $transcription = array_search('islandora:transcriptionCModel', $members);
-  $transcription_object = islandora_object_load($transcription);
-  $transcription_text = $transcription_object['TRANSCRIPTION'];
 
   $tei_rdfs = array_keys(islandora_critical_edition_get_members($data));
   $player_params;
@@ -246,7 +254,6 @@ function islandora_critical_edition_advanced_prepare_advanced($object) {
     $rels = $tei_rdf->relationships->get(ISLANDORA_RELS_EXT_URI, ISLANDORA_CRITICAL_EDITION_IS_CRITICAL_EDITION_OF);
     if (is_array($rels)) {
       $reference_object = islandora_object_load($rels[0]['object']['value']);
-      $test_obj = islandora_object_load('islandora:13241');
       if ($reference_object) {
         $content_models = $reference_object->relationships->get(FEDORA_MODEL_URI, 'hasModel');
         $content_model = $content_models[0]['object']['value'];
@@ -276,12 +283,16 @@ function islandora_critical_edition_advanced_prepare_advanced($object) {
               $player_params['url'] = "http://discoverygarden-vagrant-emic.local/islandora/object/$reference_object->id/datastream/PROXY_MP3/view/$datastream->label";
               $player_params['mimetype'] = 'audio/mpeg';
             }
+            else {
+              $player_params = NULL;
+            }
           }
         }
       }
     }
   }
-  if ($player_params) {
+  // Return data formated for the correct type.
+  if (isset($player_params)) {
     $media_params = array(
       "pid" => $reference_object->id,
       "url" => $player_params['url'],
@@ -309,6 +320,7 @@ function islandora_critical_edition_advanced_prepare_advanced($object) {
       'player_params' => NULL,
       'transcription_text' => $transcriptions,
       'module_base' => url($module_path),
+      'player_ready' => $tei_rdfs,
     )));
   }
 }
@@ -440,12 +452,13 @@ function islandora_critical_edition_advanced_preprocess_islandora_critical_editi
   $to_construct;
   foreach ($critical_aparatus as $datastream) {
     // Access individual datastreams and its content.
-    $to_construct[$datastream->id] = $datastream->content;
+    if ($datastream->id != "DC" && $datastream->id != "TN" && $datastream->id != "RELS-EXT") {
+      $to_construct[$datastream->id] = $datastream->content;
+    }
   }
 
   $to_construct['appendix'] = 'Appendix';
   $to_construct['versions'] = 'Versions';
-
   $tn_array = array();
   // Build the TN array for the elastislide viewer.
   foreach (array_keys($associated_object_keys) as $element) {
@@ -468,6 +481,7 @@ function islandora_critical_edition_advanced_preprocess_islandora_critical_editi
   foreach (array_keys($aparatus_datastreams) as $element) {
     if (isset($to_construct[$element]) || $show_all == TRUE) {
       $entry = (array_search($element, $construct_keys, TRUE) - 1);
+
       $form_state['publish_viewer']["{$element}_tab"] = array(
         '#id' => "{$element}-tab",
         '#group' => "{$element}_viewer",
@@ -478,6 +492,7 @@ function islandora_critical_edition_advanced_preprocess_islandora_critical_editi
       );
       if ($element == 'appendix' || $element == 'versions' || $element == 'collations') {
         $body_tt = theme("islandora_critical_edition_container_{$element}_table", array("object" => $variables['islandora_object']));
+
         $form_state['publish_viewer']["{$element}_tab"]['body'] = array(
           '#id' => "{$element}-tab",
           '#group' => "{$element}_viewer",
@@ -533,8 +548,8 @@ function islandora_critical_edition_advanced_preprocess_islandora_critical_editi
                 'text_pager' => theme("islandora_critical_edition_advanced_aparatus_pager",
                   array(
                     'islandora_object' => $variables['islandora_object'],
-                    'tab_previous' => (isset($aparatus_datastreams[$construct_keys[$entry]]) ? substr($aparatus_datastreams[$construct_keys[$entry]], 0, 16) : "_blank_"),
-                    'tab_next' => (isset($aparatus_datastreams[$construct_keys[$entry + 2]]) ? substr($aparatus_datastreams[$construct_keys[$entry + 2]], 0, 16) : "_blank_"),
+                    'tab_previous' => (isset($construct_keys[$entry]) ? substr($aparatus_datastreams[$construct_keys[$entry]], 0, 16) : "_blank_"),
+                    'tab_next' => (isset($construct_keys[$entry + 2]) ? substr($aparatus_datastreams[$construct_keys[$entry + 2]], 0, 16) : "_blank_"),
                   )
                 ),
               )
@@ -619,6 +634,7 @@ function islandora_critical_edition_advanced_theme($existing, $type, $theme, $pa
         'player_params' => NULL,
         'transcritption_text' => NULL,
         'module_base' => NULL,
+        'player_ready' => NULL,
       ),
     ),
     'islandora_critical_edition_advanced_aparatus_pager' => array(
@@ -1044,4 +1060,56 @@ function islandora_critical_edition_advanced_islandora_delete_object_form_submit
     }
   }
   $form_state['redirect'] = isset($parent) ? "islandora/object/{$parent->id}" : 'islandora';
+}
+
+/**
+ * Implements hook_islandora_ingest_steps().
+ */
+function islandora_critical_edition_advanced_islandora_versionableObjectCModel_islandora_ingest_steps(array $form_state) {
+  return array(
+    'islandora_critical_edition_versionable_object' => array(
+      'weight' => -10,
+      'type' => 'form',
+      'form_id' => 'islandora_critical_edition_advanced_versionable_object_form',
+      'module' => 'islandora_critical_edition_advanced',
+      'file' => 'includes/ingest_versionable_object.form.inc',
+    ),
+  );
+}
+
+/**
+ * Implements hook_islandora_ingest_steps_alter().
+ */
+function islandora_critical_edition_advanced_islandora_ingest_steps_alter(array &$steps, array $form_state) {
+  $shared_storage = islandora_ingest_form_get_shared_storage($form_state);
+  if (!empty($steps['xml_form_builder_metadata_step']) && isset($shared_storage['source'])) {
+    $source = islandora_object_load($shared_storage['source']);
+    if (isset($source['MODS'])) {
+      // Set the template to be the source objects MODS datastream if present.
+      // This pre-populates the Metadata form.
+      $steps['xml_form_builder_metadata_step']['args'][0]['template'] = $source['MODS']->content;
+    }
+  }
+}
+
+/**
+ * Implements hook_islandora_datastream_ingested().
+ *
+ * When a datastream is ingested we filter the derivatives on source_dsid being
+ * equal to the current ingested datastream's id.
+ */
+function islandora_critical_edition_advanced_islandora_transcriptionCModel_TRANSCRIPTION_islandora_datastream_ingested(AbstractObject $object, AbstractDatastream $datastream) {
+  module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/calliope');
+  islandora_calliope_write_file($object->id);
+}
+
+/**
+ * Implements hook_islandora_datastream_ingested().
+ *
+ * When a datastream is ingested we filter the derivatives on source_dsid being
+ * equal to the current ingested datastream's id.
+ */
+function islandora_critical_edition_advanced_islandora_transcriptionCModel_TRANSCRIPTION_islandora_datastream_modified(AbstractObject $object, AbstractDatastream $datastream) {
+  module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/calliope');
+  islandora_calliope_write_file($object->id);
 }

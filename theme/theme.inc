@@ -44,7 +44,7 @@ function islandora_critical_edition_preprocess_islandora_critical_media_object(a
       'source_type' => 'media',
     ),
       ), 'setting');
-  islandora_critical_edition_add_js($variables , TRUE);
+  islandora_critical_edition_add_js($variables, TRUE);
   $islandora_object = $variables['islandora_object'];
   $pages = islandora_paged_content_get_pages($islandora_object);
   $pids = array_keys($pages);
@@ -236,7 +236,7 @@ function islandora_critical_edition_container_version_links(AbstractObject $obje
   $links = array(
     'add' => array(
       'title' => t('Add New Version'),
-      'href' => "islandora/object/{$object->id}/manage/edition_container",
+      'href' => "islandora/object/{$object->id}/manage/edition_container/ingest",
       'fragment' => 'create-vo',
     ),
     'import' => array(
@@ -335,26 +335,27 @@ function theme_islandora_critical_edition_container_versions_table(array &$varia
   $rows = array();
   $versions = islandora_critical_edition_container_versions_table_data($object, tablesort_get_sort($headers), $offset, $limit);
   foreach ($versions as $pid => $version) {
-    $source = $version['source'];
+
+    $source = $version;
     $cells = array(
       'version_name' => array(
         '#markup' => l($version['label'], "islandora/object/{$pid}", array(
-          'attributes' =>
-          array(
-            'title' => $version['label'],
-            'data-pid' => $pid,
-          ),
-            )
+            'attributes' =>
+            array(
+              'title' => $version['label'],
+              'data-pid' => $pid,
+            ),
+          )
         ),
       ),
       'source_name' => array(
-        '#markup' => l($source->label, "islandora/object/{$source->id}", array('attributes' => array('title' => $source->label))),
+        '#markup' => l($version['label'], "islandora/object/{$pid}", array('attributes' => array('title' => $version['label']))),
       ),
       'transcriptions' => islandora_critical_edition_container_table_transcriptions_cell($pid, $version['transcriptions']),
       'operations' => islandora_critical_edition_container_versions_table_operations_cell($pid, $version),
       'descriptions' => array(
         // TODO: should come from the description of the versionable object.
-        '#markup' => islandora_critical_edition_container_versions_table_descriptions_cell($source->id),
+        '#markup' => islandora_critical_edition_container_versions_table_descriptions_cell($pid),
       ),
     );
     // Only include cells which have headers.
@@ -387,6 +388,9 @@ function theme_islandora_critical_edition_container_versions_table(array &$varia
 function islandora_critical_edition_container_versions_table_descriptions_cell($source_id) {
   module_load_include('inc', 'islandora', 'includes/dublin_core');
   $object = islandora_object_load($source_id);
+  if (!$object) {
+    return "";
+  }
   $dc = new DublinCore($object['DC']->content);
   $description = $dc->dc->dc['dc:description'];
   return (isset($description[0]) ? $description[0] : "");

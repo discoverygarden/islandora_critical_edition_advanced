@@ -34,37 +34,6 @@ function islandora_versionable_object_management_menu(AbstractObject $object) {
 
   $output = array();
   $output['management_tabs'] = array('#type' => 'vertical_tabs');
-  $output['management_tabs']['create_tei_rdf'] = array(
-    '#id' => 'create-tei-rdf',
-    '#access' => user_access(ISLANDORA_ADD_DS) && empty($primary_objects),
-    '#title' => t('Create TEI-RDF Object'),
-    '#description' => t('Create TEI-RDF Object from existing book object'),
-    '#type' => 'fieldset',
-    'form' => drupal_get_form('islandora_critical_edition_associate_book_form', $object),
-    '#collapsible' => TRUE,
-    '#collapsed' => TRUE,
-  );
-  $output['management_tabs']['attach_tei_rdf'] = array(
-    '#id' => 'attach-tei-rdf',
-    '#access' => user_access(ISLANDORA_ADD_DS) && empty($primary_objects),
-    '#title' => t('Associate TEI-RDF Object'),
-    '#description' => t('Associate existing TEI-RDF Object from repository'),
-    '#type' => 'fieldset',
-    'form' => drupal_get_form('islandora_critical_edition_associate_tei_rdf_form', $object, 'islandora:criticalEditionCModel'),
-    '#collapsible' => TRUE,
-    '#collapsed' => TRUE,
-  );
-  $output['management_tabs']['attach_partial_tei_rdf'] = array(
-    '#id' => 'attach-partial-tei-rdf',
-    '#access' => user_access(ISLANDORA_ADD_DS) && empty($primary_objects),
-    '#title' => t('Create TEI-RDF Object from existing object'),
-    '#description' => t('Create new RDF-TEI object as a full or partial subset on an existing object.'),
-    '#type' => 'fieldset',
-    'form' => drupal_get_form('islandora_critical_edition_associate_tei_rdf_form', $object, 'islandora:criticalEditionCModel'),
-    '#collapsible' => TRUE,
-    '#collapsed' => TRUE,
-  );
-
   $output['management_tabs']['add_transcription'] = array(
     '#id' => 'add-transcription',
     '#access' => user_access(ISLANDORA_ADD_DS),
@@ -84,15 +53,6 @@ function islandora_versionable_object_management_menu(AbstractObject $object) {
     '#collapsed' => TRUE,
   );
 
-  $output['management_tabs']['delete_tei_rdf'] = array(
-    '#id' => 'delete-tei-rdf',
-    '#access' => user_access(ISLANDORA_ADD_DS) && $tei_rdf,
-    '#title' => t('Disassociate TEI-RDF Object'),
-    '#type' => 'fieldset',
-    'form' => drupal_get_form('islandora_critical_edition_delete_tei_rdf_form', $object, $tei_rdf),
-    '#collapsible' => TRUE,
-    '#collapsed' => TRUE,
-  );
   $output['management_tabs']['update_datastreams'] = array(
     '#id' => 'update-datastreams',
     '#access' => user_access(ISLANDORA_ADD_DS) && $tei_rdf,
