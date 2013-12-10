@@ -17,7 +17,7 @@
  *   The Drupal form definition.
  */
 function islandora_critical_edition_admin_settings_form(array $form, array &$form_state) {
-  module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/utilties');
+  module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/utilities');
   module_load_include('inc', 'islandora_critical_edition', 'includes/utilities');
   $default_streams = variable_get('critical_apparatus_streams', FALSE);
   $streams = $default_streams ? $default_streams : islandora_critical_apparatus_get_datastreams();
