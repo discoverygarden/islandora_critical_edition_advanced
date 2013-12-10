@@ -363,6 +363,7 @@ function islandora_critical_edition_advanced_versionable_object_form_validate(ar
  */
 function islandora_critical_edition_advanced_versionable_object_form_submit(array $form, array &$form_state) {
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/transcriptions');
+  module_load_include('inc', 'islandora_critical_edition', 'includes/utilities');
   module_load_include('inc', 'islandora_paged_content', 'includes/utilities');
   $values = $form_state['values'];
   $shared_storage = &islandora_ingest_form_get_shared_storage($form_state);
@@ -416,6 +417,29 @@ function islandora_critical_edition_advanced_versionable_object_form_submit(arra
         array(),
       );
       batch_set($batch);
+    }
+    // TEI-RDF objects that are not associated with books require that we have
+    // at least one child islandora:criticalEditionCModelPage so that the users
+    // can edit TEI with the cwrc.
+    else {
+      $namespace = islandora_get_namespace($tei_rdf->id);
+      $page = $tei_rdf->repository->constructObject($namespace);
+      $page->label = $tei_rdf->label['label'];
+      // Add all relationships.
+      $page->relationships->add(FEDORA_MODEL_URI, 'hasModel', 'islandora:criticalEditionCModelPage');
+      $page->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOf', $tei_rdf->id);
+      $page->relationships->add(ISLANDORA_RELS_EXT_URI, 'isPageOf', $tei_rdf->id);
+      $page->relationships->add(ISLANDORA_RELS_EXT_URI, 'isSequenceNumber', 1, RELS_TYPE_PLAIN_LITERAL);
+      $page->relationships->add(ISLANDORA_RELS_EXT_URI, 'isPageNumber', 1, RELS_TYPE_PLAIN_LITERAL);
+      $page->relationships->add(ISLANDORA_RELS_EXT_URI, 'isSection', 1, RELS_TYPE_PLAIN_LITERAL);
+      // Add default datastreams.
+      $datastream = $page->constructDatastream("OCR", 'M');
+      $datastream->mimetype = 'text/plain';
+      $datastream->label = "Default Transcription";
+      $datastream->setContentFromString(t("Transcription"));
+      $page->ingestDatastream($datastream);
+      islandora_critical_edition_add_cwrc_datastream($page);
+      $ingest_objects['page'] = $page;
     }
   }
   // Create a new Transcription Object.
@@ -595,7 +619,7 @@ function islandora_critical_edition_advanced_batch_update_transcript_from_tei_rd
 function islandora_critical_edition_advanced_ingest_versionable_object_tei_rdf_page_batch_operation(array $page, $tei_rdf, array &$context) {
   module_load_include('inc', 'islandora', 'includes/utilities');
   module_load_include('inc', 'islandora_critical_edition', 'includes/utilities');
-  $namespace = islandora_get_namespace($page['pid']);
+  $namespace = islandora_get_namespace($tei_rdf);
   $edition = islandora_get_tuque_connection()->repository->constructObject($namespace);
   $edition->label = $page['label'];
   // Add all relationships.
