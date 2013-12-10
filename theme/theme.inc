@@ -331,19 +331,18 @@ function theme_islandora_critical_edition_container_versions_table(array &$varia
   $rows = array();
   $versions = islandora_critical_edition_container_versions_table_data($object, tablesort_get_sort($headers), $offset, $limit);
   foreach ($versions as $pid => $version) {
-  	
+
     $source = $version;
-    //dsm($version['id'], "source");
     $cells = array(
       'version_name' => array(
         '#markup' => l($version['label'], "islandora/object/{$pid}",
           array(
             'attributes' =>
-              array(
-                'title' => $version['label'],
-                'data-pid' => $pid
-              )
-           )
+            array(
+              'title' => $version['label'],
+              'data-pid' => $pid,
+            ),
+          )
         ),
       ),
       'source_name' => array(
@@ -386,7 +385,7 @@ function theme_islandora_critical_edition_container_versions_table(array &$varia
 function islandora_critical_edition_container_versions_table_descriptions_cell($source_id) {
   module_load_include('inc', 'islandora', 'includes/dublin_core');
   $object = islandora_object_load($source_id);
-  if(!$object) {
+  if (!$object) {
     return "";
   }
   $dc = new DublinCore($object['DC']->content);
