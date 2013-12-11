@@ -469,7 +469,7 @@ function islandora_critical_edition_advanced_versionable_object_form_submit(arra
         $batch = array(
           'title' => t('Creating Transcription from TEI-RDF Object: @tei_rdf', array('@tei_rdf' => $tei_rdf->label)),
           'file' => drupal_get_path('module', 'islandora_critical_edition_advanced') . '/includes/ingest_versionable_object.form.inc',
-          'progress_message' => t('@current of @total pages processed.'),
+          'progress_message' => t('@current of @total pages processed.', array('@total' => count($pages))),
           'finished' => 'islandora_critical_edition_advanced_ingest_versionable_object_transcription_batch_finished',
           'operations' => array(),
         );
@@ -635,6 +635,7 @@ function islandora_critical_edition_advanced_ingest_versionable_object_tei_rdf_p
   $namespace = islandora_get_namespace($tei_rdf);
   $edition = islandora_get_tuque_connection()->repository->constructObject($namespace);
   $edition->label = $page['label'];
+
   // Add all relationships.
   $edition->relationships->add(FEDORA_MODEL_URI, 'hasModel', 'islandora:criticalEditionCModelPage');
   $edition->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOf', $tei_rdf);
@@ -662,8 +663,8 @@ function islandora_critical_edition_advanced_ingest_versionable_object_tei_rdf_p
   if (!isset($edition['CWRC']) && isset($edition['OCR'])) {
     islandora_critical_edition_add_cwrc_datastream($edition);
   }
-  $context['sandbox']['pages'][$page->id] = $edition;
-  $context['results']['objects'][$page->id] = $edition;
+  $context['results']['pages'][] = $edition;
+  $context['results']['objects'][$edition->id] = $edition;
 }
 
 /**
@@ -675,39 +676,52 @@ function islandora_critical_edition_advanced_ingest_versionable_object_tei_rdf_p
 function islandora_critical_edition_advanced_ingest_versionable_object_tei_rdf_tei_datastream_batch_operation(array &$context) {
   module_load_include('inc', 'islandora', 'includes/ingest.form');
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/consolidate_tei');
+  module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/utilities');
   $batch = &batch_get();
   $ingest_objects = &islandora_ingest_form_get_objects($batch['form_state']);
   $tei_rdf = &$ingest_objects['tei-rdf'];
-  $content = new DOMDocument();
-  $content->formatOutput = TRUE;
-  $content->preserveWhiteSpace = TRUE;
-  $content->loadXML(islandora_critical_edition_advanced_get_blank_tei($tei_rdf->label));
-  $content_content_nodes = array();
-  $content_content_nodes['front'] = $content->getElementsByTagName('front')->item(0);
-  $content_content_nodes['body'] = $content->getElementsByTagName('body')->item(0);
-  $content_content_nodes['back'] = $content->getElementsByTagName('back')->item(0);
-  foreach ($context['sandbox']['pages'] as $page) {
-    if ($page['CWRC']) {
-      $new_dom = new DOMDocument();
-      $new_dom->formatOutput = TRUE;
-      $new_dom->preserveWhiteSpace = TRUE;
-      $new_dom->loadXML($page['CWRC']->content);
-      $text_node = $new_dom->getElementsByTagName('text')->item(0);
-      $content_nodes = $text_node->childNodes;
-      foreach ($content_nodes as $content_node) {
-        $content_node = $content->importNode($content_node, TRUE);
-        $children = $content_node->childNodes;
-        foreach ($children as $child) {
-          $content_content_nodes[$content_node->tagName]->appendChild($child);
+  if (!isset($context['sandbox']['progress'])) {
+    $context['sandbox']['progress'] = 0;
+    $context['sandbox']['total'] = count($context['results']['pages']);
+    // Create the template TEI to be populated.
+    $context['sandbox']['content'] = islandora_critical_edition_advanced_get_blank_tei($tei_rdf->label);
+  }
+  // Get the TEI document.
+  $content = new SimpleXMLElement($context['sandbox']['content']);
+  $content_content_nodes['front'] = $content->text->front;
+  $content_content_nodes['body'] = $content->text->body;
+  $content_content_nodes['back'] = $content->text->back;
+  // Do $count iterations per operation.
+  $index = $context['sandbox']['progress'];
+  $total = $context['sandbox']['total'];
+  $count = 5;
+  for ($i = $index, $j = 0; $i < $total && $j < $count; $i++, $j++) {
+    $page = isset($context['results']['pages'][$i]) ? $context['results']['pages'][$i] : array();
+    if (isset($page['CWRC'])) {
+      $cwrc = new SimpleXMLElement($page['CWRC']->content);
+      foreach ($cwrc->text->children() as $cwrc_node) {
+        foreach ($cwrc_node->children() as $cwrc_child_node) {
+          $content_content_nodes[$cwrc_node->getName()]->addChild($cwrc_child_node->getName(), (string) $cwrc_child_node);
         }
       }
     }
+    $context['sandbox']['progress']++;
   }
-  $datastream = $tei_rdf->constructDatastream('TEI', 'M');
-  $datastream->mimetype = 'text/plain';
-  $datastream->content = $content->saveXML();
-  $datastream->label = "Consolidated TEI";
-  $tei_rdf->ingestDatastream($datastream);
+  // Save progress.
+  $context['sandbox']['content'] = $content->saveXML();
+  $context['message'] = t('Converting page @page of @total into a TEI ...', array(
+                          '@page' => $context['sandbox']['progress'],
+                          '@total' => $context['sandbox']['total']));
+  if ($context['sandbox']['progress'] != $context['sandbox']['total']) {
+    $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['total'];
+  }
+  else {
+    $datastream = $tei_rdf->constructDatastream('TEI', 'M');
+    $datastream->mimetype = 'text/plain';
+    $datastream->setContentFromString($context['sandbox']['content']);
+    $datastream->label = "Consolidated TEI";
+    $tei_rdf->ingestDatastream($datastream);
+  }
 }
 
 /**
