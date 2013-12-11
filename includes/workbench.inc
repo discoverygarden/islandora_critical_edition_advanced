@@ -268,7 +268,6 @@ function islandora_critical_edition_advanced_toggle_workbench_membership_form(ar
  *   The Drupal form state.
  */
 function islandora_critical_edition_advanced_toggle_workbench_membership_form_submit(array $form, array &$form_state) {
-  watchdog('testing', 'tests');
   $object = islandora_object_load($form_state['values']['object']);
   if ($form_state['values']['in_work_bench']) {
     islandora_critical_edition_advanced_remove_from_workbench($object->id);

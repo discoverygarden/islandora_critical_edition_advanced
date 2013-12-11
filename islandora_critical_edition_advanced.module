@@ -104,12 +104,12 @@ function islandora_critical_edition_advanced_menu() {
 
   $items['islandora/object/%islandora_object/tei'] = array(
     'title' => 'TEI',
-    'page callback' => 'islandora_critical_edition_advanced_display_tei',
+    'page callback' => 'islandora_critical_edition_advanced_versionable_object_tei_local_task',
     'page arguments' => array(2),
     'type' => MENU_LOCAL_TASK,
     'access callback' => 'islandora_critical_edition_advanced_object_management_access',
     'access arguments' => array(2, 'display_consolidated_tei'),
-    'file' => 'includes/consolidate_tei.inc',
+    'file' => 'includes/tei.inc',
   );
 
   $items['islandora/cwrc_viewer/prepare_advanced/%islandora_object'] = array(
