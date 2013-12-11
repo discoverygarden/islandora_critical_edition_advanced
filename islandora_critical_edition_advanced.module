@@ -1222,8 +1222,14 @@ PREFIX fedora-rels-ext: <info:fedora/fedora-system:def/relations-external#>
 PREFIX fedora-model: <info:fedora/fedora-system:def/model#>
 PREFIX islandora: <http://islandora.ca/ontology/relsext#>
 SELECT DISTINCT ?object ?model ?label FROM <#ri> WHERE {
-  ?object fedora-rels-ext:isMemberOf <info:fedora/islandora:179> ;
-  fedora-model:hasModel ?model ;
+  {
+    ?object fedora-rels-ext:isMemberOf <info:fedora/$object->id> ;
+    fedora-model:hasModel ?model .
+  }
+  UNION {
+    ?object fedora-rels-ext:isMemberOfCollection <info:fedora/$object->id> ;
+    fedora-model:hasModel ?model .
+  }
   FILTER (?model != <info:fedora/fedora-system:FedoraObject-3.0>) .
   OPTIONAL {
     ?object fedora-model:label ?label;
