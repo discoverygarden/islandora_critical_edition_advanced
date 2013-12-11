@@ -716,6 +716,13 @@ function islandora_critical_edition_advanced_ingest_versionable_object_tei_rdf_t
 function islandora_critical_edition_advanced_ingest_versionable_object_tei_rdf_batch_finished($success, array $results, array $operations) {
   module_load_include('inc', 'islandora', 'includes/ingest.form');
   $batch = &batch_get();
+  // We have to unset the cached files here due to a bug in core. Basically when
+  // we come back from the batch function drupal_build_form() gets the
+  // $form_state back from the session rather than the database, thus skipping
+  // $form_get_cache which loads all of the required files. We forget the
+  // required files now, so that we can dynamically load the required files
+  // during drupal_rebuild_form().
+  $batch['form_state']['build_info']['files'] = array();
   if ($success) {
     drupal_set_message(t('Succesfully created TEI-RDF Object.'));
     $ingest_objects = &islandora_ingest_form_get_objects($batch['form_state']);
@@ -762,6 +769,13 @@ function islandora_critical_edition_advanced_ingest_versionable_object_transcrip
 function islandora_critical_edition_advanced_ingest_versionable_object_transcription_batch_finished($success, array $results, array $operations) {
   module_load_include('inc', 'islandora', 'includes/ingest.form');
   $batch = &batch_get();
+  // We have to unset the cached files here due to a bug in core. Basically when
+  // we come back from the batch function drupal_build_form() gets the
+  // $form_state back from the session rather than the database, thus skipping
+  // $form_get_cache which loads all of the required files. We forget the
+  // required files now, so that we can dynamically load the required files
+  // during drupal_rebuild_form().
+  $batch['form_state']['build_info']['files'] = array();
   if ($success) {
     $ingest_objects = &islandora_ingest_form_get_objects($batch['form_state']);
     $transcription = $ingest_objects['transcription'];
