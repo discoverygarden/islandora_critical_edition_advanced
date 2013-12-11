@@ -117,6 +117,7 @@ function islandora_critical_edition_advanced_versionable_object_form(array $form
   // Upload Transcription.
   $upload_size = min((int) ini_get('post_max_size'), (int) ini_get('upload_max_filesize'));
   $extensions = array('txt');
+  $valid_source_selected = $source ? TRUE : FALSE;
   // Opted to use #ajax over #states in most cases as #states doesn't support
   // conditionally #required values.
   return array(
@@ -187,6 +188,9 @@ function islandora_critical_edition_advanced_versionable_object_form(array $form
         ),
       ),
       'tei_rdf_source' => array(
+        '#access' => $valid_source_selected,
+        '#disabled' => empty($tei_rdf_objects),
+        '#description' => empty($tei_rdf_objects) ? t('No existing TEI-RDF found.') : NULL,
         '#type' => 'radios',
         '#title' => 'TEI-RDF',
         '#required' => TRUE,
@@ -200,6 +204,7 @@ function islandora_critical_edition_advanced_versionable_object_form(array $form
         ),
       ),
       'tei_rdf_ajax_wrapper' => array(
+        '#access' => $valid_source_selected,
         '#type' => 'container',
         '#prefix' => '<div id="tei-rdf-ajax-container-wrapper">',
         '#suffix' => '</div>',
@@ -219,11 +224,13 @@ function islandora_critical_edition_advanced_versionable_object_form(array $form
         ),
       ),
       'transcription_label' => array(
+        '#access' => $valid_source_selected,
         '#type' => 'textfield',
         '#required' => TRUE,
         '#title' => t('Transcription Label'),
       ),
       'transcription_source' => array(
+        '#access' => $valid_source_selected,
         '#type' => 'radios',
         '#default_value' => 'tei-rdf',
         '#options' => array(
@@ -233,6 +240,7 @@ function islandora_critical_edition_advanced_versionable_object_form(array $form
         ),
       ),
       'transcription' => array(
+        '#access' => $valid_source_selected,
         '#title' => t('Current Transcription'),
         '#type' => 'textarea',
         '#default_value' => t('Enter Transcription here.'),
