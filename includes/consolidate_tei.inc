@@ -230,4 +230,4 @@ function islandora_critical_edition_consolidate_page_tei($object, $dsid = 'CWRC'
   }
   islandora_critical_edition_upsert_tei($object, $master->saveXML());
 }
->>>>>>> 403f01780d31de8ecda47837762715e6acd30d9a
+
