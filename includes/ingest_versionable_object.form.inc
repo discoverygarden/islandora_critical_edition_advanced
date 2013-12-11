@@ -117,6 +117,7 @@ function islandora_critical_edition_advanced_versionable_object_form(array $form
   // Upload Transcription.
   $upload_size = min((int) ini_get('post_max_size'), (int) ini_get('upload_max_filesize'));
   $extensions = array('txt');
+  $valid_source_selected = $source ? TRUE : FALSE;
   // Opted to use #ajax over #states in most cases as #states doesn't support
   // conditionally #required values.
   return array(
@@ -187,6 +188,9 @@ function islandora_critical_edition_advanced_versionable_object_form(array $form
         ),
       ),
       'tei_rdf_source' => array(
+        '#access' => $valid_source_selected,
+        '#disabled' => empty($tei_rdf_objects),
+        '#description' => empty($tei_rdf_objects) ? t('No existing TEI-RDF found.') : NULL,
         '#type' => 'radios',
         '#title' => 'TEI-RDF',
         '#required' => TRUE,
@@ -200,6 +204,7 @@ function islandora_critical_edition_advanced_versionable_object_form(array $form
         ),
       ),
       'tei_rdf_ajax_wrapper' => array(
+        '#access' => $valid_source_selected,
         '#type' => 'container',
         '#prefix' => '<div id="tei-rdf-ajax-container-wrapper">',
         '#suffix' => '</div>',
@@ -219,11 +224,13 @@ function islandora_critical_edition_advanced_versionable_object_form(array $form
         ),
       ),
       'transcription_label' => array(
+        '#access' => $valid_source_selected,
         '#type' => 'textfield',
         '#required' => TRUE,
         '#title' => t('Transcription Label'),
       ),
       'transcription_source' => array(
+        '#access' => $valid_source_selected,
         '#type' => 'radios',
         '#default_value' => 'tei-rdf',
         '#options' => array(
@@ -233,6 +240,7 @@ function islandora_critical_edition_advanced_versionable_object_form(array $form
         ),
       ),
       'transcription' => array(
+        '#access' => $valid_source_selected,
         '#title' => t('Current Transcription'),
         '#type' => 'textarea',
         '#default_value' => t('Enter Transcription here.'),
@@ -323,11 +331,16 @@ function islandora_critical_edition_advanced_versionable_object_form_validate(ar
     $page_count = count(islandora_paged_content_get_pages($source));
     foreach (array('first', 'last') as $element) {
       $numeric = is_numeric($values[$element]);
-      $in_range = $numeric ? $values[$element] < 1 || $values[$element] > $page_count : FALSE;
-      if ($in_range) {
+      $out_of_range = $numeric ? $values[$element] < 1 || $values[$element] > $page_count : FALSE;
+      if ($out_of_range) {
         $element = $form['source_ajax_wrapper']['page_range'][$element];
         form_error($element, t('@name must be a number between 1 - @max.', array('@name' => $element['#title'], '@max' => $page_count)));
       }
+    }
+    if ((int) $values['last'] < (int) $values['first']) {
+      $last = $form['source_ajax_wrapper']['page_range']['last'];
+      $first = $form['source_ajax_wrapper']['page_range']['first'];
+      form_error($last, t('@last must be less than @first.', array('@last' => $last['#title'], '@first' => $first['#title'])));
     }
   }
   // Validate Upload.
