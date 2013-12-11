@@ -437,7 +437,7 @@ function islandora_critical_edition_advanced_versionable_object_form_submit(arra
     else {
       $namespace = islandora_get_namespace($tei_rdf->id);
       $page = $tei_rdf->repository->constructObject($namespace);
-      $page->label = $tei_rdf->label['label'];
+      $page->label = $tei_rdf->label;
       // Add all relationships.
       $page->relationships->add(FEDORA_MODEL_URI, 'hasModel', 'islandora:criticalEditionCModelPage');
       $page->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOf', $tei_rdf->id);
