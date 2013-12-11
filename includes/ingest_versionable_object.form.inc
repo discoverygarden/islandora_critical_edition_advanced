@@ -14,7 +14,7 @@
  */
 function islandora_critical_edition_advanced_valid_source_types() {
   return array(
-    'islandora:bookCModel' => t('Book'),
+    'islandora:bookCModel' => t('Text'),
     'islandora:sp-audioCModel' => t('Audio'),
     'islandora:sp_videoCModel' => t('Video'),
   );
