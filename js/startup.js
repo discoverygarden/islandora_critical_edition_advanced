@@ -1,10 +1,10 @@
 //var $jq = jQuery.noConflict();
 (function($) {
 $('document').ready(function() {
-	console.log($.fn.jquery);
-	console.log($jq.fn.jquery);
-	console.log("ready");
-	console.log(Drupal.settings);
+	//console.log($.fn.jquery);
+	//console.log($jq.fn.jquery);
+	//console.log("ready");
+	//console.log(Drupal.settings);
 	$jq( '#versions-tab tbody').find('td[class="version_name"]').each(function(e) {
 		//console.log($(this));
 		$jq(this).children(':first').click(function(e) {
@@ -183,16 +183,19 @@ var CriticalEditionViewer = {
 			$jq('#navi').append(tree_html);
 			
 			var entity_list = '<ul>';
-			var text_image_list = '<ul>'
+			var text_image_list = '<ul><li id="phtml_2"><a href="#">' + 'Text Image Links' + '</a><ul>';
+			
+			
 			$jq('.entitiesList li', window.frames[0].document).each(function() {
-				//console.log($jq(this));
 				// If a class is found, its an entity entry.
 				if($jq(this).attr("class")) {
 					if($jq(this).attr("class") == "txtimglnk") {
-						text_image_list += '<li id="phtml_2">';
-						text_image_list += '<a href="#">' + 'Text Image Links' + '</a>';
-						text_image_list += '<ul><li id="' + $jq(this).attr("name") + '"><a href="#">' + $jq(this).children('.entityTitle').first().text() + '</a></li></ul>';
-						text_image_list += '</li>';
+						var inner_data = $jq(this).find('div[class="info"]').children().last().children().last().text();
+						var clean_id= inner_data.replace("uuid: ", "");
+						if(inner_data == "") {
+							inner_data = $jq(this).attr("name");
+						}
+						text_image_list += '<li id="' + inner_data + '"><a href="#">' + $jq(this).children('.entityTitle').first().text() + '</a></li>';
 					} else {
 						entity_list += '<li id="phtml_2">';
 						entity_list += '<a href="#">' + $jq(this).attr("class") + '</a>';
@@ -201,12 +204,13 @@ var CriticalEditionViewer = {
 					}
 				}
 			});
-			text_image_list += '</ul>';
+			
+			
+			text_image_list += '</ul></li></ul>';
 			entity_list += '</ul>';
 			if(entity_list != '<ul>') {
 				$jq('#demo3').append(text_image_list);
 			}
-			//console.log(entity_list);
 			$jq('#tree_entities').append(entity_list);
 			
 			// Build the annotation list
@@ -226,7 +230,6 @@ var CriticalEditionViewer = {
 				anno_list += '</li>';
 			});
 			anno_list += '</ul>';
-			//console.log(anno_list);
 			$jq('#tree_annos').append(anno_list);
 			$jq("#navi").css("margin-left",-$jq("#navi").width());
 		},
@@ -251,6 +254,9 @@ var CriticalEditionViewer = {
 			}).bind('select_node.jstree', function (e, data) {
 				// Hate this, but this version of jstree kinda
 				// requires it.
+				
+				//$jq('#translated_tei', window.frames[0].document).find('span[data-cref="224568"]').css("background-color", "#FFFF00");
+				
 				var data_stuff = $jq('.jstree-clicked');
 				
 				// The following highlights entity's
@@ -266,16 +272,20 @@ var CriticalEditionViewer = {
 					if($jq(data_stuff[x]).closest("li").attr("id")) {
 						var uuid = $jq(data_stuff[x]).closest("li").attr("id");
 						if(uuid.indexOf("annos_") === -1) {
+							var trimmed_uuid = uuid.replace("uuid: ", "");
 							// Show the annotation.console.log(document.getElementById('viewer_iframe').contentWindow);
-							document.getElementById('viewer_iframe').contentWindow.paint_commentAnnoTargets($jq('#anno_' + uuid, window.frames[0].document), 'canvas_0', uuid, "TextImageLink");
-					
+							document.getElementById('viewer_iframe').contentWindow.paint_commentAnnoTargets($jq('#anno_' + trimmed_uuid, window.frames[0].document), 'canvas_0', trimmed_uuid, "TextImageLink");
+							if($jq('#translated_tei', window.frames[0].document).length > 0) {
+								$jq('#translated_tei', window.frames[0].document).find('span[data-cref="' + trimmed_uuid + '"]').css("background-color", "#FFFF00");
+							}
+							
 						}
 					}
 				}
 				
-				console.log(data_stuff);
+				//console.log(data_stuff);
 			}).bind('deselect_node.jstree', function() {
-				console.log("deselect");
+				//console.log("deselect");
 				var data_stuff = $jq('.jstree-anchor');
 				
 				$jq('#entities > ul > li', window.frames[0].document).each(function(index, el) {
@@ -286,11 +296,11 @@ var CriticalEditionViewer = {
 				for(var x = 0;x<data_stuff.length;x++) {
 					if($jq(data_stuff[x]).closest("li").attr("id")) {
 						var uuid = $jq(data_stuff[x]).closest("li").attr("id");
-						console.log("id: " + uuid);
 						if(uuid.indexOf("annos_") === -1) {
 							// Show the annotation.console.log(document.getElementById('viewer_iframe').contentWindow);
-							//document.getElementById('viewer_iframe').contentWindow.paint_commentAnnoTargets($jq('#anno_' + uuid, window.frames[0].document), 'canvas_0', uuid, "TextImageLink");
-							$jq('.svg_' + uuid, window.frames[0].document).remove();
+							var trimmed_uuid = uuid.replace("uuid: ", "");
+							$jq('.svg_' + trimmed_uuid, window.frames[0].document).remove();
+							$jq('#translated_tei', window.frames[0].document).find('span[data-cref="' + trimmed_uuid + '"]').css("background-color", "");
 						}
 					}
 				}
@@ -332,12 +342,12 @@ var CriticalEditionViewer = {
 			location.reload();
 		},
 		zoom_plus_click: function() {
-			console.log("plus clicked");
+			//console.log("plus clicked");
 			CriticalEditionViewer.current_zoom = CriticalEditionViewer.current_zoom + 5;
 			CriticalEditionViewer.Viewer.zoom_level_update();
 		},
 		zoom_minus_click: function() {
-			console.log("minus clicked");
+			//console.log("minus clicked");
 			if(CriticalEditionViewer.current_zoom - 5 >= 0) {
 				CriticalEditionViewer.current_zoom = CriticalEditionViewer.current_zoom - 5;
 				CriticalEditionViewer.Viewer.zoom_level_update();
@@ -346,7 +356,7 @@ var CriticalEditionViewer = {
 		},
 		zoom_level_update: function() {
 			$jq('#zoom').text(CriticalEditionViewer.current_zoom);
-			console.log($jq('#zoom').text());
+			//console.log($jq('#zoom').text());
 			// Need to destroy it every time.
 			CriticalEditionViewer.Viewer.destroy_zoom();
 			var img = $jq('#annotations', window.frames[0].document).find('div[class="base_img"]').children(0);
@@ -420,7 +430,7 @@ var CriticalEditionViewer = {
 			}
 			
 			
-			console.log($jq('#view_box').width());
+			///console.log($jq('#view_box').width());
 			$jq('#loadImg div').width($jq('#view_box').width());
 			$jq('#loadImg div').height($jq('#view_box').height());
 			//$("#viewer_iframe").style(display,'none');
@@ -446,7 +456,7 @@ var CriticalEditionViewer = {
 					$jq("#meta_overlay").animate({
 				        marginTop:-$jq("#meta_overlay").height()},{
 				        complete: function() {
-				          console.log("moved up complete");
+				         // console.log("moved up complete");
 				          $jq('.data_anchor').css('font-weight', 'normal');
 				          $jq('#detail_tran').css('font-weight', 'bold');
 				          $jq("#meta_overlay").remove();
@@ -516,10 +526,10 @@ var CriticalEditionViewer = {
 			// TODO: hide the writer from view while this is loading
 			if($jq("#viewer_iframe").length > 0) {
 				$jq("#viewer_iframe").load(function (){
-					console.log("iframe load complete");
+					//console.log("iframe load complete");
 					
 					$jq('#cwrc_wrapper', window.frames[0].document).height($jq('#view_box').height());
-					console.log(document.getElementById('viewer_iframe').contentWindow);
+					//console.log(document.getElementById('viewer_iframe').contentWindow);
 					// Set the writer object for access later
 					CriticalEditionViewer.cwrc_writer = document.getElementById('viewer_iframe').contentWindow['writer'];
 					CriticalEditionViewer.cwrc_writer_helper = document.getElementById('viewer_iframe').contentWindow['islandoraCWRCWriter'];
@@ -533,9 +543,9 @@ var CriticalEditionViewer = {
 					$jq('#page_choose option', window.frames[0].document).each(function() {
 						CriticalEditionViewer.pager_data[$jq(this).attr("value") - 1] = $jq(this).attr("value");
 					});
-					console.log("pager length: " + CriticalEditionViewer.pager_data.length);
+					//console.log("pager length: " + CriticalEditionViewer.pager_data.length);
 					
-					console.log(CriticalEditionViewer.cwrc_params.pages[ CriticalEditionViewer.cwrc_params.position]);
+					//console.log(CriticalEditionViewer.cwrc_params.pages[ CriticalEditionViewer.cwrc_params.position]);
 					
 					CriticalEditionViewer.Viewer.get_page_transformed_tei(CriticalEditionViewer.cwrc_params.pages[ CriticalEditionViewer.cwrc_params.position]);
 					
@@ -546,7 +556,7 @@ var CriticalEditionViewer = {
 					    	
 					    	CriticalEditionViewer.Viewer.show_preloader();
 					    	CriticalEditionViewer.Viewer.toggle_text_image_linking(0);
-					    	console.log($jq('#page_choose', window.frames[0].document).val());
+					    	//console.log($jq('#page_choose', window.frames[0].document).val());
 					    	$jq('#page_choose', window.frames[0].document).val(page);
 					    	$jq("#page_choose :selected[true]", window.frames[0].document).attr('selected',false);
 					    	$jq("#page_choose option[value="+page+"]", window.frames[0].document).attr('selected',true);
@@ -556,7 +566,7 @@ var CriticalEditionViewer = {
 					    	CriticalEditionViewer.Viewer.get_page_transformed_tei();
 					    	
 					    	CriticalEditionViewer.cwrc_writer_helper.Writer.load_next_anno_page();
-					    	console.log("after load next anno");
+					    	//console.log("after load next anno");
 					    	//~~~
 					    	$jq("#navi").remove();
 					    	CriticalEditionViewer.Viewer.get_entities();

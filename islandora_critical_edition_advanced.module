@@ -111,15 +111,6 @@ function islandora_critical_edition_advanced_menu() {
     'file' => 'includes/consolidate_tei.inc',
   );
 
-  $items['islandora/object/%islandora_object/critical_edition_publish'] = array(
-    'title' => 'Publish Viewer',
-    'page callback' => 'islandora_critical_edition_publish_view',
-    'page arguments' => array(2),
-    'type' => MENU_LOCAL_TASK,
-    'access callback' => 'islandora_critical_edition_publish_access',
-    'access arguments' => array(2),
-  );
-
   $items['islandora/cwrc_viewer/prepare_advanced/%islandora_object'] = array(
     'title' => 'Prepare advanced viewer',
     'page callback' => 'islandora_critical_edition_advanced_prepare_advanced',
@@ -447,7 +438,7 @@ function islandora_critical_edition_advanced_preprocess_islandora_critical_editi
     }
   }
 
-  $to_construct['appendix'] = 'Appendix';
+  //$to_construct['appendix'] = 'Appendix';
   $to_construct['versions'] = 'Versions';
   $tn_array = array();
   // Build the TN array for the elastislide viewer.
