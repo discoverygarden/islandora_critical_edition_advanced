@@ -738,7 +738,7 @@ function islandora_critical_edition_advanced_ingest_versionable_object_transcrip
     $text = islandora_critical_edition_convert_tei_to_plain_text($page['CWRC']->content);
   }
   elseif (isset($page['OCR'])) {
-    $text = $object['OCR']->content;
+    $text = $page['OCR']->content;
   }
   file_put_contents($filename, $text, FILE_APPEND | LOCK_EX);
 }
