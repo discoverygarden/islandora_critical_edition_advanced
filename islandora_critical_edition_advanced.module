@@ -1242,7 +1242,7 @@ EOT;
   foreach ($results as $result) {
     $pid = $result['object']['value'];
     $rows[] = array(
-      l("islandora/object/$pid", $pid),
+      l($pid, "islandora/object/$pid"),
       $result['label']['value'],
       $result['model']['value'],
     );
