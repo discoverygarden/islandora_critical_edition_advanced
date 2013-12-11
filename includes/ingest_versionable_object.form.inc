@@ -597,34 +597,6 @@ function islandora_critical_edition_advanced_tei_rdf_ajax_container(array $form,
 }
 
 /**
- * Create a Batch definition to update a Transcript from a TEI-RDF object.
- */
-function islandora_critical_edition_advanced_batch_update_transcript_from_tei_rdf($tei_rdf, $transcription) {
-  module_load_include('inc', 'islandora_paged_content', 'includes/utilities');
-  module_load_include('inc', 'islandora', 'includes/utilities');
-  $pages = array_keys(islandora_paged_content_get_pages($tei_rdf));
-  $batch = array(
-    'title' => t('Creating Transcription from TEI-RDF Object'),
-    'operations' => array(),
-    'file' => drupal_get_path('module', 'islandora_critical_edition') . '/includes/transcriptions.inc',
-    'progress_message' => t('@current of @total pages processed.'),
-  );
-  $flat_pid = islandora_escape_pid_for_function($transcription->id);
-  $filename = file_create_filename($flat_pid . "tempcwrc", 'temporary://');
-  foreach ($pages as $page) {
-    $batch['operations'][] = array(
-      'islandora_critical_edition_build_text_file',
-      array('page_object' => islandora_object_load($page), 'filename' => $filename),
-    );
-  }
-  $batch['operations'][] = array(
-    'islandora_transcription_file_update',
-    array('transcription' => $transcription, 'filename' => $filename),
-  );
-  return $batch;
-}
-
-/**
  * Create editions of the given page object.
  *
  * @param array $page
@@ -767,6 +739,11 @@ function islandora_critical_edition_advanced_ingest_versionable_object_tei_rdf_b
 function islandora_critical_edition_advanced_ingest_versionable_object_transcription_batch_operation($page, array &$context) {
   module_load_include('inc', 'islandora_critical_edition', 'includes/utilities');
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/utilities');
+  // Even though this include is not needed by this function it must be included
+  // here the Batch API won't be able to Find the submit handler:
+  // islandora_ingest_form_next_submit() as it doesn't respect form_load_include
+  // and doesn't check load any files required by submit handles.
+  module_load_include('inc', 'islandora', 'includes/ingest.form');
   if (empty($context['sandbox'])) {
     $file = file_save_data('', 'temporary://transcription.txt');
     $context['results']['filename'] = drupal_realpath($file->uri);
