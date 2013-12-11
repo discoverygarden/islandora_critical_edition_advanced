@@ -167,7 +167,7 @@ function islandora_critical_edition_advanced_menu() {
     'access callback' => 'islandora_critical_edition_publish_access',
     'access arguments' => array(2),
   );
-  
+
   $items['islandora/object/%islandora_object/collation'] = array(
     'title' => 'Collations',
     'page callback' => 'islandora_critical_edition_collation_view',
@@ -917,6 +917,42 @@ function islandora_critical_edition_advanced_islandora_required_objects(Islandor
   $datastream->mimetype = 'text/xml';
   $datastream->setContentFromFile("$module_path/xml/islandora_transcription_ds_composite_model.xml", FALSE);
   $transcription_content_model->ingestDatastream($datastream);
+  // Top Level Collection For Source Objects.
+  $source_collection = $connection->repository->constructObject('islandora:sourceCollection');
+  $source_collection->owner = 'fedoraAdmin';
+  $source_collection->label = 'Co-op';
+  $source_collection->models = 'islandora:collectionCModel';
+  $source_collection->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOfCollection', 'islandora:root');
+  // Collection Policy Datastream.
+  $datastream = $source_collection->constructDatastream('COLLECTION_POLICY', 'M');
+  $datastream->label = 'COLLECTION_POLICY';
+  $datastream->mimetype = 'text/xml';
+  $datastream->setContentFromFile("{$module_path}/xml/islandora_source_collection_policy.xml", FALSE);
+  $source_collection->ingestDatastream($datastream);
+  // TN Datastream.
+  $datastream = $source_collection->constructDatastream('TN', 'M');
+  $datastream->label = 'TN';
+  $datastream->mimetype = 'image/png';
+  $datastream->setContentFromFile("$module_path/images/folder.png", FALSE);
+  $source_collection->ingestDatastream($datastream);
+  // Top Level Collection For Critical Editions.
+  $critical_edition_collection = $connection->repository->constructObject('islandora:criticalEditionCollection');
+  $critical_edition_collection->owner = 'fedoraAdmin';
+  $critical_edition_collection->label = 'Editions';
+  $critical_edition_collection->models = 'islandora:collectionCModel';
+  $critical_edition_collection->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOfCollection', 'islandora:root');
+  // Collection Policy Datastream.
+  $datastream = $critical_edition_collection->constructDatastream('COLLECTION_POLICY', 'M');
+  $datastream->label = 'COLLECTION_POLICY';
+  $datastream->mimetype = 'text/xml';
+  $datastream->setContentFromFile("{$module_path}/xml/islandora_critical_edition_collection_policy.xml", FALSE);
+  $critical_edition_collection->ingestDatastream($datastream);
+  // TN Datastream.
+  $datastream = $critical_edition_collection->constructDatastream('TN', 'M');
+  $datastream->label = 'TN';
+  $datastream->mimetype = 'image/png';
+  $datastream->setContentFromFile("$module_path/images/folder.png", FALSE);
+  $critical_edition_collection->ingestDatastream($datastream);
   return array(
     'islandora_critical_edition_advanced' => array(
       'title' => 'Islandora critical editions - advanced',
@@ -925,6 +961,8 @@ function islandora_critical_edition_advanced_islandora_required_objects(Islandor
         $tei_rdf_container_content_model,
         $tei_rdf_apparatus_content_model,
         $transcription_content_model,
+        $source_collection,
+        $critical_edition_collection,
       ),
     ),
   );
