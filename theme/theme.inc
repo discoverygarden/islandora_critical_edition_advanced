@@ -171,7 +171,7 @@ function islandora_critical_edition_preprocess_islandora_critical_edition_contai
 
   $object = $variables['object'];
   $apparatus = islandora_critical_edition_get_apparatus($object);
-  $link = l(t('Apparatus'), "islandora/object/$apparatus");
+  $link = l(t('Apparatus'), "islandora/object/$apparatus/manage/apparatus");
   $message = t('Manage !Apparatus', array('!Apparatus' => $link));
   $variables['apparatus_link'] = array('#markup' => "<div><strong>$message</strong></div>");
   $variables['apparatus'] = array(
@@ -336,8 +336,9 @@ function theme_islandora_critical_edition_container_versions_table(array &$varia
   $rows = array();
   $versions = islandora_critical_edition_container_versions_table_data($object, tablesort_get_sort($headers), $offset, $limit);
   foreach ($versions as $pid => $version) {
-
-    $source = $version;
+   
+    $source = $version['source'];
+    $source_pid = $source->id;
     $cells = array(
       'version_name' => array(
         '#markup' => l($version['label'], "islandora/object/{$pid}", array(
@@ -350,7 +351,7 @@ function theme_islandora_critical_edition_container_versions_table(array &$varia
         ),
       ),
       'source_name' => array(
-        '#markup' => l($version['label'], "islandora/object/{$pid}", array('attributes' => array('title' => $version['label']))),
+        '#markup' => l($version['label'], "islandora/object/{$source_pid}", array('attributes' => array('title' => $version['label']))),
       ),
       'transcriptions' => islandora_critical_edition_container_table_transcriptions_cell($pid, $version['transcriptions']),
       'operations' => islandora_critical_edition_container_versions_table_operations_cell($pid, $version),
