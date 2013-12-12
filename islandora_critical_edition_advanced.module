@@ -31,6 +31,7 @@ function islandora_critical_edition_advanced_menu() {
     'access callback' => 'islandora_critical_edition_advanced_object_management_access',
     'access arguments' => array(2, 'manage_container'),
     'file' => 'includes/container_management.inc',
+    'weight' => 20,
   );
   $items['islandora/object/%islandora_object/manage/edition_container/ingest'] = array(
     'title' => 'Add New Version',
@@ -166,6 +167,7 @@ function islandora_critical_edition_advanced_menu() {
     'type' => MENU_LOCAL_TASK,
     'access callback' => 'islandora_critical_edition_publish_access',
     'access arguments' => array(2),
+    'weight' => 1,
   );
   
   $items['islandora/object/%islandora_object/collation'] = array(
@@ -175,6 +177,7 @@ function islandora_critical_edition_advanced_menu() {
     'type' => MENU_LOCAL_TASK,
     'access callback' => 'islandora_critical_edition_publish_access',
     'access arguments' => array(2),
+    'weight' => 2,
   );
 
 

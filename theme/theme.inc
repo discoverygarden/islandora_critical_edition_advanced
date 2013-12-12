@@ -307,7 +307,7 @@ function islandora_critical_edition_container_version_links(AbstractObject $obje
       'fragment' => 'create-vo',
     ),
     'import' => array(
-      'title' => t('Import Version'),
+      'title' => t('Associate Existing Version'),
       'href' => "islandora/object/{$object->id}/manage/edition_container",
       'fragment' => 'attach-vo',
     ),
