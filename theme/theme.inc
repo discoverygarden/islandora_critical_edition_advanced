@@ -195,6 +195,72 @@ function islandora_critical_edition_preprocess_islandora_critical_edition_contai
 }
 
 /**
+ * Implements hook_preprocess_theme().
+ *
+ * This function is resposible for fetching the required data to render the
+ * critical edition object.
+ */
+function islandora_critical_edition_preprocess_islandora_critical_edition_container_version(array &$variables) {
+  module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/utilities');
+  $module_path = drupal_get_path('module', 'islandora_critical_edition_advanced');
+  drupal_add_css("$module_path/css/critical_edition_container.css");
+  // For now we are using views/ctools to style our drop downs if they are not
+  // enabled plain links will be rendered.
+  $views_module_path = drupal_get_path('module', 'views');
+  drupal_add_css("$views_module_path/css/views-admin.ctools.css");
+  drupal_add_css("$views_module_path/css/views-admin.seven.css");
+
+  $object = $variables['object'];
+  
+  $variables['version_actions'] = islandora_critical_edition_container_version_links($object);
+  $variables['versions'] = array(
+    '#theme' => 'islandora_critical_edition_container_versions_table',
+    '#object' => $object,
+  );
+ 
+}
+/**
+ * Implements hook_preprocess_theme().
+ *
+ * This function is resposible for fetching the required data to render the
+ * critical edition object.
+ */
+function islandora_critical_edition_preprocess_islandora_critical_edition_container_collation(array &$variables) {
+  module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/utilities');
+  $module_path = drupal_get_path('module', 'islandora_critical_edition_advanced');
+  drupal_add_css("$module_path/css/critical_edition_container.css");
+  // For now we are using views/ctools to style our drop downs if they are not
+  // enabled plain links will be rendered.
+  $views_module_path = drupal_get_path('module', 'views');
+  drupal_add_css("$views_module_path/css/views-admin.ctools.css");
+  drupal_add_css("$views_module_path/css/views-admin.seven.css");
+
+  $object = $variables['object'];
+  $apparatus = islandora_critical_edition_get_apparatus($object);
+  $link = l(t('Apparatus'), "islandora/object/$apparatus/manage/apparatus");
+  $message = t('Manage !Apparatus', array('!Apparatus' => $link));
+  $variables['apparatus_link'] = array('#markup' => "<div><strong>$message</strong></div>");
+  $variables['apparatus'] = array(
+    '#markup' => theme('islandora_critical_edition_publish_view', array(
+      'islandora_object' => $object,
+      'publish_form' => NULL,
+        )
+    ),
+  );
+  $variables['edition_actions'] = islandora_critical_edition_container_editor_links($object);
+  $variables['version_actions'] = islandora_critical_edition_container_version_links($object);
+  $variables['collation_actions'] = islandora_critical_edition_container_collation_links($object);
+  $variables['versions'] = array(
+    '#theme' => 'islandora_critical_edition_container_versions_table',
+    '#object' => $object,
+  );
+  $variables['collations'] = array(
+    '#theme' => 'islandora_critical_edition_container_collations_table',
+    '#object' => $object,
+  );
+}
+
+/**
  * Get the definition for the editor links.
  */
 function islandora_critical_edition_container_editor_links(AbstractObject $object) {
