@@ -103,7 +103,7 @@ function islandora_critical_edition_mvd_form_validate($form, $form_state) {
   $mvds = islandora_calliope_find_mvds($critical_edition_object);
   $match = FALSE;
   foreach ($mvds as $mvd) {
-    if ($mvd['label'] == $form_state['values']['mvd']) {
+    if ($mvd['name'] == $form_state['values']['mvd']) {
       form_set_error('mvd', t('A collation with this name is already associated with this critical edition.'));
     }
   }

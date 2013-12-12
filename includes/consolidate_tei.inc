@@ -193,7 +193,7 @@ function islandora_critical_edition_advanced_display_page_tei($object, $dsid = '
  * Consolidates TEI.
  *
  * @param AbstractObject $object
- * Object representing Page level fedora object
+ *   Object representing Page level fedora object
  * @param String $dsid
  *   DSID to be pulled
  */

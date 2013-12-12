@@ -77,7 +77,7 @@ function islandora_critical_edition_preprocess_islandora_critical_media_object(a
         "pid" => $reference_object->id,
         "url" => $audio_url,
         "mime" => 'audio/mpeg',
-        "width" => 175,
+        "width" => "100%",
       );
     }
     // Thumbnail.
