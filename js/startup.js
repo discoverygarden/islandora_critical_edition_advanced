@@ -67,7 +67,6 @@ var CriticalEditionViewer = {
 		        },
 	            success: function(data, status, xhr) {
 	              CriticalEditionViewer.Viewer.transformed_data = data;
-	              //CriticalEditionViewer.Viewer.remove_translated_tei();
 	              CriticalEditionViewer.Viewer.show_versionable_transcriptions();
 	            },
 	            error: function(xhRequest, ErrorText, thrownError) {
@@ -122,38 +121,15 @@ var CriticalEditionViewer = {
 		},
 		toggle_anno_entities: function(show) {
 			if(show == 1) {
-				CriticalEditionViewer.cwrc_writer.layout.open("west");
-			} else {
-				CriticalEditionViewer.cwrc_writer.layout.close("west");
-			}
-			//$('#cwrc_main .ui-layout-center', window.frames[0].document).append('<div style="float: left;height: 40px;background: #de9a44;margin: 3px;width: 80px;" class="slidedown"></div>')
-		},
-		toggle_text_image_linking: function(show) {
-			if(show == 1) {
 				$jq("#navi").animate({
-			      marginLeft:0},{
-			      complete: function() {
-			        //CriticalEditionViewer.cwrc_writer.layout.sizePane("east", ($('#cwrc_wrapper', window.frames[0].document).width()-$("#navi").width()));
-			        CriticalEditionViewer.cwrc_writer.editor.$('body', window.frames[0].document).toggleClass('showEntityBrackets');
-			        if(!$jq('#img_title').hasClass('img_selected')) {
-			        	console.log("resizing west");
-			        	CriticalEditionViewer.cwrc_writer.layout.open("west");
-			          CriticalEditionViewer.cwrc_writer.layout.sizePane("west", $jq("#navi").width());
-			        } else {
-			        	CriticalEditionViewer.cwrc_writer.layout.sizePane("east", ($jq('#cwrc_wrapper', window.frames[0].document).width()-$jq("#navi").width()));
-			        }
-			      }
-			    }, 700);
+				      marginLeft:0},{
+				      complete: function() {
+				    	  CriticalEditionViewer.cwrc_writer.layout.open("west");
 				
-//				
+				      }
+			    }, 700);
 			} else {
 				CriticalEditionViewer.cwrc_writer.layout.close("west");
-				
-				if($jq('#img_title').hasClass('img_selected')) {
-					CriticalEditionViewer.cwrc_writer.layout.sizePane("east", $jq('#cwrc_wrapper', window.frames[0].document).width());
-				}
-				
-				CriticalEditionViewer.cwrc_writer.editor.$('body', window.frames[0].document).toggleClass('showEntityBrackets');
 				
 				$jq("#navi").animate({
 			        marginLeft:-$jq("#navi").width()},{
@@ -161,6 +137,39 @@ var CriticalEditionViewer = {
 			        	
 			        },
 			    }, 700);
+			}
+		},
+		toggle_text_image_linking: function(show) {
+			if(show == 1) {
+//				$jq("#navi").animate({
+//			      marginLeft:0},{
+//			      complete: function() {
+			        //CriticalEditionViewer.cwrc_writer.layout.sizePane("east", ($('#cwrc_wrapper', window.frames[0].document).width()-$("#navi").width()));
+			        CriticalEditionViewer.cwrc_writer.editor.$('body', window.frames[0].document).toggleClass('showEntityBrackets');
+			        if(!$jq('#img_title').hasClass('img_selected')) {
+			          CriticalEditionViewer.cwrc_writer.layout.open("west");
+			          CriticalEditionViewer.cwrc_writer.layout.sizePane("west", $jq("#navi").width());
+			        } else {
+			          CriticalEditionViewer.cwrc_writer.layout.sizePane("east", ($jq('#cwrc_wrapper', window.frames[0].document).width()-$jq("#navi").width()));
+			        }
+//			    }, 700);
+			} else {
+				//
+				//CriticalEditionViewer.cwrc_writer.layout.close("west");
+				
+				if($jq('#img_title').hasClass('img_selected')) {
+				  CriticalEditionViewer.cwrc_writer.layout.sizePane("east", $jq('#cwrc_wrapper', window.frames[0].document).width());
+				}
+				
+				CriticalEditionViewer.cwrc_writer.editor.$('body', window.frames[0].document).toggleClass('showEntityBrackets');
+				
+				//
+//				$jq("#navi").animate({
+//			        marginLeft:-$jq("#navi").width()},{
+//			        complete: function() {
+//			        	
+//			        },
+//			    }, 700);
 				
 			}
 		},
@@ -501,7 +510,7 @@ var CriticalEditionViewer = {
 				switch ($jq(this).attr("id")) {
 					case "anno_entity_switch":
 						//$jq("#publish_txtimglnk_list").toggle();
-						CriticalEditionViewer.Viewer.toggle_text_image_linking($jq(this).attr("value"));
+						CriticalEditionViewer.Viewer.toggle_anno_entities($jq(this).attr("value"));
 						break;
 					case "til_switch":
 //						$jq("#publish_txtimglnk_list").toggle();

@@ -258,7 +258,8 @@ function islandora_critical_edition_advanced_prepare_advanced($object) {
             );
             $datastream = $reference_object['OBJ'];
             if ($content_model == 'islandora:sp_videoCModel') {
-              $player_params['url'] = "http://discoverygarden-vagrant-emic.local/islandora/object/$reference_object->id/datastream/OBJ/view/$datastream->label";
+              $player_params['url'] = "/islandora/object/$reference_object->id/datastream/OBJ/view/$datastream->label";
+              $player_params['mimetype'] = 'video/mp4';
             }
             elseif ($content_model == 'islandora:sp-audioCModel') {
               $player_params['url'] = "http://discoverygarden-vagrant-emic.local/islandora/object/$reference_object->id/datastream/PROXY_MP3/view/$datastream->label";
