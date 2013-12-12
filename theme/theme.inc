@@ -122,6 +122,7 @@ function islandora_critical_edition_preprocess_islandora_critical_media_object(a
       $video_params += array(
         'mime' => 'video/mp4',
         'url' => $video_url,
+        'width' => '100%',
       );
     }
     // Thumbnail.

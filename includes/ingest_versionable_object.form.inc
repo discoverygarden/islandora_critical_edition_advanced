@@ -42,8 +42,8 @@ function islandora_critical_edition_advanced_ingest_versionable_object_page(Abst
   $version->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOf', $edition);
   drupal_set_title(t('Add Versionable Object to @edition', array('@edition' => $edition->label)));
   return drupal_get_form('islandora_ingest_form', array(
-      'models' => array('islandora:versionableObjectCModel'),
-      'objects' => array($version)));
+    'models' => array('islandora:versionableObjectCModel'),
+    'objects' => array($version)));
 }
 
 /**
@@ -56,7 +56,7 @@ function islandora_critical_edition_advanced_versionable_object_form_source_auto
   $models = in_array($type, $models) ? array($type) : $models;
   $where_clause = '';
   foreach ($models as $model) {
-    $where_clause .= !empty($where_clause) ? 'UNION ' : '';
+    $where_clause .=!empty($where_clause) ? 'UNION ' : '';
     $where_clause .= "{ ?object fedora-model:hasModel <info:fedora/$model> . }\n";
   }
   $where_clause = substr($where_clause, 0, -1);
@@ -289,7 +289,7 @@ function islandora_critical_edition_advanced_versionable_object_form_validate(ar
   // It must be a Fedora Object.
   if (!$source) {
     form_error($form['source_ajax_wrapper']['source'], t('Source Object: "@source" is not valid object.', array(
-          '@source' => $values['source'])));
+      '@source' => $values['source'])));
   }
   else {
     $valid_source_types = islandora_critical_edition_advanced_valid_source_types();
@@ -297,8 +297,8 @@ function islandora_critical_edition_advanced_versionable_object_form_validate(ar
     // It must be of a valid source type.
     if (empty($sources_valid_models)) {
       form_error($form['source_ajax_wrapper']['source'], t('Source Object: "@source" must be one of the following types: @types.', array(
-            '@source' => $values['source'],
-            '@types' => implode(', ', $valid_source_types))));
+        '@source' => $values['source'],
+        '@types' => implode(', ', $valid_source_types))));
     }
   }
   // Validate TEI-RDF object, if "use existing" was selected.
@@ -319,7 +319,7 @@ function islandora_critical_edition_advanced_versionable_object_form_validate(ar
         // We don't put the form error on the tableselect as that is not
         // supported by the Drupal Form API.
         form_error($form, t('TEI-RDF Object: "@tei_rdf" is not valid object.', array(
-              '@tei_rdf' => $values['tei_rdf'])));
+          '@tei_rdf' => $values['tei_rdf'])));
       }
     }
   }
@@ -482,6 +482,11 @@ function islandora_critical_edition_advanced_versionable_object_form_submit(arra
           );
         }
         batch_set($batch);
+      }
+      else {
+        $datastream = $transcription->constructDatastream('TRANSCRIPTION', 'M');
+        $datastream->setContentFromString(t('Transcription'));
+        $transcription->ingestDatastream($datastream);
       }
       break;
 
