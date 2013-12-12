@@ -190,7 +190,7 @@ function islandora_critical_edition_advanced_versionable_object_form(array $form
       'tei_rdf_source' => array(
         '#access' => $valid_source_selected,
         '#disabled' => empty($tei_rdf_objects),
-        '#description' => empty($tei_rdf_objects) ? t('No existing TEI-RDF found.') : NULL,
+        '#description' => check_plain(empty($tei_rdf_objects) ? t('No existing TEI-RDF found.') : NULL),
         '#type' => 'radios',
         '#title' => 'TEI-RDF',
         '#required' => TRUE,

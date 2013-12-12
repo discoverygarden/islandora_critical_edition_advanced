@@ -439,7 +439,6 @@ function islandora_critical_edition_advanced_preprocess_islandora_critical_editi
     }
   }
 
-  //$to_construct['appendix'] = 'Appendix';
   $to_construct['versions'] = 'Versions';
   $tn_array = array();
   // Build the TN array for the elastislide viewer.

@@ -186,7 +186,6 @@ function islandora_critical_edition_advanced_display_page_tei($object, $dsid = '
     ),
   ));
   $xslt_path = "$base_url/$path/xml/EMiC_test_XSLTv2.xsl";
-  drupal_set_message("get contents url: " + "$tomcat_url/saxon/SaxonServlet?source=$xml_path&style=$xslt_path", "status");
   return file_get_contents("$tomcat_url/saxon/SaxonServlet?source=$xml_path&style=$xslt_path");
 }
 
@@ -194,7 +193,7 @@ function islandora_critical_edition_advanced_display_page_tei($object, $dsid = '
  * Consolidates TEI.
  *
  * @param AbstractObject $object
- * Object representing Page level fedora object
+ *   Object representing Page level fedora object
  * @param String $dsid
  *   DSID to be pulled
  */
