@@ -18,8 +18,7 @@
 			<a class="data_anchor" id="detail_perm" href="#"> Permalink</a>
 		</div>
 	</div>
-	<?php if (!$player_params || !$media_viewer): ?>
-		<?php if ($player_ready == NULL): ?>
+	<?php if (!$media_viewer): ?>
 			<div style="width:100%;height:40px;">
 				<div style="float:left;" class="action_img">
 					<img id="tei_plain_text" title="Transcription" class="work_action_img" style="cursor: pointer;"src="<?php print $module_base;?>/img/text_plain.png" alt="image" />
@@ -47,29 +46,22 @@
 				    <a href="#" class="last" data-action="last">&raquo;</a>
 			    </div>
 			</div>
-		<?php endif;?>
 	<?php endif; ?>
 	<div id="view_box" style="width:100%;height:100%;overflow:auto;position: relative;">
-	<?php if ($player_params || $media_viewer): ?>
+	<?php if ($media_viewer): ?>
 		<?php foreach ($transcription_text as $key => $value):?>
 			<div id="versionable_transcription_<?php print $key;?>" class="versionable_transcription_text" style="width:49%;height:100%;float:left;overflow:auto;position: absolute;">
 				<h2><?php print $transcription_text[$key]['title'];?></h2>
 				<p><pre><?php print $transcription_text[$key]['text'];?></pre></p>
 			</div>
 		<?php endforeach;?>
-		<?php if ($player_params): ?>
-		  <div id="MediaPlayer" style="width:50%;height:100%;float:right;"
-			data-url="<?php print $player_params['url'];?>" 
-			data-mimetype="<?php print $player_params['mimetype'];?>" 
-			data-thumbnail="<?php print $player_params['thumbnail'];?>" 
-			data-width="<?php print $player_params['width'];?>" 
-			data-height="<?php print $player_params['height'];?>" >
-			<?php print $media_viewer;?>
-		  </div>
-		<?php endif; ?>
 		<?php if ($media_viewer): ?>
-		  <div id="MediaPlayer" style="width:50%;height:100%;float:right;">
-		    <img style="width: 100%;height:100%" class="associated_tn_img" src="<?php print $media_viewer;?>" alt=""/>
+		  <div id="MediaPlayer" style="width:50%;height:100%;float:right;" data-url="<?php print ($player_params['url']) ?>" data-thumbnail="<?php print ($player_params['tn']) ?>" data-mime="<?php print ($player_params['mime']) ?>">
+		    <?php if ($player_ready === FALSE): ?>
+		      <img src="<?php print $media_viewer;?>" alt="img" style="width:100%;height:100%;"/>
+		    <?php else: ?>
+		      <?php print $media_viewer;?>
+		    <?php endif;?>
 		  </div>
 		<?php endif; ?>
 	<?php else: ?>
@@ -81,7 +73,6 @@
 				</div>
 		  	<iframe id="viewer_iframe" border=0 name=iframe style="width: 100%;height:100%;" src="/islandora/critical_edition/viewer/trimed/<?php print $islandora_object;?>"></iframe>
 		  </div>
-		  
 	<?php endif;?>
 	</div>
 		<div id="append_data">

@@ -67,7 +67,6 @@ var CriticalEditionViewer = {
 		        },
 	            success: function(data, status, xhr) {
 	              CriticalEditionViewer.Viewer.transformed_data = data;
-	              //CriticalEditionViewer.Viewer.remove_translated_tei();
 	              CriticalEditionViewer.Viewer.show_versionable_transcriptions();
 	            },
 	            error: function(xhRequest, ErrorText, thrownError) {
@@ -122,38 +121,15 @@ var CriticalEditionViewer = {
 		},
 		toggle_anno_entities: function(show) {
 			if(show == 1) {
-				CriticalEditionViewer.cwrc_writer.layout.open("west");
-			} else {
-				CriticalEditionViewer.cwrc_writer.layout.close("west");
-			}
-			//$('#cwrc_main .ui-layout-center', window.frames[0].document).append('<div style="float: left;height: 40px;background: #de9a44;margin: 3px;width: 80px;" class="slidedown"></div>')
-		},
-		toggle_text_image_linking: function(show) {
-			if(show == 1) {
 				$jq("#navi").animate({
-			      marginLeft:0},{
-			      complete: function() {
-			        //CriticalEditionViewer.cwrc_writer.layout.sizePane("east", ($('#cwrc_wrapper', window.frames[0].document).width()-$("#navi").width()));
-			        CriticalEditionViewer.cwrc_writer.editor.$('body', window.frames[0].document).toggleClass('showEntityBrackets');
-			        if(!$jq('#img_title').hasClass('img_selected')) {
-			        	console.log("resizing west");
-			        	CriticalEditionViewer.cwrc_writer.layout.open("west");
-			          CriticalEditionViewer.cwrc_writer.layout.sizePane("west", $jq("#navi").width());
-			        } else {
-			        	CriticalEditionViewer.cwrc_writer.layout.sizePane("east", ($jq('#cwrc_wrapper', window.frames[0].document).width()-$jq("#navi").width()));
-			        }
-			      }
-			    }, 700);
+				      marginLeft:0},{
+				      complete: function() {
+				    	  CriticalEditionViewer.cwrc_writer.layout.open("west");
 				
-//				
+				      }
+			    }, 700);
 			} else {
 				CriticalEditionViewer.cwrc_writer.layout.close("west");
-				
-				if($jq('#img_title').hasClass('img_selected')) {
-					CriticalEditionViewer.cwrc_writer.layout.sizePane("east", $jq('#cwrc_wrapper', window.frames[0].document).width());
-				}
-				
-				CriticalEditionViewer.cwrc_writer.editor.$('body', window.frames[0].document).toggleClass('showEntityBrackets');
 				
 				$jq("#navi").animate({
 			        marginLeft:-$jq("#navi").width()},{
@@ -161,6 +137,46 @@ var CriticalEditionViewer = {
 			        	
 			        },
 			    }, 700);
+			}
+		},
+		toggle_text_image_linking: function(show) {
+			$jq("#publish_txtimglnk_list").toggle();
+			if(show == 1) {
+//				$jq("#navi").animate({
+//			      marginLeft:0},{
+//			      complete: function() {
+			        //CriticalEditionViewer.cwrc_writer.layout.sizePane("east", ($('#cwrc_wrapper', window.frames[0].document).width()-$("#navi").width()));
+			        CriticalEditionViewer.cwrc_writer.editor.$('body', window.frames[0].document).toggleClass('showEntityBrackets');
+//			        if(!$jq('#img_title').hasClass('img_selected')) {
+//			          CriticalEditionViewer.cwrc_writer.layout.open("west");
+//			          CriticalEditionViewer.cwrc_writer.layout.sizePane("west", $jq("#navi").width());
+//			        } else {
+//			          CriticalEditionViewer.cwrc_writer.layout.sizePane("east", ($jq('#cwrc_wrapper', window.frames[0].document).width()-$jq("#navi").width()));
+//			        }
+//			    }, 700);
+			} else {
+				//
+				//CriticalEditionViewer.cwrc_writer.layout.close("west");
+				
+				CriticalEditionViewer.cwrc_writer.editor.$('body', window.frames[0].document).toggleClass('showEntityBrackets');
+				
+				
+//				if($jq('#img_title').hasClass('img_selected')) {
+//				  CriticalEditionViewer.cwrc_writer.layout.sizePane("east", $jq('#cwrc_wrapper', window.frames[0].document).width());
+//				}
+//				
+//				CriticalEditionViewer.cwrc_writer.editor.$('body', window.frames[0].document).toggleClass('showEntityBrackets');
+				
+				
+				
+				
+				//
+//				$jq("#navi").animate({
+//			        marginLeft:-$jq("#navi").width()},{
+//			        complete: function() {
+//			        	
+//			        },
+//			    }, 700);
 				
 			}
 		},
@@ -246,8 +262,6 @@ var CriticalEditionViewer = {
 				// Hate this, but this version of jstree kinda
 				// requires it.
 				
-				//$jq('#translated_tei', window.frames[0].document).find('span[data-cref="224568"]').css("background-color", "#FFFF00");
-				
 				var data_stuff = $jq('.jstree-clicked');
 				
 				// The following highlights entity's
@@ -264,34 +278,28 @@ var CriticalEditionViewer = {
 						var uuid = $jq(data_stuff[x]).closest("li").attr("id");
 						if(uuid.indexOf("annos_") === -1) {
 							var trimmed_uuid = uuid.replace("uuid: ", "");
-							// Show the annotation.console.log(document.getElementById('viewer_iframe').contentWindow);
 							document.getElementById('viewer_iframe').contentWindow.paint_commentAnnoTargets($jq('#anno_' + trimmed_uuid, window.frames[0].document), 'canvas_0', trimmed_uuid, "TextImageLink");
 							if($jq('#translated_tei', window.frames[0].document).length > 0) {
-								$jq('#translated_tei', window.frames[0].document).find('span[data-cref="' + trimmed_uuid + '"]').css("background-color", "#FFFF00");
+								$jq('#translated_tei', window.frames[0].document).find('span[data-source="' + trimmed_uuid + '"]').css("background-color", "#FFFF00");
 							}
-							
 						}
 					}
 				}
 				
-				//console.log(data_stuff);
 			}).bind('deselect_node.jstree', function() {
-				//console.log("deselect");
 				var data_stuff = $jq('.jstree-anchor');
 				
 				$jq('#entities > ul > li', window.frames[0].document).each(function(index, el) {
 					$jq(this).removeClass('selected').css('background-color', '').find('div[class="info"]').hide();
 					CriticalEditionViewer.cwrc_writer.delegator.editorCallback('highlightEntity_looseFocus', $jq(this));
 				});
-				
 				for(var x = 0;x<data_stuff.length;x++) {
 					if($jq(data_stuff[x]).closest("li").attr("id")) {
 						var uuid = $jq(data_stuff[x]).closest("li").attr("id");
 						if(uuid.indexOf("annos_") === -1) {
-							// Show the annotation.console.log(document.getElementById('viewer_iframe').contentWindow);
 							var trimmed_uuid = uuid.replace("uuid: ", "");
 							$jq('.svg_' + trimmed_uuid, window.frames[0].document).remove();
-							$jq('#translated_tei', window.frames[0].document).find('span[data-cref="' + trimmed_uuid + '"]').css("background-color", "");
+							$jq('#translated_tei', window.frames[0].document).find('span[data-source="' + trimmed_uuid + '"]').css("background-color", "");
 						}
 					}
 				}
@@ -501,7 +509,7 @@ var CriticalEditionViewer = {
 				switch ($jq(this).attr("id")) {
 					case "anno_entity_switch":
 						//$jq("#publish_txtimglnk_list").toggle();
-						CriticalEditionViewer.Viewer.toggle_text_image_linking($jq(this).attr("value"));
+						CriticalEditionViewer.Viewer.toggle_anno_entities($jq(this).attr("value"));
 						break;
 					case "til_switch":
 //						$jq("#publish_txtimglnk_list").toggle();
@@ -591,6 +599,7 @@ var CriticalEditionViewer = {
 					CriticalEditionViewer.Viewer.build_tree_view();
 					
 					CriticalEditionViewer.Viewer.show_versionable_transcriptions();
+					$jq("#publish_txtimglnk_list").toggle();
 				});
 			}
 			
@@ -598,7 +607,7 @@ var CriticalEditionViewer = {
 				jwplayer("mediaplayer").setup({
 				    file: $jq('#MediaPlayer').attr('data-url'),
 				    image: $jq('#MediaPlayer').attr('data-thumbnail'),
-				    width: $jq('#MediaPlayer').attr('data-width'),
+				    type: $jq('#MediaPlayer').attr('data-mime'),
 				});
 			}
 		}
