@@ -115,7 +115,8 @@ function islandora_critical_edition_advanced_menu() {
     'page callback' => 'islandora_critical_edition_advanced_prepare_advanced',
     'page arguments' => array(3),
     'type' => MENU_CALLBACK,
-    'access arguments' => TRUE,
+    'access callback' => 'user_access',
+    'access arguments' => array(ISLANDORA_CRITICAL_EDITION_ADVANCED_READ),
   );
 
   $items['islandora/cwrc_viewer/detail_meta_data'] = array(
@@ -129,7 +130,8 @@ function islandora_critical_edition_advanced_menu() {
     'title' => 'Prepare Metadata view',
     'page callback' => 'islandora_critical_edition_advanced_prepare_detail_transcription',
     'type' => MENU_CALLBACK,
-    'access arguments' => TRUE,
+    'access callback' => 'user_access',
+    'access arguments' => array(ISLANDORA_CRITICAL_EDITION_ADVANCED_READ),
   );
 
   $items['islandora/cwrc_viewer/transformed_page/%islandora_object'] = array(
@@ -137,7 +139,8 @@ function islandora_critical_edition_advanced_menu() {
     'page callback' => 'islandora_critical_edition_advanced_prepare_page_tei_consolidated',
     'page arguments' => array(3),
     'type' => MENU_CALLBACK,
-    'access arguments' => TRUE,
+    'access callback' => 'user_access',
+    'access arguments' => array(ISLANDORA_CRITICAL_EDITION_ADVANCED_READ),
   );
 
   $items['islandora/collation'] = array(
