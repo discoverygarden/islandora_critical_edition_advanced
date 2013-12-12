@@ -7,7 +7,7 @@
  */
 ?>
 <div id="AudioLayout" class="easyui-layout" style="width:100%;height:100%;">
-	<div id="view_box_header" style="width:100%;height:30px;border:1px solid red;">
+	<div id="view_box_header" style="width:100%;height:30px;">
 		<div style="float:left;">
 			<a class="data_anchor" id ="detail_meta" href="#">Metadata | </a>
 		</div>
@@ -20,7 +20,7 @@
 	</div>
 	<?php if (!$player_params || !$media_viewer): ?>
 		<?php if ($player_ready == NULL): ?>
-			<div style="width:100%;height:40px;border:1px solid red;">
+			<div style="width:100%;height:40px;">
 				<div style="float:left;" class="action_img">
 					<img id="tei_plain_text" title="Transcription" class="work_action_img" style="cursor: pointer;"src="<?php print $module_base;?>/img/text_plain.png" alt="image" />
 				</div>
@@ -28,15 +28,15 @@
 					<img id="img_title" title="Image" class="work_action_img" style="cursor: pointer;" src="<?php print $module_base;?>/img/picture.png" alt="image" />
 				</div>
 				<div style="float:left;" class="action_img">
-					<img id="tei_text_img" title="TEI Text" class="work_action_img" style="cursor: pdointer;" src="<?php print $module_base;?>/img/TEI_logo.jpg" alt="image" />
+					<img id="tei_text_img" title="TEI Text" class="work_action_img" style="cursor: pointer;" src="<?php print $module_base;?>/img/TEI_logo.jpg" alt="image" />
 				</div>
 				<div style="float:left;" class="action_img">
 					<img id="img_transcriptions" title="Diplomatic Transcriptions" class="work_action_img img_selected" style="cursor: pointer;" src="<?php print $module_base;?>/img/list_transcriptions.png" alt="image" />
 				</div>
-				<div class="switch-wrapper" style="height:100%;border:1px solid green;float:left">
+				<div class="switch-wrapper" style="height:100%;float:left">
 					<label style="float:left;" for="anno_entity_switch">Annotations & Entities</label><input class="switch " id="anno_entity_switch" type="checkbox" value="0">
 				</div>
-				<div class="switch-wrapper" style="height:100%;border:1px solid green;float:left">
+				<div class="switch-wrapper" style="height:100%;float:left">
 					<label style="float:left;" for="til_switch">Text-Image Linking</label><input class="switch" id="til_switch" type="checkbox" value="0">
 				</div>
 				<div id="jqpagination" class="pagination img_pager">
@@ -49,16 +49,16 @@
 			</div>
 		<?php endif;?>
 	<?php endif; ?>
-	<div id="view_box" style="width:100%;height:100%;border:1px solid green;overflow:auto;position: relative;">
+	<div id="view_box" style="width:100%;height:100%;overflow:auto;position: relative;">
 	<?php if ($player_params || $media_viewer): ?>
 		<?php foreach ($transcription_text as $key => $value):?>
-			<div id="versionable_transcription_<?php print $key;?>" class="versionable_transcription_text" style="width:49%;height:100%;border:1px solid blue;float:left;overflow:auto;position: absolute;">
+			<div id="versionable_transcription_<?php print $key;?>" class="versionable_transcription_text" style="width:49%;height:100%;float:left;overflow:auto;position: absolute;">
 				<h2><?php print $transcription_text[$key]['title'];?></h2>
 				<p><pre><?php print $transcription_text[$key]['text'];?></pre></p>
 			</div>
 		<?php endforeach;?>
 		<?php if ($player_params): ?>
-		  <div id="MediaPlayer" style="width:50%;height:100%;border:1px solid blue;float:right;"
+		  <div id="MediaPlayer" style="width:50%;height:100%;float:right;"
 			data-url="<?php print $player_params['url'];?>" 
 			data-mimetype="<?php print $player_params['mimetype'];?>" 
 			data-thumbnail="<?php print $player_params['thumbnail'];?>" 
@@ -68,14 +68,14 @@
 		  </div>
 		<?php endif; ?>
 		<?php if ($media_viewer): ?>
-		  <div id="MediaPlayer" style="width:50%;height:100%;border:1px solid blue;float:right;">
+		  <div id="MediaPlayer" style="width:50%;height:100%;float:right;">
 		    <img style="width: 100%;height:100%" class="associated_tn_img" src="<?php print $media_viewer;?>" alt=""/>
 		  </div>
 		<?php endif; ?>
 	<?php else: ?>
-		  <div id="viewer_iframe_border" style="width:100%;height:100%;border:1px solid red;">
+		  <div id="viewer_iframe_border" style="width:100%;height:100%;">
 				<div id="loadImg" class="loader-background-image">
-					<div style="width:100%;height:100%;border:1px solid red;background-color:white;">
+					<div style="width:100%;height:100%;background-color:white;">
 						<img class="loader-overlay" src="<?php print $module_base;?>/img/engine.png" alt="" />
 					</div>
 				</div>

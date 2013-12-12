@@ -21,6 +21,7 @@
   margin-right: auto;
 }
 div.transcriptions-container, div.operations-container, div.edition-container {
+  float: left;
   position: relative;
   width: 100%;
   height: 100%;

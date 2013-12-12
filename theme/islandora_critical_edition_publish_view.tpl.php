@@ -33,7 +33,6 @@ var $jt = jQuery.noConflict();
 <script type="text/javascript">
 var $zm = jQuery.noConflict();
 </script>
-<?php print "I wrote this thing"; ?>
 <div id="critical_edition_publish_form_wrapper" data-pid="<?php print $islandora_object->id; ?>">
 	<div style="width:100%;float:left;">
 	  <?php print $publish_form; ?>
