@@ -3,7 +3,6 @@
 $('document').ready(function() {
 	$jq( '#versions-tab tbody').find('td[class="version_name"]').each(function(e) {
 		$jq(this).children(':first').click(function(e) {
-			console.log("clicked");
 			e.preventDefault();
 			  if($jq('#aparatusDialog').length == 0) {
 				  $jq(document.body).append(''+
@@ -605,9 +604,6 @@ var CriticalEditionViewer = {
 			}
 			
 			if($jq('#MediaPlayer').length > 0) {
-				console.log($jq('#MediaPlayer').attr('data-thumbnail'));
-				console.log($jq('#MediaPlayer').attr('data-url'));
-				console.log($jq('#MediaPlayer').attr('mime'));
 				jwplayer("mediaplayer").setup({
 				    file: $jq('#MediaPlayer').attr('data-url'),
 				    image: $jq('#MediaPlayer').attr('data-thumbnail'),
