@@ -7,7 +7,7 @@
 ?>
 <?php print "$view_link"; ?>
 <?php print drupal_render($apparatus_link); ?>
-
+<?php print drupal_render($toggle_workbench_membership_form); ?>
 <div class="edition-container">
   <?php print drupal_render($version_actions); ?>
 </div>
