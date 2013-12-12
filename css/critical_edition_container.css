@@ -28,6 +28,15 @@ div.transcriptions-container, div.operations-container, div.edition-container {
   min-width: 100px;
   min-height: 25px;
 }
+
+div.transcriptions-container{
+  right: 20px;
+}
+
+div.operations-container{
+  right: 30px;
+}
+
 div.version-links, div.edition-links {
   position: absolute;
   top: 0px;
