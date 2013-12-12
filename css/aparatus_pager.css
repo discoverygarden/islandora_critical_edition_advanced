@@ -1,7 +1,6 @@
 #aparatus_pager{
     width:100%;
     height:20px;
-    border:1px solid red;
     margin-right:10px;
     margin-left:10px;
     float:left;
@@ -14,7 +13,6 @@
     margin-left:5px;
 }
 #aparatus_next_anchor{
-    border:solid 1px red;
     margin:5px;
     color:#000000;
     font-weight:bold;

@@ -21,12 +21,22 @@
   margin-right: auto;
 }
 div.transcriptions-container, div.operations-container, div.edition-container {
+  float: left;
   position: relative;
   width: 100%;
   height: 100%;
   min-width: 100px;
   min-height: 25px;
 }
+
+div.transcriptions-container{
+  right: 20px;
+}
+
+div.operations-container{
+  right: 30px;
+}
+
 div.version-links, div.edition-links {
   position: absolute;
   top: 0px;

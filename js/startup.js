@@ -1,16 +1,9 @@
-//var $jq = jQuery.noConflict();
+
 (function($) {
 $('document').ready(function() {
-	//console.log($.fn.jquery);
-	//console.log($jq.fn.jquery);
-	//console.log("ready");
-	//console.log(Drupal.settings);
 	$jq( '#versions-tab tbody').find('td[class="version_name"]').each(function(e) {
-		//console.log($(this));
 		$jq(this).children(':first').click(function(e) {
 			e.preventDefault();
-			console.log(this);
-			
 			  if($jq('#aparatusDialog').length == 0) {
 				  $jq(document.body).append(''+
 		          '<div id="aparatusDialog">'+
@@ -19,12 +12,10 @@ $('document').ready(function() {
 		      }
 			  var clicked_item = this;
 			  var pid = $(this).attr('data-pid');
-			  console.log(pid);
-			  console.log(Drupal.settings.basePath + 'islandora/cwrc_viewer/prepare_advanced/' + pid);
-			  console.log($ui.fn.jquery);
+			  var dialog_title = $jq(this).text();
 //		      // TODO: get the width/height dynamically.
 			  $ui('#aparatusDialog').dialog({
-		        title: 'Edit Header',
+		        title: dialog_title,
 		        modal: true,
 		        resizable: true,
 		        height: 600,
@@ -175,7 +166,7 @@ var CriticalEditionViewer = {
 		},
 		get_entities: function() {
 			// Append to block_4_hidden.
-			var cover = '<div id="navi" style="border:1px solid blue;position:absolute;overflow:auto;width:35%;height:100%;background-color: #FFFFFF;z-index: 500;top: 0;"></div>';
+			var cover = '<div id="navi" style="position:absolute;overflow:auto;width:35%;height:100%;background-color: #FFFFFF;z-index: 500;top: 0;"></div>';
 			
 			$jq("#view_box").append(cover);
 			
@@ -183,7 +174,7 @@ var CriticalEditionViewer = {
 			$jq('#navi').append(tree_html);
 			
 			var entity_list = '<ul>';
-			var text_image_list = '<ul><li id="phtml_2"><a href="#">' + 'Text Image Links' + '</a><ul>';
+			var text_image_list = '<ul><li id="publish_txtimglnk_list"><a href="#">' + 'Text Image Links' + '</a><ul>';
 			
 			
 			$jq('.entitiesList li', window.frames[0].document).each(function() {
@@ -197,7 +188,7 @@ var CriticalEditionViewer = {
 						}
 						text_image_list += '<li id="' + inner_data + '"><a href="#">' + $jq(this).children('.entityTitle').first().text() + '</a></li>';
 					} else {
-						entity_list += '<li id="phtml_2">';
+						entity_list += '<li id="publish_entities_list">';
 						entity_list += '<a href="#">' + $jq(this).attr("class") + '</a>';
 						entity_list += '<ul><li id="' + $jq(this).attr("name") + '"><a href="#">' + $jq(this).children('.entityTitle').first().text() + '</a></li></ul>';
 						entity_list += '</li>';
@@ -373,7 +364,7 @@ var CriticalEditionViewer = {
 						'<img onclick="CriticalEditionViewer.Viewer.zoom_minus_click();"style="float:right;cursor:pointer;cursor:hand;" src="' + Drupal.settings.basePath + Drupal.settings.islandora_critical_edition_advanced.module_base+'/img/zoom_minus.png"/>'+
 					'</div>');
 			
-			$jq("#zoom_wrapper").css("border","1px solid red");
+			//$jq("#zoom_wrapper").css("border","1px solid red");
 			$jq("#zoom_wrapper").css("margin-right","5px");
 			$jq("#zoom_wrapper").css("float","right");
 			$jq("#zoom_wrapper").css("text-align","center");
@@ -430,14 +421,8 @@ var CriticalEditionViewer = {
 			}
 			
 			
-			///console.log($jq('#view_box').width());
 			$jq('#loadImg div').width($jq('#view_box').width());
 			$jq('#loadImg div').height($jq('#view_box').height());
-			//$("#viewer_iframe").style(display,'none');
-//			  $(window.frames[0].document).ready(function() {
-//				  console.log($('#cwrc_wrapper', window.frames[0].document).height());
-//			  });
-			  
 			$jq('.data_anchor').click(function(e) {
 				$jq('.data_anchor').css('font-weight', 'normal');
 				//console.log($jq(this).css('font-weight') == 'bold');
@@ -449,7 +434,7 @@ var CriticalEditionViewer = {
 				
 				e.preventDefault();
 				if($jq("#meta_overlay").length == 0) {
-					var meta_cover = '<div id="meta_overlay" style="border:1px solid blue;position:absolute;overflow:auto;width:100%;height:100%;background-color: #FFFFFF;z-index: 500;top: 0;"></div>';
+					var meta_cover = '<div id="meta_overlay" style="position:absolute;overflow:auto;width:100%;height:100%;background-color: #FFFFFF;z-index: 500;top: 0;"></div>';
 					$jq("#view_box").append(meta_cover);
 					$jq("#meta_overlay").css("margin-top",-$jq("#meta_overlay").height());
 				} else {
@@ -515,23 +500,33 @@ var CriticalEditionViewer = {
 				}
 				switch ($jq(this).attr("id")) {
 					case "anno_entity_switch":
+						//$jq("#publish_txtimglnk_list").toggle();
 						CriticalEditionViewer.Viewer.toggle_text_image_linking($jq(this).attr("value"));
 						break;
 					case "til_switch":
+//						$jq("#publish_txtimglnk_list").toggle();
+//						$jq("#tree_annos").toggle();
+//						$jq("#tree_entities").toggle();
 						CriticalEditionViewer.Viewer.toggle_text_image_linking($jq(this).attr("value"));
 						break;
 				}
 			});
 			
-			// TODO: hide the writer from view while this is loading
 			if($jq("#viewer_iframe").length > 0) {
 				$jq("#viewer_iframe").load(function (){
 					//console.log("iframe load complete");
 					
 					$jq('#cwrc_wrapper', window.frames[0].document).height($jq('#view_box').height());
-					//console.log(document.getElementById('viewer_iframe').contentWindow);
 					// Set the writer object for access later
 					CriticalEditionViewer.cwrc_writer = document.getElementById('viewer_iframe').contentWindow['writer'];
+					console.log("writer");
+					
+					CriticalEditionViewer.cwrc_writer.layout.north.options.resizeable = false;
+					console.log(CriticalEditionViewer.cwrc_writer);
+					
+					
+					
+					
 					CriticalEditionViewer.cwrc_writer_helper = document.getElementById('viewer_iframe').contentWindow['islandoraCWRCWriter'];
 						
 					CriticalEditionViewer.cwrc_writer.editor.$('body', window.frames[0].document).removeClass('showEntityBrackets');
@@ -543,11 +538,10 @@ var CriticalEditionViewer = {
 					$jq('#page_choose option', window.frames[0].document).each(function() {
 						CriticalEditionViewer.pager_data[$jq(this).attr("value") - 1] = $jq(this).attr("value");
 					});
-					//console.log("pager length: " + CriticalEditionViewer.pager_data.length);
-					
-					//console.log(CriticalEditionViewer.cwrc_params.pages[ CriticalEditionViewer.cwrc_params.position]);
-					
 					CriticalEditionViewer.Viewer.get_page_transformed_tei(CriticalEditionViewer.cwrc_params.pages[ CriticalEditionViewer.cwrc_params.position]);
+					
+					// Hide the resize bar buttons in the UI-Layout plugin.
+					$jq('.ui-layout-toggler', window.frames[0].document).css("visibility", "hidden");
 					
 					$pg('.pagination').jqPagination({
 						max_page: CriticalEditionViewer.pager_data.length,

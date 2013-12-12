@@ -407,6 +407,7 @@ function islandora_critical_edition_advanced_preprocess_islandora_critical_editi
   $islandora_critical_edition = drupal_get_path('module', 'islandora_critical_edition');
   $module_path = drupal_get_path('module', 'islandora_critical_edition_advanced');
   drupal_add_css("$module_path/css/jquery-ui.css");
+  drupal_add_css("$module_path/css/theme_override.css");
   drupal_add_js("$module_path/js/jquery-ui.js");
   drupal_add_js("$module_path/js/startup.js");
 
