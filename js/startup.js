@@ -3,6 +3,7 @@
 $('document').ready(function() {
 	$jq( '#versions-tab tbody').find('td[class="version_name"]').each(function(e) {
 		$jq(this).children(':first').click(function(e) {
+			console.log("clicked");
 			e.preventDefault();
 			  if($jq('#aparatusDialog').length == 0) {
 				  $jq(document.body).append(''+
@@ -140,28 +141,35 @@ var CriticalEditionViewer = {
 			}
 		},
 		toggle_text_image_linking: function(show) {
+			$jq("#publish_txtimglnk_list").toggle();
 			if(show == 1) {
 //				$jq("#navi").animate({
 //			      marginLeft:0},{
 //			      complete: function() {
 			        //CriticalEditionViewer.cwrc_writer.layout.sizePane("east", ($('#cwrc_wrapper', window.frames[0].document).width()-$("#navi").width()));
 			        CriticalEditionViewer.cwrc_writer.editor.$('body', window.frames[0].document).toggleClass('showEntityBrackets');
-			        if(!$jq('#img_title').hasClass('img_selected')) {
-			          CriticalEditionViewer.cwrc_writer.layout.open("west");
-			          CriticalEditionViewer.cwrc_writer.layout.sizePane("west", $jq("#navi").width());
-			        } else {
-			          CriticalEditionViewer.cwrc_writer.layout.sizePane("east", ($jq('#cwrc_wrapper', window.frames[0].document).width()-$jq("#navi").width()));
-			        }
+//			        if(!$jq('#img_title').hasClass('img_selected')) {
+//			          CriticalEditionViewer.cwrc_writer.layout.open("west");
+//			          CriticalEditionViewer.cwrc_writer.layout.sizePane("west", $jq("#navi").width());
+//			        } else {
+//			          CriticalEditionViewer.cwrc_writer.layout.sizePane("east", ($jq('#cwrc_wrapper', window.frames[0].document).width()-$jq("#navi").width()));
+//			        }
 //			    }, 700);
 			} else {
 				//
 				//CriticalEditionViewer.cwrc_writer.layout.close("west");
 				
-				if($jq('#img_title').hasClass('img_selected')) {
-				  CriticalEditionViewer.cwrc_writer.layout.sizePane("east", $jq('#cwrc_wrapper', window.frames[0].document).width());
-				}
-				
 				CriticalEditionViewer.cwrc_writer.editor.$('body', window.frames[0].document).toggleClass('showEntityBrackets');
+				
+				
+//				if($jq('#img_title').hasClass('img_selected')) {
+//				  CriticalEditionViewer.cwrc_writer.layout.sizePane("east", $jq('#cwrc_wrapper', window.frames[0].document).width());
+//				}
+//				
+//				CriticalEditionViewer.cwrc_writer.editor.$('body', window.frames[0].document).toggleClass('showEntityBrackets');
+				
+				
+				
 				
 				//
 //				$jq("#navi").animate({
@@ -255,8 +263,6 @@ var CriticalEditionViewer = {
 				// Hate this, but this version of jstree kinda
 				// requires it.
 				
-				//$jq('#translated_tei', window.frames[0].document).find('span[data-cref="224568"]').css("background-color", "#FFFF00");
-				
 				var data_stuff = $jq('.jstree-clicked');
 				
 				// The following highlights entity's
@@ -273,34 +279,28 @@ var CriticalEditionViewer = {
 						var uuid = $jq(data_stuff[x]).closest("li").attr("id");
 						if(uuid.indexOf("annos_") === -1) {
 							var trimmed_uuid = uuid.replace("uuid: ", "");
-							// Show the annotation.console.log(document.getElementById('viewer_iframe').contentWindow);
 							document.getElementById('viewer_iframe').contentWindow.paint_commentAnnoTargets($jq('#anno_' + trimmed_uuid, window.frames[0].document), 'canvas_0', trimmed_uuid, "TextImageLink");
 							if($jq('#translated_tei', window.frames[0].document).length > 0) {
-								$jq('#translated_tei', window.frames[0].document).find('span[data-cref="' + trimmed_uuid + '"]').css("background-color", "#FFFF00");
+								$jq('#translated_tei', window.frames[0].document).find('span[data-source="' + trimmed_uuid + '"]').css("background-color", "#FFFF00");
 							}
-							
 						}
 					}
 				}
 				
-				//console.log(data_stuff);
 			}).bind('deselect_node.jstree', function() {
-				//console.log("deselect");
 				var data_stuff = $jq('.jstree-anchor');
 				
 				$jq('#entities > ul > li', window.frames[0].document).each(function(index, el) {
 					$jq(this).removeClass('selected').css('background-color', '').find('div[class="info"]').hide();
 					CriticalEditionViewer.cwrc_writer.delegator.editorCallback('highlightEntity_looseFocus', $jq(this));
 				});
-				
 				for(var x = 0;x<data_stuff.length;x++) {
 					if($jq(data_stuff[x]).closest("li").attr("id")) {
 						var uuid = $jq(data_stuff[x]).closest("li").attr("id");
 						if(uuid.indexOf("annos_") === -1) {
-							// Show the annotation.console.log(document.getElementById('viewer_iframe').contentWindow);
 							var trimmed_uuid = uuid.replace("uuid: ", "");
 							$jq('.svg_' + trimmed_uuid, window.frames[0].document).remove();
-							$jq('#translated_tei', window.frames[0].document).find('span[data-cref="' + trimmed_uuid + '"]').css("background-color", "");
+							$jq('#translated_tei', window.frames[0].document).find('span[data-source="' + trimmed_uuid + '"]').css("background-color", "");
 						}
 					}
 				}
@@ -600,14 +600,18 @@ var CriticalEditionViewer = {
 					CriticalEditionViewer.Viewer.build_tree_view();
 					
 					CriticalEditionViewer.Viewer.show_versionable_transcriptions();
+					$jq("#publish_txtimglnk_list").toggle();
 				});
 			}
 			
 			if($jq('#MediaPlayer').length > 0) {
+				console.log($jq('#MediaPlayer').attr('data-thumbnail'));
+				console.log($jq('#MediaPlayer').attr('data-url'));
+				console.log($jq('#MediaPlayer').attr('mime'));
 				jwplayer("mediaplayer").setup({
 				    file: $jq('#MediaPlayer').attr('data-url'),
 				    image: $jq('#MediaPlayer').attr('data-thumbnail'),
-				    width: $jq('#MediaPlayer').attr('data-width'),
+				    type: $jq('#MediaPlayer').attr('data-mime'),
 				});
 			}
 		}
