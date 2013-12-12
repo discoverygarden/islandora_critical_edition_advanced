@@ -31,7 +31,7 @@ function islandora_critical_edition_advanced_workbench() {
         '#theme' => 'links__ctools_dropbutton',
         '#links' => array(
           array(
-            'title' => t('Add New Critical Edition Object'),
+            'title' => t('Add New Critical Edition'),
             'href' => 'workbench/add/islandora:criticalEditionContainerCModel'
           ),
         ),
@@ -54,7 +54,7 @@ function islandora_critical_edition_advanced_workbench() {
             'href' => 'workbench/add/islandora:sp_videoCModel'
           ),
           array(
-            'title' => t('Add New Collection Object'),
+            'title' => t('Add New Collection'),
             'href' => 'workbench/add/islandora:collectionCModel'
           ),
         ),
@@ -138,7 +138,7 @@ function islandora_critical_edition_advanced_select_collection_form(array $form,
   return array(
     'collection' => array(
       '#type' => 'textfield',
-      '#title' => t('Select Collection to add to'),
+      '#title' => t('Select Collection'),
       '#required' => TRUE,
       '#autocomplete_path' => 'workbench/collection_autocomplete',
     ),
