@@ -68,12 +68,13 @@ function islandora_calliope_write_file($pid, $critical_edition = '') {
   file_put_contents($filename, $contents);
   try {
     $grid = islandora_calliope_create_mongo_grid();
-    $query = array('_resourceid' => $flat_pid);
+    $query = array('_resourceid' => $pid);
     $record = $grid->findOne($query);
     if ($record) {
       $id = $record->file['_id'];
       $grid->remove($query);
     }
+    $record2 = $grid->findOne($query);
     $metadata['filetype'] = $transcription_ds->mimetype;
     if ($critical_edition) {
       $metadata['project'] = $critical_edition;

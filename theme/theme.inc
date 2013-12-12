@@ -318,8 +318,8 @@ function theme_islandora_critical_edition_container_versions_table(array &$varia
     'object', 'limit', 'pager', 'columns'))));
   // Build Header.
   $headers = array(
-    'version_name' => array('data' => t('Version Name'), 'field' => 'version_name'),
-    'source_name' => array('data' => t('Source Name')),
+    'version_name' => array('data' => t('Version'), 'field' => 'version_name'),
+    'source_name' => array('data' => t('Source')),
     'transcriptions' => array('data' => t('Transcriptions')),
     'operations' => array('data' => t('Operations')),
     'descriptions' => array('data' => t('Descriptions')),
