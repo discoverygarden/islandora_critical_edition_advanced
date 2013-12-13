@@ -31,6 +31,7 @@ function islandora_critical_edition_advanced_menu() {
     'access callback' => 'islandora_critical_edition_advanced_object_management_access',
     'access arguments' => array(2, 'manage_container'),
     'file' => 'includes/container_management.inc',
+    'weight' => 20,
   );
   $items['islandora/object/%islandora_object/manage/edition_container/ingest'] = array(
     'title' => 'Add New Version',
@@ -159,24 +160,16 @@ function islandora_critical_edition_advanced_menu() {
     'type' => MENU_CALLBACK,
   );
 
-  $items['islandora/object/%islandora_object/version'] = array(
-    'title' => 'Versions',
-    'page callback' => 'islandora_critical_edition_versions_view',
-    'page arguments' => array(2),
-    'type' => MENU_LOCAL_TASK,
-    'access callback' => 'islandora_critical_edition_publish_access',
-    'access arguments' => array(2),
-  );
+  $items["islandora/object/%islandora_object/critical_edition/edit"] = array(
+    'title' => 'Edit Critical Edition',
 
-  $items['islandora/object/%islandora_object/collation'] = array(
-    'title' => 'Collations',
     'page callback' => 'islandora_critical_edition_collation_view',
     'page arguments' => array(2),
-    'type' => MENU_LOCAL_TASK,
+    'type' => MENU_CALLBACK,
     'access callback' => 'islandora_critical_edition_publish_access',
     'access arguments' => array(2),
+    'weight' => 2,
   );
-
 
   return $items;
 }
@@ -420,7 +413,7 @@ function islandora_critical_edition_versions_view(AbstractObject $object) {
  *   The marked up output.
  */
 function islandora_critical_edition_collation_view(AbstractObject $object) {
-  return theme('islandora_critical_edition_container_collation', array('object' => $object)
+  return theme('islandora_critical_edition_container_edit', array('object' => $object)
   );
 }
 
@@ -628,15 +621,9 @@ function islandora_critical_edition_advanced_theme($existing, $type, $theme, $pa
       'pattern' => 'islandora_critical_edition_container__',
       'variables' => array('object' => NULL),
     ),
-    'islandora_critical_edition_container_version' => array(
+     'islandora_critical_edition_container_edit' => array(
       'file' => 'theme/theme.inc',
-      'template' => 'theme/islandora_critical_edition_container_version',
-      'pattern' => 'islandora_critical_edition_container_version__',
-      'variables' => array('object' => NULL),
-    ),
-     'islandora_critical_edition_container_collation' => array(
-      'file' => 'theme/theme.inc',
-      'template' => 'theme/islandora_critical_edition_container_collation',
+      'template' => 'theme/islandora_critical_edition_container_edit',
       'pattern' => 'islandora_critical_edition_container_version__',
       'variables' => array('object' => NULL),
     ),

@@ -169,7 +169,12 @@ function islandora_critical_edition_preprocess_islandora_critical_edition_contai
   drupal_add_css("$views_module_path/css/views-admin.ctools.css");
   drupal_add_css("$views_module_path/css/views-admin.seven.css");
 
+
   $object = $variables['object'];
+  //$variables['edit_link'] = l(t('Edit'), "islandora/object/$object/critical_edition/edit");
+  $variables['edit_link'] = "<a href ='/islandora/object/$object/critical_edition/edit'><button>" . t('Critical Edition Editing View') . "</button></a>";
+
+
   $apparatus = islandora_critical_edition_get_apparatus($object);
   $link = l(t('Apparatus'), "islandora/object/$apparatus/manage/apparatus");
   $message = t('Manage !Apparatus', array('!Apparatus' => $link));
@@ -204,6 +209,7 @@ function islandora_critical_edition_preprocess_islandora_critical_edition_contai
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/utilities');
   $module_path = drupal_get_path('module', 'islandora_critical_edition_advanced');
   drupal_add_css("$module_path/css/critical_edition_container.css");
+  drupal_add_js("$module_path/js/select_transcription.js");
   // For now we are using views/ctools to style our drop downs if they are not
   // enabled plain links will be rendered.
   $views_module_path = drupal_get_path('module', 'views');
@@ -211,21 +217,21 @@ function islandora_critical_edition_preprocess_islandora_critical_edition_contai
   drupal_add_css("$views_module_path/css/views-admin.seven.css");
 
   $object = $variables['object'];
-  
+
   $variables['version_actions'] = islandora_critical_edition_container_version_links($object);
   $variables['versions'] = array(
     '#theme' => 'islandora_critical_edition_container_versions_table',
     '#object' => $object,
   );
- 
 }
+
 /**
  * Implements hook_preprocess_theme().
  *
  * This function is resposible for fetching the required data to render the
  * critical edition object.
  */
-function islandora_critical_edition_preprocess_islandora_critical_edition_container_collation(array &$variables) {
+function islandora_critical_edition_preprocess_islandora_critical_edition_container_edit(array &$variables) {
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/utilities');
   $module_path = drupal_get_path('module', 'islandora_critical_edition_advanced');
   drupal_add_css("$module_path/css/critical_edition_container.css");
@@ -236,10 +242,11 @@ function islandora_critical_edition_preprocess_islandora_critical_edition_contai
   drupal_add_css("$views_module_path/css/views-admin.seven.css");
 
   $object = $variables['object'];
+  $variables['view_link'] = "<a href ='islandora/object/$object'><button>" . t('Critical Edition Reading View') . "</button></a>";
   $apparatus = islandora_critical_edition_get_apparatus($object);
   $link = l(t('Apparatus'), "islandora/object/$apparatus/manage/apparatus");
   $message = t('Manage !Apparatus', array('!Apparatus' => $link));
-  $variables['apparatus_link'] = array('#markup' => "<div><strong>$message</strong></div>");
+  $variables['apparatus_link'] = array('#markup' => "<div class = 'apparatus_link'><strong>$message</strong></div>");
   $variables['apparatus'] = array(
     '#markup' => theme('islandora_critical_edition_publish_view', array(
       'islandora_object' => $object,
@@ -307,7 +314,7 @@ function islandora_critical_edition_container_version_links(AbstractObject $obje
       'fragment' => 'create-vo',
     ),
     'import' => array(
-      'title' => t('Import Version'),
+      'title' => t('Associate Existing Version'),
       'href' => "islandora/object/{$object->id}/manage/edition_container",
       'fragment' => 'attach-vo',
     ),
@@ -402,18 +409,18 @@ function theme_islandora_critical_edition_container_versions_table(array &$varia
   $rows = array();
   $versions = islandora_critical_edition_container_versions_table_data($object, tablesort_get_sort($headers), $offset, $limit);
   foreach ($versions as $pid => $version) {
-   
+
     $source = $version['source'];
     $source_pid = $source->id;
     $cells = array(
       'version_name' => array(
         '#markup' => l($version['label'], "islandora/object/{$pid}", array(
-            'attributes' =>
-            array(
-              'title' => $version['label'],
-              'data-pid' => $pid,
-            ),
-          )
+          'attributes' =>
+          array(
+            'title' => $version['label'],
+            'data-pid' => $pid,
+          ),
+            )
         ),
       ),
       'source_name' => array(
