@@ -11,7 +11,6 @@ define('ISLANDORA_CRITICAL_EDITION_ADVANCED_READ', 'read critical editions');
 define('ISLANDORA_CRITICAL_EDITION_ADVANCED_MODIFY', 'modify critical editions');
 define('ISLANDORA_CRITICAL_EDITION_ADVANCED_DELETE', 'delete critical editions');
 
-
 /**
  * Implements hook_menu().
  */

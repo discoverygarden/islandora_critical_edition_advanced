@@ -169,7 +169,6 @@ function islandora_critical_edition_preprocess_islandora_critical_edition_contai
   $object = $variables['object'];
   $variables['edit_link'] = "<a href ='/islandora/object/$object/critical_edition/edit'><button>" . t('Editing View') . "</button></a>";
 
-
   $apparatus = islandora_critical_edition_get_apparatus($object);
   $link = l(t('Apparatus'), "islandora/object/$apparatus/manage/apparatus");
   $message = t('Manage !Apparatus', array('!Apparatus' => $link));
@@ -184,12 +183,6 @@ function islandora_critical_edition_preprocess_islandora_critical_edition_contai
   $variables['edition_actions'] = islandora_critical_edition_container_editor_links($object);
   $variables['version_actions'] = islandora_critical_edition_container_version_links($object);
   $variables['collation_actions'] = islandora_critical_edition_container_collation_links($object);
-
-  // Hidden form for adding the object to the users workbench.
-  if (user_access('use islandora_bookmark')) {
-    module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/workbench');
-    $variables['toggle_workbench_membership_form'] = drupal_get_form('islandora_critical_edition_advanced_toggle_workbench_membership_form', $object);
-  }
 
   $variables['versions'] = array(
     '#theme' => 'islandora_critical_edition_container_versions_table',
@@ -259,6 +252,11 @@ function islandora_critical_edition_preprocess_islandora_critical_edition_contai
   $variables['edition_actions'] = islandora_critical_edition_container_editor_links($object);
   $variables['version_actions'] = islandora_critical_edition_container_version_links($object);
   $variables['collation_actions'] = islandora_critical_edition_container_collation_links($object);
+
+  // Hidden form for adding the object to the users workbench.
+  module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/workbench');
+  $variables['toggle_workbench_membership_form'] = drupal_get_form('islandora_critical_edition_advanced_toggle_workbench_membership_form', $object);
+
   $variables['versions'] = array(
     '#theme' => 'islandora_critical_edition_container_versions_table',
     '#object' => $object,
