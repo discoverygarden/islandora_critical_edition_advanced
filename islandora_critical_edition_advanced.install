@@ -1,0 +1,27 @@
+<?php
+
+/**
+ * @file
+ * Install hooks for this module.
+ */
+
+/**
+ * Implements hook_install().
+ *
+ * @see islandora_book_islandora_required_objects()
+ */
+function islandora_critical_edition_advanced_install() {
+  module_load_include('inc', 'islandora', 'includes/solution_packs');
+  islandora_install_solution_pack('islandora_critical_edition_advanced');
+  // Set defaults for the islandora_bookmark module.
+  variable_set('islandora_bookmark_default_list_name', t('@username\'s Workbench'));
+  variable_get('islandora_bookmark_create_user_default_lists', TRUE);
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function islandora_critical_edition_advanced_uninstall() {
+  module_load_include('inc', 'islandora', 'includes/solution_packs');
+  islandora_install_solution_pack('islandora_critical_edition_advanced', 'uninstall');
+}
