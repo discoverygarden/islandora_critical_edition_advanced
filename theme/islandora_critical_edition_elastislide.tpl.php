@@ -1,9 +1,7 @@
 <?php
 /**
  * @file
- * This is the template file for the Critical Edition elastislide object
- * viewer.
- *
+ * This is the template file for the Critical Edition elastislide object viewer.
  */
 ?>
 
@@ -17,5 +15,3 @@
 		</ul>
 	</div>
 </div>
-		
-		

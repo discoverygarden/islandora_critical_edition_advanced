@@ -39,11 +39,7 @@ function islandora_critical_edition_preprocess_islandora_critical_media_object(a
 
   $critical_edition_module_path = drupal_get_path('module', 'islandora_critical_edition');
   $validate_path = variable_get('islandora_critical_edition_validate_url', '/validator/validate.html');
-  drupal_add_js(array(
-    'islandora_critical_edition' => array(
-      'source_type' => 'media',
-    ),
-      ), 'setting');
+  drupal_add_js(array('islandora_critical_edition' => array('source_type' => 'media')), 'setting');
   islandora_critical_edition_add_js($variables, TRUE);
   $islandora_object = $variables['islandora_object'];
   $pages = islandora_paged_content_get_pages($islandora_object);
@@ -171,7 +167,6 @@ function islandora_critical_edition_preprocess_islandora_critical_edition_contai
 
 
   $object = $variables['object'];
-  //$variables['edit_link'] = l(t('Edit'), "islandora/object/$object/critical_edition/edit");
   $variables['edit_link'] = "<a href ='/islandora/object/$object/critical_edition/edit'><button>" . t('Editing View') . "</button></a>";
 
 
