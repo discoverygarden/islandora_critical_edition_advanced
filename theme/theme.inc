@@ -172,7 +172,7 @@ function islandora_critical_edition_preprocess_islandora_critical_edition_contai
 
   $object = $variables['object'];
   //$variables['edit_link'] = l(t('Edit'), "islandora/object/$object/critical_edition/edit");
-  $variables['edit_link'] = "<a href ='/islandora/object/$object/critical_edition/edit'><button>" . t('Critical Edition Editing View') . "</button></a>";
+  $variables['edit_link'] = "<a href ='/islandora/object/$object/critical_edition/edit'><button>" . t('Editing View') . "</button></a>";
 
 
   $apparatus = islandora_critical_edition_get_apparatus($object);
@@ -242,7 +242,7 @@ function islandora_critical_edition_preprocess_islandora_critical_edition_contai
   drupal_add_css("$views_module_path/css/views-admin.seven.css");
 
   $object = $variables['object'];
-  $variables['view_link'] = "<a href ='islandora/object/$object'><button>" . t('Critical Edition Reading View') . "</button></a>";
+  $variables['view_link'] = "<a href ='islandora/object/$object'><button>" . t('Reading View') . "</button></a>";
   $apparatus = islandora_critical_edition_get_apparatus($object);
   $link = l(t('Apparatus'), "islandora/object/$apparatus/manage/apparatus");
   $message = t('Manage !Apparatus', array('!Apparatus' => $link));
