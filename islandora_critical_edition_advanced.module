@@ -4,6 +4,7 @@
  * @file
  * Add advanced data modeling options to Islandora Critical Editions.
  */
+
 define('ISLANDORA_CRITICAL_EDITION_ADVANCED_MANAGE_CONTAINER', 'manage critical edition');
 define('ISLANDORA_CRITICAL_EDITION_ADVANCED_CREATE', 'create critical editions');
 define('ISLANDORA_CRITICAL_EDITION_ADVANCED_READ', 'read critical editions');
@@ -239,7 +240,7 @@ function islandora_critical_edition_advanced_prepare_advanced($object) {
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/consolidate_tei');
 
   $tei_rdfs = array_keys(islandora_critical_edition_get_members($data));
-  //$player_params;
+  // $player_params;
   if (!empty($tei_rdfs)) {
     $media_cmodels = array(
       'islandora:sp_videoCModel',
@@ -280,7 +281,7 @@ function islandora_critical_edition_advanced_prepare_advanced($object) {
       }
     }
   }
-  // This is a catch all, to handle anything else with a basic TN
+  // This is a catch all, to handle anything else with a basic TN.
   drupal_json_output(theme("islandora_critical_edition_advanced_detail_viewer", array(
     'islandora_object' => $data,
     'media_viewer' => url("islandora/object/$data/datastream/TN/view"),
@@ -291,6 +292,17 @@ function islandora_critical_edition_advanced_prepare_advanced($object) {
   )));
 }
 
+/**
+ * Builds viewer for Media objects.
+ *
+ * @param AbstractObject $reference_object
+ *   Object representing object from which this Versionable object is derived
+ * @param array $variables
+ *   Theme variables
+ *
+ * @return array
+ *   Theme variables
+ */
 function islandora_critical_edition_advanced_build_version_media_view($reference_object, $variables) {
   module_load_include('inc', 'islandora', 'includes/solution_packs');
   module_load_include('inc', 'islandora_critical_edition', 'theme/theme');
@@ -553,8 +565,8 @@ function islandora_critical_edition_advanced_preprocess_islandora_critical_editi
           '#title' => $aparatus_datastreams[$element],
           '#markup' => theme(
               "islandora_critical_edition_advanced_critical_aparatus", array(
-            'islandora_object' => $variables['islandora_object'],
-            'text_body' => theme("islandora_critical_edition_container_{$element}_table", array(
+                'islandora_object' => $variables['islandora_object'],
+                'text_body' => theme("islandora_critical_edition_container_{$element}_table", array(
               "object" => $variables['islandora_object'],
               'columns' => array(
                 'version_name' => TRUE,
@@ -564,21 +576,21 @@ function islandora_critical_edition_advanced_preprocess_islandora_critical_editi
                 'descriptions' => TRUE,
               ),
                 )
-            ),
-            'text_header' => $aparatus_datastreams[$element],
-            'text_pager' => theme("islandora_critical_edition_advanced_aparatus_pager", array(
+                ),
+                'text_header' => $aparatus_datastreams[$element],
+                'text_pager' => theme("islandora_critical_edition_advanced_aparatus_pager", array(
               'islandora_object' => $variables['islandora_object'],
               'tab_previous' => (isset($all_keys[$entry]) ? substr($aparatus_datastreams[$all_keys[$entry]], 0, 16) : "_blank_"),
               'tab_next' => (isset($all_keys[$entry + 2]) ? substr($aparatus_datastreams[$all_keys[$entry + 2]], 0, 16) : "_blank_"),
                 )
-            ),
-            'text_header' => $aparatus_datastreams[$element],
-            'text_pager' => theme("islandora_critical_edition_advanced_aparatus_pager", array(
+                ),
+                'text_header' => $aparatus_datastreams[$element],
+                'text_pager' => theme("islandora_critical_edition_advanced_aparatus_pager", array(
               'islandora_object' => $variables['islandora_object'],
               'tab_previous' => (isset($construct_keys[$entry]) ? substr($aparatus_datastreams[$construct_keys[$entry]], 0, 16) : "_blank_"),
               'tab_next' => (isset($construct_keys[$entry + 2]) ? substr($aparatus_datastreams[$construct_keys[$entry + 2]], 0, 16) : "_blank_"),
                 )
-            ),
+                ),
               )
           ),
         );
@@ -592,15 +604,15 @@ function islandora_critical_edition_advanced_preprocess_islandora_critical_editi
           '#title' => $aparatus_datastreams[$element],
           '#markup' => theme(
               'islandora_critical_edition_advanced_critical_aparatus', array(
-            'islandora_object' => $variables['islandora_object'],
-            'text_body' => (isset($to_construct[$element]) ? $to_construct[$element] : ""),
-            'text_header' => $aparatus_datastreams[$element],
-            'text_pager' => theme("islandora_critical_edition_advanced_aparatus_pager", array(
+                'islandora_object' => $variables['islandora_object'],
+                'text_body' => (isset($to_construct[$element]) ? $to_construct[$element] : ""),
+                'text_header' => $aparatus_datastreams[$element],
+                'text_pager' => theme("islandora_critical_edition_advanced_aparatus_pager", array(
               'islandora_object' => $variables['islandora_object'],
               'tab_previous' => (isset($construct_keys[$entry]) ? substr($aparatus_datastreams[$construct_keys[$entry]], 0, 16) : "_blank_"),
               'tab_next' => (isset($construct_keys[$entry + 2]) ? substr($aparatus_datastreams[$construct_keys[$entry + 2]], 0, 16) : "_blank_"),
                 )
-            ),
+                ),
               )
           ),
         );
@@ -621,7 +633,7 @@ function islandora_critical_edition_advanced_theme($existing, $type, $theme, $pa
       'pattern' => 'islandora_critical_edition_container__',
       'variables' => array('object' => NULL),
     ),
-     'islandora_critical_edition_container_edit' => array(
+    'islandora_critical_edition_container_edit' => array(
       'file' => 'theme/theme.inc',
       'template' => 'theme/islandora_critical_edition_container_edit',
       'pattern' => 'islandora_critical_edition_container_version__',
@@ -1211,7 +1223,11 @@ function islandora_critical_edition_advanced_islandora_transcriptionCModel_TRANS
  * Implements hook_CMODEL_PID_islandora_overview_object().
  */
 function islandora_critical_edition_advanced_islandora_overview_object(AbstractObject $object) {
-  $allowed_models = array('islandora:criticalEditionContainerCModel', 'islandora:versionableObjectCModel', 'islandora:criticalEditionCModel');
+  $allowed_models = array(
+    'islandora:criticalEditionContainerCModel',
+    'islandora:versionableObjectCModel',
+    'islandora:criticalEditionCModel',
+  );
   // Contains allowed model.
   $models = array_intersect($object->models, $allowed_models);
   if (empty($models)) {

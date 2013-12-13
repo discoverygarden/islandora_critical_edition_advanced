@@ -2,11 +2,6 @@
 /**
  * @file
  * This is the template file for the Critical Edition published object
- *
- *<div style="width:25%;float:right;">
- *  <?php print $scroll_list; ?>
- *</div>
- *
  */
 ?>
 <script type="text/javascript" src="<?php print $path; ?>/sites/all/modules/islandora_critical_edition/CWRC-Writer/src/js/lib/jquery/jquery-1.8.3.js"></script>
@@ -38,9 +33,3 @@ var $zm = jQuery.noConflict();
 	  <?php print $publish_form; ?>
 	</div>
 </div>
-
-
-<!-- drupal_add_js("$module_path/js/jquery-ui.js"); -->
-<!-- drupal_add_js("$module_path/js/jQuery-switchButton/jquery.switchButton.js"); -->
-<!-- drupal_add_js("$module_path/js/jqPagination/js/jquery.jqpagination.js"); -->
-<!-- drupal_add_js("$module_path/js/jstree/dist/jstree.js"); -->

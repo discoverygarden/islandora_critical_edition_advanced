@@ -56,7 +56,7 @@ function islandora_critical_edition_advanced_versionable_object_form_source_auto
   $models = in_array($type, $models) ? array($type) : $models;
   $where_clause = '';
   foreach ($models as $model) {
-    $where_clause .=!empty($where_clause) ? 'UNION ' : '';
+    $where_clause .= !empty($where_clause) ? 'UNION ' : '';
     $where_clause .= "{ ?object fedora-model:hasModel <info:fedora/$model> . }\n";
   }
   $where_clause = substr($where_clause, 0, -1);
@@ -517,9 +517,7 @@ function islandora_critical_edition_advanced_versionable_object_form_undo_submit
   $versionable_object = islandora_ingest_form_get_object($form_state);
   $ingest_objects = &islandora_ingest_form_get_objects($form_state);
   // Forget all generated objects except the default object.
-  $ingest_objects = array(
-    0 => $versionable_object,
-  );
+  $ingest_objects = array(0 => $versionable_object);
 }
 
 /**
