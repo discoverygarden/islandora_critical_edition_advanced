@@ -549,7 +549,8 @@ function islandora_critical_edition_advanced_preprocess_islandora_critical_editi
     }
   }
 
-  $to_construct['versions'] = 'Viewer';
+  $to_construct['versions'] = t('Viewer');
+  $to_construct['collation_view'] = t('Collations');
   $tn_array = array();
   // Build the TN array for the elastislide viewer.
   foreach (array_keys($associated_object_keys) as $element) {
@@ -562,9 +563,9 @@ function islandora_critical_edition_advanced_preprocess_islandora_critical_editi
   $variables['scroll_list'] = NULL;
   $aparatus_datastreams = islandora_critical_apparatus_get_datastreams();
   $form_state['publish_viewer']['#type'] = 'vertical_tabs';
-  $aparatus_datastreams['appendix'] = 'Appendix';
-  $aparatus_datastreams['versions'] = 'Viewer';
 
+  $aparatus_datastreams['versions'] = 'Viewer';
+  $aparatus_datastreams['collation_view'] = 'Collations';
   // Build the aparatus content.
   $all_keys = array_keys($aparatus_datastreams);
   $construct_keys = array_keys($to_construct);
@@ -581,9 +582,7 @@ function islandora_critical_edition_advanced_preprocess_islandora_critical_editi
         '#title' => $aparatus_datastreams[$element],
         '#form' => theme('islandora_critical_edition_advanced_critical_aparatus', array('islandora_objects' => $variables['islandora_object'])),
       );
-      if ($element == 'appendix' || $element == 'versions' || $element == 'collations') {
-        $body_tt = theme("islandora_critical_edition_container_{$element}_table", array("object" => $variables['islandora_object']));
-
+      if ($element == 'appendix' || $element == 'versions' || $element == 'collations' || $element == 'collation_view') {
         $form_state['publish_viewer']["{$element}_tab"]['body'] = array(
           '#id' => "{$element}-tab",
           '#group' => "{$element}_viewer",
@@ -703,6 +702,24 @@ function islandora_critical_edition_advanced_theme($existing, $type, $theme, $pa
       ),
     ),
     'islandora_critical_edition_container_collations_table' => array(
+      'file' => 'theme/theme.inc',
+      'variables' => array(
+        'object' => NULL,
+        'limit' => 25,
+        'columns' => array(
+          'collation_name' => TRUE,
+          'transcriptions' => TRUE,
+          'collation_filter' => TRUE,
+          'operations' => TRUE,
+        ),
+        'pager' => array(
+          'element' => 1,
+          'tags' => array('<<', '<', '', '>', '>>'),
+          'quantity' => 3,
+        ),
+      ),
+    ),
+    'islandora_critical_edition_container_collation_view_table' => array(
       'file' => 'theme/theme.inc',
       'variables' => array(
         'object' => NULL,

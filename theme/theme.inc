@@ -769,7 +769,7 @@ function theme_islandora_critical_edition_container_collations_table(array &$var
       $rows[$pid][$name] = array('data' => $data, 'class' => $name);
     }
   }
-  return theme('islandora_critical_edition_container_table', array(
+  $output = theme('islandora_critical_edition_container_table', array(
     'title' => t('Collations'),
     'header' => $headers,
     'rows' => $rows,
@@ -778,6 +778,62 @@ function theme_islandora_critical_edition_container_collations_table(array &$var
     'total' => $total,
     'pager' => $pager,
   ));
+  return $output;
+}
+/**
+ * Implements theme_hook().
+ *
+ * For the versions table in the critical edition container display.
+ */
+function theme_islandora_critical_edition_container_collation_view_table(array &$variables) {
+  module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/utilities');
+  module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/calliope');
+  // Create local variables.
+  extract(array_intersect_key($variables, drupal_map_assoc(array(
+    'object', 'limit', 'pager', 'columns'))));
+  // Build Header.
+  $headers = array(
+    'collation_name' => array('data' => t('Collation Name'), 'field' => 'collation_name'),
+    'transcriptions' => array('data' => t('Transcriptions')),
+    'collation_filter' => array('data' => t('Filter')),
+    'operations' => array('data' => t('Operations')),
+  );
+  // Operations may be hidden if the user doesn't have permission for any.
+  $permissions = islandora_critical_edition_container_collation_table_operations_permissions();
+  $columns['operations'] = isset($columns['operations']) && $columns['operations'] && count(array_filter($permissions));
+  //$headers = array_intersect_key($headers, array_filter($columns));
+  // Init Pager.
+  $mvds = islandora_calliope_find_mvds($object);
+  $total = count($mvds);
+  $page = pager_default_initialize($total, $limit, $pager['element']);
+  $offset = $page * $limit;
+  // Build Rows.
+  $rows = array();
+  $collations = islandora_calliope_find_mvds($object, tablesort_get_sort($headers), $limit, $offset);
+  foreach ($collations as $pid => $collation) {
+    $cells = array(
+      'collation_name' => array('#markup' => $collation['name']),
+      'transcriptions' => islandora_critical_edition_container_table_transcriptions_cell($pid, $collation['transcriptions'], array(FALSE)),
+      'collation_filter' => array('#markup' => $collation['filter']),
+      'operations' => islandora_critical_edition_container_collation_table_operations_cell($pid, $object->id, $collation['transcriptions']),
+    );
+    // Only include cells which have headers.
+    $cells = array_intersect_key($cells, $headers);
+    $cells = array_map('drupal_render', $cells);
+    foreach ($cells as $name => $data) {
+      $rows[$pid][$name] = array('data' => $data, 'class' => $name);
+    }
+  }
+  $output = theme('islandora_critical_edition_container_table', array(
+    'title' => t('Collations'),
+    'header' => $headers,
+    'rows' => $rows,
+    'limit' => $limit,
+    'offset' => $offset,
+    'total' => $total,
+    'pager' => $pager,
+  ));
+  return $output;
 }
 
 /**
