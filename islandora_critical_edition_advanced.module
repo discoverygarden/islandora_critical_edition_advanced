@@ -1219,3 +1219,53 @@ function islandora_critical_edition_advanced_islandora_transcriptionCModel_TRANS
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/calliope');
   islandora_calliope_write_file($object->id);
 }
+
+/**
+ * Implements hook_CMODEL_PID_islandora_overview_object().
+ */
+function islandora_critical_edition_advanced_islandora_overview_object(AbstractObject $object) {
+  $allowed_models = array('islandora:criticalEditionContainerCModel', 'islandora:versionableObjectCModel', 'islandora:criticalEditionCModel');
+  // Contains allowed model.
+  $models = array_intersect($object->models, $allowed_models);
+  if (empty($models)) {
+    return array();
+  }
+  $query = <<<EOT
+PREFIX fedora-rels-ext: <info:fedora/fedora-system:def/relations-external#>
+PREFIX fedora-model: <info:fedora/fedora-system:def/model#>
+PREFIX islandora: <http://islandora.ca/ontology/relsext#>
+SELECT DISTINCT ?object ?model ?label FROM <#ri> WHERE {
+  ?object fedora-rels-ext:isMemberOf <info:fedora/islandora:179> ;
+  fedora-model:hasModel ?model ;
+  FILTER (?model != <info:fedora/fedora-system:FedoraObject-3.0>) .
+  OPTIONAL {
+    ?object fedora-model:label ?label;
+  }
+}
+ORDER BY ?model
+EOT;
+  $rows = array();
+  $results = $object->repository->ri->sparqlQuery($query);
+  foreach ($results as $result) {
+    $pid = $result['object']['value'];
+    $rows[] = array(
+      l("islandora/object/$pid", $pid),
+      $result['label']['value'],
+      $result['model']['value'],
+    );
+  }
+  $content = array(
+    'table' => array(
+      '#theme' => 'table',
+      '#header' => array(
+        'pid' => array('data' => t('PID')),
+        'type' => array('data' => t('Label')),
+        'count' => array('data' => t('Type')),
+      ),
+      '#rows' => $rows,
+      '#empty' => t('Empty.')),
+  );
+  return array(
+    'container' => drupal_render($content),
+  );
+}
