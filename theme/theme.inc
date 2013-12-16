@@ -170,9 +170,12 @@ function islandora_critical_edition_preprocess_islandora_critical_edition_contai
   $variables['edit_link'] = "<a href ='/islandora/object/$object/critical_edition/edit'><button>" . t('Editing View') . "</button></a>";
 
   $apparatus = islandora_critical_edition_get_apparatus($object);
-  $link = l(t('Apparatus'), "islandora/object/$apparatus/manage/apparatus");
-  $message = t('Manage !Apparatus', array('!Apparatus' => $link));
-  $variables['apparatus_link'] = array('#markup' => "<div><strong>$message</strong></div>");
+  //$link = l(t('Apparatus'), "islandora/object/$apparatus/manage/apparatus");
+  //$message = t('Manage !Apparatus', array('!Apparatus' => $link));
+  //$variables['apparatus_link'] = array('#markup' => "<div><strong>$message</strong></div>");
+  
+  
+  $variables['apparatus_link'] = "<a href ='islandora/object/$apparatus/manage/apparatus'><button>" . t('Manage Apparatus') . "</button></a>";
   $variables['apparatus'] = array(
     '#markup' => theme('islandora_critical_edition_publish_view', array(
       'islandora_object' => $object,
@@ -240,8 +243,9 @@ function islandora_critical_edition_preprocess_islandora_critical_edition_contai
   $variables['view_link'] = "<a href ='islandora/object/$object'><button>" . t('Reading View') . "</button></a>";
   $apparatus = islandora_critical_edition_get_apparatus($object);
   $link = l(t('Apparatus'), "islandora/object/$apparatus/manage/apparatus");
-  $message = t('Manage !Apparatus', array('!Apparatus' => $link));
+  $message = "<a href ='/islandora/object/$apparatus/manage/apparatus'><button>" . t('Manage Apparatus') . "</button></a>";
   $variables['apparatus_link'] = array('#markup' => "<div class = 'apparatus_link'><strong>$message</strong></div>");
+
   $variables['apparatus'] = array(
     '#markup' => theme('islandora_critical_edition_publish_view', array(
       'islandora_object' => $object,
