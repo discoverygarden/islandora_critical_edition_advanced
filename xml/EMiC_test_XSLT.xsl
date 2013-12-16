@@ -1,22 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet exclude-result-prefixes="xs xlink" version="2.0" xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xs="http://www.w3.org/2001/XMLSchema"
-  xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+  xmlns:xlink="http://www.w3.org/1999/xlink" 
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+  xmlns:TEI="http://www.tei-c.org/ns/1.0"
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
   <xsl:output doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN"
-    doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" method="xml"/>
-  <xsl:template match="/">
+    doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" method="xml" indent="yes"/>
+  <xsl:template match="/TEI:TEI">
     <html>
       <head>
         <title></title>
       </head>
       <body>
-        <xsl:apply-templates/>
+        <div id="tei-header" style="display:none;">
+          <xsl:apply-templates select="rdf:RDF"/>
+        </div>
+        <xsl:apply-templates select="TEI:text"/>
       </body>
     </html>
   </xsl:template>
   <!-- match patterns good? -->
   <!-- playing with choose -->
-  <xsl:template match="TEI//*">
+  <xsl:template match="*">
     <xsl:choose>
       <xsl:when test="local-name() = 'p'">
         <p>
