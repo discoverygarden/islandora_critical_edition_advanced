@@ -334,8 +334,7 @@ function islandora_critical_transcription_edit_form($form, $form_state, $transcr
   $form = array();
   $form['transcription'] = array(
     '#title' => t('Current Transcription'),
-    '#type' => 'text_format',
-    '#base_type' => 'textarea',
+    '#type' => 'textarea',
     '#default_value' => $content,
     '#rows' => 40,
     '#cols' => 20,
@@ -364,12 +363,8 @@ function islandora_critical_transcription_edit_form_submit($form, $form_state) {
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/calliope');
   $transcription_object = islandora_object_load($form_state['values']['pid']);
   $success = FALSE;
-  if (isset($form_state['values']['transcription']['value'])) {
-    $content = $form_state['values']['transcription']['value'];
-  }
-  else {
-    $content = $form_state['values']['transcription'];
-  }
+  $content = $form_state['values']['transcription'];
+
   try {
     if ($transcription_object['TRANSCRIPTION']) {
       $success = $transcription_object['TRANSCRIPTION']->content = $content;

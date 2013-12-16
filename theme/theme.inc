@@ -781,7 +781,7 @@ function theme_islandora_critical_edition_container_collation_view_table(array &
   $headers = array(
     'collation_name' => array('data' => t('Collation Name'), 'field' => 'collation_name'),
     'transcriptions' => array('data' => t('Transcriptions')),
-    'collation_filter' => array('data' => t('Filter')),
+    'collation_filter' => array('data' => t('Description')),
     'operations' => array('data' => t('Operations')),
   );
   // Operations may be hidden if the user doesn't have permission for any.
@@ -800,7 +800,7 @@ function theme_islandora_critical_edition_container_collation_view_table(array &
     $cells = array(
       'collation_name' => array('#markup' => $collation['name']),
       'transcriptions' => islandora_critical_edition_container_table_transcriptions_cell($pid, $collation['transcriptions'], array(FALSE)),
-      'collation_filter' => array('#markup' => $collation['filter']),
+      'collation_filter' => array('#markup' => $collation['description']),
       'operations' => islandora_critical_edition_container_collation_table_operations_cell($pid, $object->id, $collation['transcriptions']),
     );
     // Only include cells which have headers.
