@@ -1369,5 +1369,18 @@ function islandora_critical_edition_advanced_form_islandora_bookmark_detailed_fo
     unset($form['bookmarks']['fieldset']['format_opts']);
     unset($form['bookmarks']['users']);
     unset($form['bookmark_rss']);
+    $form['#submit'][] = 'islandora_critical_edition_advanced_form_islandora_bookmark_detailed_redirect';
   }
+}
+
+/**
+ * Redirect the user back to the workbench.
+ *
+ * @param array $form
+ *   The Drupal form definition.
+ * @param array $form_state
+ *   The Drupal form state.
+ */
+function islandora_critical_edition_advanced_form_islandora_bookmark_detailed_redirect(array $form, array &$form_state) {
+  $form_state['redirect'] = 'workbench';
 }
