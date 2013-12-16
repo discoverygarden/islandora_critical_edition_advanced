@@ -163,13 +163,39 @@ function islandora_critical_edition_advanced_menu() {
 
   $items["islandora/object/%islandora_object/critical_edition/edit"] = array(
     'title' => 'Edit Critical Edition',
-
     'page callback' => 'islandora_critical_edition_collation_view',
     'page arguments' => array(2),
     'type' => MENU_CALLBACK,
     'access callback' => 'islandora_critical_edition_publish_access',
     'access arguments' => array(2),
     'weight' => 2,
+  );
+
+  $items["workbench"] = array(
+    'title' => 'My Workbench',
+    'page callback' => 'islandora_critical_edition_advanced_workbench',
+    'file' => 'includes/workbench.inc',
+    'type' => MENU_NORMAL_ITEM,
+    'access callback' => 'user_access',
+    'access arguments' => array('manage critical edition'),
+  );
+  $items["workbench/add/%"] = array(
+    'title' => 'Add New Object',
+    'page callback' => 'islandora_critical_edition_advanced_workbench_ingest',
+    'page arguments' => array(2),
+    'file' => 'includes/workbench.inc',
+    'type' => MENU_CALLBACK,
+    'access callback' => 'user_access',
+    'access arguments' => array('manage critical edition'),
+  );
+  $items["workbench/collection_autocomplete"] = array(
+    'title' => 'Add New Object',
+    'page callback' => 'islandora_critical_edition_advanced_workbench_collection_autocomplete',
+    'page arguments' => array(2),
+    'file' => 'includes/workbench.inc',
+    'type' => MENU_CALLBACK,
+    'access callback' => 'user_access',
+    'access arguments' => array('manage critical edition'),
   );
 
   return $items;
@@ -1187,6 +1213,24 @@ function islandora_critical_edition_advanced_islandora_delete_object_form_submit
 /**
  * Implements hook_islandora_ingest_steps().
  */
+function islandora_critical_edition_advanced_islandora_ingest_steps(array $form_state) {
+  $shared_storage = islandora_ingest_form_get_shared_storage($form_state);
+  if (isset($shared_storage['require_select_collection_step']) && $shared_storage['require_select_collection_step']) {
+    return array(
+      'islandora_critical_edition_select_collection' => array(
+        'weight' => -15,
+        'type' => 'form',
+        'form_id' => 'islandora_critical_edition_advanced_select_collection_form',
+        'module' => 'islandora_critical_edition_advanced',
+        'file' => 'includes/workbench.inc',
+      ),
+    );
+  }
+}
+
+/**
+ * Implements hook_islandora_ingest_steps().
+ */
 function islandora_critical_edition_advanced_islandora_versionableObjectCModel_islandora_ingest_steps(array $form_state) {
   return array(
     'islandora_critical_edition_versionable_object' => array(
@@ -1255,8 +1299,14 @@ PREFIX fedora-rels-ext: <info:fedora/fedora-system:def/relations-external#>
 PREFIX fedora-model: <info:fedora/fedora-system:def/model#>
 PREFIX islandora: <http://islandora.ca/ontology/relsext#>
 SELECT DISTINCT ?object ?model ?label FROM <#ri> WHERE {
-  ?object fedora-rels-ext:isMemberOf <info:fedora/islandora:179> ;
-  fedora-model:hasModel ?model ;
+  {
+    ?object fedora-rels-ext:isMemberOf <info:fedora/$object->id> ;
+    fedora-model:hasModel ?model .
+  }
+  UNION {
+    ?object fedora-rels-ext:isMemberOfCollection <info:fedora/$object->id> ;
+    fedora-model:hasModel ?model .
+  }
   FILTER (?model != <info:fedora/fedora-system:FedoraObject-3.0>) .
   OPTIONAL {
     ?object fedora-model:label ?label;
@@ -1269,7 +1319,7 @@ EOT;
   foreach ($results as $result) {
     $pid = $result['object']['value'];
     $rows[] = array(
-      l("islandora/object/$pid", $pid),
+      l($pid, "islandora/object/$pid"),
       $result['label']['value'],
       $result['model']['value'],
     );
@@ -1288,4 +1338,36 @@ EOT;
   return array(
     'container' => drupal_render($content),
   );
+}
+
+/**
+ * Implements hook_form_alter();
+ *
+ * Prevent the disabling of the default bookmark list.
+ */
+function islandora_critical_edition_advanced_form_islandora_bookmark_admin_settings_alter(array &$form, array &$form_state) {
+  $form['create_user_default_lists']['#disabled'] = TRUE;
+  $form['create_user_default_lists']['#default_value'] = TRUE;
+  $form['default_list_name']['#disabled'] = TRUE;
+  $form['default_list_name']['#default_value'] = t('@username\'s Workbench');
+}
+
+/**
+ * Alter the bookmark form.
+ *
+ * @param array $form
+ *   The Drupal form definition.
+ * @param array $form_state
+ *   The Drupal form state.
+ */
+function islandora_critical_edition_advanced_form_islandora_bookmark_detailed_form_alter(array &$form, array &$form_state) {
+  // Only modify the bookmark form when it's displayed on the Workbench page.
+  if (current_path() == 'workbench') {
+    $form['bookmarks']['fieldset']['#title'] = t('Critical Editions Bookmarks');
+    unset($form['bookmarks']['fieldset']['export_title']);
+    unset($form['bookmarks']['fieldset']['export_options']);
+    unset($form['bookmarks']['fieldset']['format_opts']);
+    unset($form['bookmarks']['users']);
+    unset($form['bookmark_rss']);
+  }
 }

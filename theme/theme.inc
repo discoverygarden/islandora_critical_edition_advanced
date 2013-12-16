@@ -169,7 +169,6 @@ function islandora_critical_edition_preprocess_islandora_critical_edition_contai
   $object = $variables['object'];
   $variables['edit_link'] = "<a href ='/islandora/object/$object/critical_edition/edit'><button>" . t('Editing View') . "</button></a>";
 
-
   $apparatus = islandora_critical_edition_get_apparatus($object);
   $link = l(t('Apparatus'), "islandora/object/$apparatus/manage/apparatus");
   $message = t('Manage !Apparatus', array('!Apparatus' => $link));
@@ -184,6 +183,7 @@ function islandora_critical_edition_preprocess_islandora_critical_edition_contai
   $variables['edition_actions'] = islandora_critical_edition_container_editor_links($object);
   $variables['version_actions'] = islandora_critical_edition_container_version_links($object);
   $variables['collation_actions'] = islandora_critical_edition_container_collation_links($object);
+
   $variables['versions'] = array(
     '#theme' => 'islandora_critical_edition_container_versions_table',
     '#object' => $object,
@@ -252,6 +252,11 @@ function islandora_critical_edition_preprocess_islandora_critical_edition_contai
   $variables['edition_actions'] = islandora_critical_edition_container_editor_links($object);
   $variables['version_actions'] = islandora_critical_edition_container_version_links($object);
   $variables['collation_actions'] = islandora_critical_edition_container_collation_links($object);
+
+  // Hidden form for adding the object to the users workbench.
+  module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/workbench');
+  $variables['toggle_workbench_membership_form'] = drupal_get_form('islandora_critical_edition_advanced_toggle_workbench_membership_form', $object);
+
   $variables['versions'] = array(
     '#theme' => 'islandora_critical_edition_container_versions_table',
     '#object' => $object,
@@ -271,6 +276,15 @@ function islandora_critical_edition_container_editor_links(AbstractObject $objec
     'edit_permissions' => function_exists('islandora_xacml_editor_access') && islandora_xacml_editor_access($object),
     'workbench' => user_access('use islandora_bookmark'),
   );
+  // The WorkBench is just the default Bookmark list.
+  module_load_include('inc', 'islandora_bookmark', 'includes/api');
+  $in_work_bench = FALSE;
+  $default_list = islandora_bookmark_get_default_list();
+  if ($default_list !== FALSE) {
+    $default_list = Bookmark::getList($default_list);
+    $in_work_bench = in_array($object->id, $default_list->getPids());
+  }
+  $work_bench_action = $in_work_bench ? 'remove' : 'add';
   $links = array(
     'edit_metadata' => array(
       'title' => t('Edit Edition Metadata'),
@@ -281,10 +295,8 @@ function islandora_critical_edition_container_editor_links(AbstractObject $objec
       'href' => "islandora/object/{$object->id}/manage/xacml",
     ),
     'workbench' => array(
-      'title' => t('Add to Workbench'),
-      'href' => '',
-      'external' => TRUE,
-      'fragment' => 'not_implemented',
+      'title' => $in_work_bench ? t('Remove from Workbench') : t('Add to Workbench'),
+      'href' => "islandora_critical_edition_advanced_workbench/{$work_bench_action}/{$object->id}",
     ),
   );
   return array(
