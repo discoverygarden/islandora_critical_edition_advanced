@@ -98,5 +98,10 @@ function islandora_critical_edition_advanced_transform_tei_datastream_to_html($p
   $module_path = drupal_get_path('module', 'islandora_critical_edition_advanced');
   drupal_add_css("$module_path/css/islandora_critical_edition_common_tei.css");
   $xslt_path = url("{$module_path}/xml/EMiC_test_XSLT.xsl", array('absolute' => TRUE));
-  return file_get_contents("$tomcat_url/saxon/SaxonServlet?source=$xml_path&style=$xslt_path");
+  $xml = new SimpleXMLElement(file_get_contents("$tomcat_url/saxon/SaxonServlet?source=$xml_path&style=$xslt_path"));
+  $output = '';
+  foreach ($xml->body->children() as $child) {
+    $output .= $child->asXML();
+  }
+  return $output;
 }
