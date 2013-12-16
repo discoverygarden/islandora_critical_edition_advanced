@@ -153,7 +153,7 @@ function islandora_calliope_delete_mvd($id) {
  * @return String
  *   Status message
  */
-function islandora_calliope_create_mvd($critical_edition, $mvd_title, $resource_ids = NULL, $filter = "Empty") {
+function islandora_calliope_create_mvd($critical_edition, $mvd_title, $mvd_description, $resource_ids = NULL, $filter = "Empty") {
   global $base_url;
   $mvd_url = "$base_url/calliope";
   $calliope_import_url = "$mvd_url/import/";
@@ -247,6 +247,7 @@ function islandora_calliope_create_mvd($critical_edition, $mvd_title, $resource_
           'resources' => $id_array,
           'filter' => $filter,
           'critical_edition' => $critical_edition,
+          'description' => $mvd_description,
         );
         $mvd_success = islandora_calliope_write_mvd($newmvd);
       }
@@ -332,6 +333,12 @@ function islandora_calliope_find_mvds($critical_edition_object, $sort = "asc", $
         $mvd_data[$mvd['metadata']['name']]['name'] = $mvd['metadata']['name'];
         $mvd_data[$mvd['metadata']['name']]['filter'] = $mvd['metadata']['filter'];
         $mvd_data[$mvd['metadata']['name']]['transcriptions'] = $transcriptions;
+        if (isset($mvd['metadata']['description'])) {
+          $mvd_data[$mvd['metadata']['name']]['description'] = $mvd['metadata']['description'];
+        }
+        else {
+          $mvd_data[$mvd['metadata']['name']]['description'] = t("No description");
+        }
       }
     }
   }
