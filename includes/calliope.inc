@@ -337,7 +337,7 @@ function islandora_calliope_find_mvds($critical_edition_object, $sort = "asc", $
           $mvd_data[$mvd['metadata']['name']]['description'] = $mvd['metadata']['description'];
         }
         else {
-           $mvd_data[$mvd['metadata']['name']]['description'] = t("No description");
+          $mvd_data[$mvd['metadata']['name']]['description'] = t("No description");
         }
       }
     }

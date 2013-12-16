@@ -29,13 +29,13 @@ function islandora_critical_edition_mvd_form(array $form, array &$form_state, Ab
 
   $form['mvd'] = array(
     '#type' => 'textfield',
-    '#title' => t('Title of new MVD'),
+    '#title' => t('Title of new Collation'),
     '#size' => 40,
     '#required' => TRUE,
   );
-    $form['mvd_description'] = array(
+  $form['mvd_description'] = array(
     '#type' => 'textarea',
-    '#title' => t('Description of new MVD'),
+    '#title' => t('Description of new Collation'),
   );
 
   $members = islandora_critical_edition_get_members($object->id);
@@ -83,7 +83,7 @@ function islandora_critical_edition_mvd_form(array $form, array &$form_state, Ab
   $form['transcriptions'] = $table_element;
   $form['next'] = array(
     '#type' => 'submit',
-    '#value' => t('Create MVD'),
+    '#value' => t('Create Collation'),
   );
   $form['pid'] = array(
     '#type' => 'hidden',
