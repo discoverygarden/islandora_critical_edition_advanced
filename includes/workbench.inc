@@ -12,6 +12,7 @@
  *   The object to add to the work bench.
  */
 function islandora_critical_edition_advanced_workbench() {
+  module_load_include('inc', 'islandora_bookmark', 'includes/api');
   $module_path = drupal_get_path('module', 'islandora_critical_edition_advanced');
   drupal_add_css("$module_path/css/islandora_critical_edition.workbench.css");
   // For now we are using views/ctools to style our drop downs if they are not
@@ -19,6 +20,11 @@ function islandora_critical_edition_advanced_workbench() {
   $views_module_path = drupal_get_path('module', 'views');
   drupal_add_css("$views_module_path/css/views-admin.ctools.css");
   drupal_add_css("$views_module_path/css/views-admin.seven.css");
+  $default_list = islandora_bookmark_get_default_list();
+  $bookmark_form = NULL;
+  if ($default_list !== FALSE) {
+    $bookmark_form = drupal_get_form('islandora_bookmark_detailed_form', $default_list);
+  }
   return array(
     'description' => array(
       '#type' => 'markup',
@@ -60,6 +66,7 @@ function islandora_critical_edition_advanced_workbench() {
         ),
       ),
     ),
+    'bookmarks' => $bookmark_form,
   );
 }
 
