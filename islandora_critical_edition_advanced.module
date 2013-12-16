@@ -1351,3 +1351,23 @@ function islandora_critical_edition_advanced_form_islandora_bookmark_admin_setti
   $form['default_list_name']['#disabled'] = TRUE;
   $form['default_list_name']['#default_value'] = t('@username\'s Workbench');
 }
+
+/**
+ * Alter the bookmark form.
+ *
+ * @param array $form
+ *   The Drupal form definition.
+ * @param array $form_state
+ *   The Drupal form state.
+ */
+function islandora_critical_edition_advanced_form_islandora_bookmark_detailed_form_alter(array &$form, array &$form_state) {
+  // Only modify the bookmark form when it's displayed on the Workbench page.
+  if (current_path() == 'workbench') {
+    $form['bookmarks']['fieldset']['#title'] = t('Critical Editions Bookmarks');
+    unset($form['bookmarks']['fieldset']['export_title']);
+    unset($form['bookmarks']['fieldset']['export_options']);
+    unset($form['bookmarks']['fieldset']['format_opts']);
+    unset($form['bookmarks']['users']);
+    unset($form['bookmark_rss']);
+  }
+}
