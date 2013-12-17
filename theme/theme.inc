@@ -165,7 +165,7 @@ function islandora_critical_edition_preprocess_islandora_critical_edition_contai
   drupal_add_css("$views_module_path/css/views-admin.ctools.css");
   drupal_add_css("$views_module_path/css/views-admin.seven.css");
   $object = $variables['object'];
-  $variables['edit_link'] = "<span = 'editing_view'><a href ='/islandora/object/$object/critical_edition/edit'><button>" . t('Go to Editing View') . "</button></a></span>";
+  $variables['edit_link'] = "<div class='editing_view'><a href ='/islandora/object/$object/critical_edition/edit'><button>" . t('Go to Editing View') . "</button></a></div>";
   $variables['apparatus'] = array(
     '#markup' => theme('islandora_critical_edition_publish_view', array(
       'islandora_object' => $object,
@@ -230,11 +230,12 @@ function islandora_critical_edition_preprocess_islandora_critical_edition_contai
   drupal_add_css("$views_module_path/css/views-admin.seven.css");
 
   $object = $variables['object'];
-  $variables['view_link'] = "<span = 'reading_view'><a href ='islandora/object/$object'><button>" . t('Go to Reading View') . "</button></a></span>";
   $apparatus = islandora_critical_edition_get_apparatus($object);
-  $link = l(t('Apparatus'), "islandora/object/$apparatus/manage/apparatus");
+  
   $message = "<a href ='/islandora/object/$apparatus/manage/apparatus'><button>" . t('Manage Apparatus') . "</button></a>";
   $variables['apparatus_link'] = array('#markup' => "<div class = 'apparatus_link'><strong>$message</strong></div>");
+  $variables['view_link'] = "<div class ='reading_view'><a href ='islandora/object/$object'><button>" . t('Go to Reading View') . "</button></a></div>";
+
 
   $variables['apparatus'] = array(
     '#markup' => theme('islandora_critical_edition_publish_view', array(
@@ -423,7 +424,7 @@ function theme_islandora_critical_edition_container_versions_table(array &$varia
             )
         ),
       ),
-      'operations' => islandora_critical_edition_container_versions_table_operations_cell($pid, $version, $source_pid),
+      'operations' => islandora_critical_edition_container_versions_table_operations_cell($pid, $version, $source_pid, $object->id),
       'transcriptions' => islandora_critical_edition_container_table_transcriptions_cell($pid, $version['transcriptions']),
       'descriptions' => array(
         // TODO: should come from the description of the versionable object.
@@ -677,7 +678,7 @@ function islandora_critical_edition_container_table_transcriptions_cell($version
  * @return array
  *   A renderable array containing the links the user has access to.
  */
-function islandora_critical_edition_container_versions_table_operations_cell($pid, array $version, $source_pid) {
+function islandora_critical_edition_container_versions_table_operations_cell($pid, array $version, $source_pid, $critical_edition_pid) {
   $permissions = islandora_critical_edition_container_versions_table_operations_permissions();
   // If we can't render any links skip the rest of the logic.
   if (count(array_filter($permissions)) == 0) {
@@ -699,7 +700,7 @@ function islandora_critical_edition_container_versions_table_operations_cell($pi
     ),
     'delete' => array(
       'title' => t('Delete'),
-      'href' => "islandora/object/{$pid}/delete",
+      'href' => "islandora/object/{$pid}/delete/$critical_edition_pid",
     ),
   );
   return array(

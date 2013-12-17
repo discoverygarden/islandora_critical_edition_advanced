@@ -4,7 +4,6 @@
  * @file
  * Add advanced data modeling options to Islandora Critical Editions.
  */
-
 define('ISLANDORA_CRITICAL_EDITION_ADVANCED_MANAGE_CONTAINER', 'manage critical edition');
 define('ISLANDORA_CRITICAL_EDITION_ADVANCED_CREATE', 'create critical editions');
 define('ISLANDORA_CRITICAL_EDITION_ADVANCED_READ', 'read critical editions');
@@ -441,6 +440,7 @@ function islandora_critical_edition_versions_view(AbstractObject $object) {
   return theme('islandora_critical_edition_container_version', array('object' => $object)
   );
 }
+
 /**
  * The critical edition versions view.
  *
@@ -590,8 +590,8 @@ function islandora_critical_edition_advanced_preprocess_islandora_critical_editi
           '#title' => $aparatus_datastreams[$element],
           '#markup' => theme(
               "islandora_critical_edition_advanced_critical_aparatus", array(
-                'islandora_object' => $variables['islandora_object'],
-                'text_body' => theme("islandora_critical_edition_container_{$element}_table", array(
+            'islandora_object' => $variables['islandora_object'],
+            'text_body' => theme("islandora_critical_edition_container_{$element}_table", array(
               "object" => $variables['islandora_object'],
               'columns' => array(
                 'version_name' => TRUE,
@@ -601,21 +601,21 @@ function islandora_critical_edition_advanced_preprocess_islandora_critical_editi
                 'descriptions' => TRUE,
               ),
                 )
-                ),
-                'text_header' => $aparatus_datastreams[$element],
-                'text_pager' => theme("islandora_critical_edition_advanced_aparatus_pager", array(
+            ),
+            'text_header' => $aparatus_datastreams[$element],
+            'text_pager' => theme("islandora_critical_edition_advanced_aparatus_pager", array(
               'islandora_object' => $variables['islandora_object'],
               'tab_previous' => (isset($all_keys[$entry]) ? substr($aparatus_datastreams[$all_keys[$entry]], 0, 16) : "_blank_"),
               'tab_next' => (isset($all_keys[$entry + 2]) ? substr($aparatus_datastreams[$all_keys[$entry + 2]], 0, 16) : "_blank_"),
                 )
-                ),
-                'text_header' => $aparatus_datastreams[$element],
-                'text_pager' => theme("islandora_critical_edition_advanced_aparatus_pager", array(
+            ),
+            'text_header' => $aparatus_datastreams[$element],
+            'text_pager' => theme("islandora_critical_edition_advanced_aparatus_pager", array(
               'islandora_object' => $variables['islandora_object'],
               'tab_previous' => (isset($construct_keys[$entry]) ? substr($aparatus_datastreams[$construct_keys[$entry]], 0, 16) : "_blank_"),
               'tab_next' => (isset($construct_keys[$entry + 2]) ? substr($aparatus_datastreams[$construct_keys[$entry + 2]], 0, 16) : "_blank_"),
                 )
-                ),
+            ),
               )
           ),
         );
@@ -629,15 +629,15 @@ function islandora_critical_edition_advanced_preprocess_islandora_critical_editi
           '#title' => $aparatus_datastreams[$element],
           '#markup' => theme(
               'islandora_critical_edition_advanced_critical_aparatus', array(
-                'islandora_object' => $variables['islandora_object'],
-                'text_body' => (isset($to_construct[$element]) ? $to_construct[$element] : ""),
-                'text_header' => $aparatus_datastreams[$element],
-                'text_pager' => theme("islandora_critical_edition_advanced_aparatus_pager", array(
+            'islandora_object' => $variables['islandora_object'],
+            'text_body' => (isset($to_construct[$element]) ? $to_construct[$element] : ""),
+            'text_header' => $aparatus_datastreams[$element],
+            'text_pager' => theme("islandora_critical_edition_advanced_aparatus_pager", array(
               'islandora_object' => $variables['islandora_object'],
               'tab_previous' => (isset($construct_keys[$entry]) ? substr($aparatus_datastreams[$construct_keys[$entry]], 0, 16) : "_blank_"),
               'tab_next' => (isset($construct_keys[$entry + 2]) ? substr($aparatus_datastreams[$construct_keys[$entry + 2]], 0, 16) : "_blank_"),
                 )
-                ),
+            ),
               )
           ),
         );
@@ -1136,6 +1136,11 @@ function islandora_critical_edition_advanced_islandora_xml_form_builder_forms() 
  * Implements hook_form_islandora_object_properties_form_alter().
  */
 function islandora_critical_edition_advanced_form_islandora_delete_object_form_alter(array &$form, array &$form_state) {
+  if (isset($_GET['q'])) {
+    $url = $_GET['q'];
+    $critical_edition_pid = end(explode('/', $url));
+  }
+  $url = $_GET['q'];
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/utilities');
   $object = $form_state['object'];
   $message = NULL;
@@ -1178,6 +1183,9 @@ function islandora_critical_edition_advanced_form_islandora_delete_object_form_a
     $form['#submit'] = array('islandora_critical_edition_advanced_islandora_delete_object_form_submit');
     $form_state['pids_to_delete'] = isset($pids_to_delete) ? $pids_to_delete : NULL;
     $form_state['objects_to_free'] = isset($objects_to_free) ? $objects_to_free : NULL;
+    if (isset($critical_edition_pid)) {
+      $form_state['parent'] = $critical_edition_pid;
+    }
   }
 }
 
@@ -1192,6 +1200,7 @@ function islandora_critical_edition_advanced_form_islandora_delete_object_form_a
 function islandora_critical_edition_advanced_islandora_delete_object_form_submit(array $form, array &$form_state) {
   // Add collection awareness.
   module_load_include('inc', 'islandora', 'includes/utilities');
+  $parent = $form_state['parent'];
   $object = $form_state['object'];
   if (isset($form_state['pids_to_delete'])) {
     foreach ($form_state['pids_to_delete'] as $pid) {
@@ -1207,7 +1216,7 @@ function islandora_critical_edition_advanced_islandora_delete_object_form_submit
       }
     }
   }
-  $form_state['redirect'] = isset($parent) ? "islandora/object/{$parent->id}" : 'islandora';
+  $form_state['redirect'] = isset($parent) ? "islandora/object/$parent/critical_edition/edit" : 'islandora';
 }
 
 /**
