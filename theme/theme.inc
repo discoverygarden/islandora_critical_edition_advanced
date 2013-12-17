@@ -165,7 +165,7 @@ function islandora_critical_edition_preprocess_islandora_critical_edition_contai
   drupal_add_css("$views_module_path/css/views-admin.ctools.css");
   drupal_add_css("$views_module_path/css/views-admin.seven.css");
   $object = $variables['object'];
-  $variables['edit_link'] = "<a href ='/islandora/object/$object/critical_edition/edit'><button>" . t('Go to Editing View') . "</button></a>";
+  $variables['edit_link'] = "<span div = 'editing_view'><a href ='/islandora/object/$object/critical_edition/edit'><button>" . t('Go to Editing View') . "</button></a></span>";
   $variables['apparatus'] = array(
     '#markup' => theme('islandora_critical_edition_publish_view', array(
       'islandora_object' => $object,
@@ -230,7 +230,7 @@ function islandora_critical_edition_preprocess_islandora_critical_edition_contai
   drupal_add_css("$views_module_path/css/views-admin.seven.css");
 
   $object = $variables['object'];
-  $variables['view_link'] = "<a href ='islandora/object/$object'><button>" . t('Go to Reading View') . "</button></a>";
+  $variables['view_link'] = "<span div = 'reading_view'><a href ='islandora/object/$object'><button>" . t('Go to Reading View') . "</button></a></span>";
   $apparatus = islandora_critical_edition_get_apparatus($object);
   $link = l(t('Apparatus'), "islandora/object/$apparatus/manage/apparatus");
   $message = "<a href ='/islandora/object/$apparatus/manage/apparatus'><button>" . t('Manage Apparatus') . "</button></a>";
