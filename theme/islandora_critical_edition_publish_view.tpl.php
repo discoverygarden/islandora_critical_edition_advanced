@@ -25,7 +25,7 @@ var $sb = jQuery.noConflict();
 <script type="text/javascript">
 var $pg = jQuery.noConflict();
 </script>
-<script type="text/javascript" src="<?php print $path; ?>/sites/all/modules/islandora_critical_edition_advanced/js/jstree/dist/jstree.js"></script>
+<script type="text/javascript" src="<?php print $path; ?>/sites/all/modules/islandora_critical_edition_advanced/js/jstreeV1_0_2/jquery.jstree.js"></script>
 <script type="text/javascript">
 var $jt = jQuery.noConflict();
 </script>
