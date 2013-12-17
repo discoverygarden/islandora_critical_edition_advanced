@@ -423,7 +423,7 @@ function theme_islandora_critical_edition_container_versions_table(array &$varia
             )
         ),
       ),
-      'operations' => islandora_critical_edition_container_versions_table_operations_cell($pid, $version, $source_pid),
+      'operations' => islandora_critical_edition_container_versions_table_operations_cell($pid, $version, $source_pid, $object->id),
       'transcriptions' => islandora_critical_edition_container_table_transcriptions_cell($pid, $version['transcriptions']),
       'descriptions' => array(
         // TODO: should come from the description of the versionable object.
@@ -677,7 +677,7 @@ function islandora_critical_edition_container_table_transcriptions_cell($version
  * @return array
  *   A renderable array containing the links the user has access to.
  */
-function islandora_critical_edition_container_versions_table_operations_cell($pid, array $version, $source_pid) {
+function islandora_critical_edition_container_versions_table_operations_cell($pid, array $version, $source_pid, $critical_edition_pid) {
   $permissions = islandora_critical_edition_container_versions_table_operations_permissions();
   // If we can't render any links skip the rest of the logic.
   if (count(array_filter($permissions)) == 0) {
@@ -699,7 +699,7 @@ function islandora_critical_edition_container_versions_table_operations_cell($pi
     ),
     'delete' => array(
       'title' => t('Delete'),
-      'href' => "islandora/object/{$pid}/delete",
+      'href' => "islandora/object/{$pid}/delete/$critical_edition_pid",
     ),
   );
   return array(
