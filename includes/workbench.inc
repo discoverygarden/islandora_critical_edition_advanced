@@ -48,7 +48,7 @@ function islandora_critical_edition_advanced_workbench() {
         '#theme' => 'links__ctools_dropbutton',
         '#links' => array(
           array(
-            'title' => t('Add New Text Object'),
+            'title' => t('Add New Text / Image Object'),
             'href' => 'workbench/add/islandora:bookCModel'
           ),
           array(
