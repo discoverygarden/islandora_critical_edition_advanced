@@ -20,7 +20,8 @@ function islandora_versionable_object_management_menu(AbstractObject $object) {
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/manage_rdf_tei_attachment.form');
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/transcriptions');
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/utilities');
-  module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/update_datastreams.form');
+  //module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/update_datastreams.form');
+  module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/consolidate_tei.form');
   drupal_set_breadcrumb(islandora_get_breadcrumbs($object));
   drupal_set_title($object->label);
   $primary_object_types = array(
@@ -53,12 +54,12 @@ function islandora_versionable_object_management_menu(AbstractObject $object) {
     '#collapsed' => TRUE,
   );
 
-  $output['management_tabs']['update_datastreams'] = array(
+  $output['management_tabs']['consolidate_tei'] = array(
     '#id' => 'update-datastreams',
     '#access' => user_access(ISLANDORA_ADD_DS) && $tei_rdf,
     '#title' => t('Update Consolidated TEI'),
     '#type' => 'fieldset',
-    'form' => drupal_get_form('islandora_critical_edition_advanced_update_datastream_form', $object, $tei_rdf),
+    'form' => drupal_get_form('islandora_critical_edition_advanced_consolidate_tei_form', $tei_rdf),
     '#collapsible' => TRUE,
     '#collapsed' => TRUE,
   );

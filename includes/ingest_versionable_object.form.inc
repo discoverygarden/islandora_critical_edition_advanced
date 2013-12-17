@@ -42,8 +42,8 @@ function islandora_critical_edition_advanced_ingest_versionable_object_page(Abst
   $version->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOf', $edition);
   drupal_set_title(t('Add Versionable Object to @edition', array('@edition' => $edition->label)));
   return drupal_get_form('islandora_ingest_form', array(
-      'models' => array('islandora:versionableObjectCModel'),
-      'objects' => array($version)));
+    'models' => array('islandora:versionableObjectCModel'),
+    'objects' => array($version)));
 }
 
 /**
@@ -289,7 +289,7 @@ function islandora_critical_edition_advanced_versionable_object_form_validate(ar
   // It must be a Fedora Object.
   if (!$source) {
     form_error($form['source_ajax_wrapper']['source'], t('Source Object: "@source" is not valid object.', array(
-          '@source' => $values['source'])));
+      '@source' => $values['source'])));
   }
   else {
     $valid_source_types = islandora_critical_edition_advanced_valid_source_types();
@@ -297,8 +297,8 @@ function islandora_critical_edition_advanced_versionable_object_form_validate(ar
     // It must be of a valid source type.
     if (empty($sources_valid_models)) {
       form_error($form['source_ajax_wrapper']['source'], t('Source Object: "@source" must be one of the following types: @types.', array(
-            '@source' => $values['source'],
-            '@types' => implode(', ', $valid_source_types))));
+        '@source' => $values['source'],
+        '@types' => implode(', ', $valid_source_types))));
     }
   }
   // Validate TEI-RDF object, if "use existing" was selected.
@@ -319,7 +319,7 @@ function islandora_critical_edition_advanced_versionable_object_form_validate(ar
         // We don't put the form error on the tableselect as that is not
         // supported by the Drupal Form API.
         form_error($form, t('TEI-RDF Object: "@tei_rdf" is not valid object.', array(
-              '@tei_rdf' => $values['tei_rdf'])));
+          '@tei_rdf' => $values['tei_rdf'])));
       }
     }
   }
@@ -437,7 +437,7 @@ function islandora_critical_edition_advanced_versionable_object_form_submit(arra
     else {
       $namespace = islandora_get_namespace($tei_rdf->id);
       $page = $tei_rdf->repository->constructObject($namespace);
-      $page->label = $tei_rdf->label['label'];
+      $page->label = $tei_rdf->label;
       // Add all relationships.
       $page->relationships->add(FEDORA_MODEL_URI, 'hasModel', 'islandora:criticalEditionCModelPage');
       $page->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOf', $tei_rdf->id);
@@ -469,7 +469,7 @@ function islandora_critical_edition_advanced_versionable_object_form_submit(arra
         $batch = array(
           'title' => t('Creating Transcription from TEI-RDF Object: @tei_rdf', array('@tei_rdf' => $tei_rdf->label)),
           'file' => drupal_get_path('module', 'islandora_critical_edition_advanced') . '/includes/ingest_versionable_object.form.inc',
-          'progress_message' => t('@current of @total pages processed.'),
+          'progress_message' => t('@current of @total pages processed.', array('@total' => count($pages))),
           'finished' => 'islandora_critical_edition_advanced_ingest_versionable_object_transcription_batch_finished',
           'operations' => array(),
         );
@@ -482,6 +482,11 @@ function islandora_critical_edition_advanced_versionable_object_form_submit(arra
           );
         }
         batch_set($batch);
+      }
+      else {
+        $datastream = $transcription->constructDatastream('TRANSCRIPTION', 'M');
+        $datastream->setContentFromString(t('Transcription'));
+        $transcription->ingestDatastream($datastream);
       }
       break;
 
@@ -512,9 +517,7 @@ function islandora_critical_edition_advanced_versionable_object_form_undo_submit
   $versionable_object = islandora_ingest_form_get_object($form_state);
   $ingest_objects = &islandora_ingest_form_get_objects($form_state);
   // Forget all generated objects except the default object.
-  $ingest_objects = array(
-    0 => $versionable_object,
-  );
+  $ingest_objects = array(0 => $versionable_object);
 }
 
 /**
@@ -532,14 +535,13 @@ function islandora_critical_edition_advanced_source_ajax_container(array $form, 
   $source = isset($values['source']) ? islandora_object_load($values['source']) : NULL;
   // Repopulate the create label when selecting a new Source.
   if ($source) {
-    $args = array('@source' => $source->label, '@user' => $user->name);
     $element = &$form['source_ajax_wrapper'];
     $element['page_range']['first']['#value'] = 1;
     $element['page_range']['last']['#value'] = count(islandora_paged_content_get_pages($source));
     $element = &$form['source_ajax_wrapper']['tei_rdf_ajax_wrapper'];
-    $element['tei_rdf_label']['#value'] = t('@source: TEI-RDF (@user)', $args);
+    $element['tei_rdf_label']['#value'] = $source->label;
     $element = &$form['source_ajax_wrapper'];
-    $element['transcription_label']['#value'] = t('@source: Transcription (@user)', $args);
+    $element['transcription_label']['#value'] = $source->label;
   }
   else {
     $element = &$form['source_ajax_wrapper']['tei_rdf_ajax_wrapper'];
@@ -592,34 +594,6 @@ function islandora_critical_edition_advanced_tei_rdf_ajax_container(array $form,
 }
 
 /**
- * Create a Batch definition to update a Transcript from a TEI-RDF object.
- */
-function islandora_critical_edition_advanced_batch_update_transcript_from_tei_rdf($tei_rdf, $transcription) {
-  module_load_include('inc', 'islandora_paged_content', 'includes/utilities');
-  module_load_include('inc', 'islandora', 'includes/utilities');
-  $pages = array_keys(islandora_paged_content_get_pages($tei_rdf));
-  $batch = array(
-    'title' => t('Creating Transcription from TEI-RDF Object'),
-    'operations' => array(),
-    'file' => drupal_get_path('module', 'islandora_critical_edition') . '/includes/transcriptions.inc',
-    'progress_message' => t('@current of @total pages processed.'),
-  );
-  $flat_pid = islandora_escape_pid_for_function($transcription->id);
-  $filename = file_create_filename($flat_pid . "tempcwrc", 'temporary://');
-  foreach ($pages as $page) {
-    $batch['operations'][] = array(
-      'islandora_critical_edition_build_text_file',
-      array('page_object' => islandora_object_load($page), 'filename' => $filename),
-    );
-  }
-  $batch['operations'][] = array(
-    'islandora_transcription_file_update',
-    array('transcription' => $transcription, 'filename' => $filename),
-  );
-  return $batch;
-}
-
-/**
  * Create editions of the given page object.
  *
  * @param array $page
@@ -635,6 +609,7 @@ function islandora_critical_edition_advanced_ingest_versionable_object_tei_rdf_p
   $namespace = islandora_get_namespace($tei_rdf);
   $edition = islandora_get_tuque_connection()->repository->constructObject($namespace);
   $edition->label = $page['label'];
+
   // Add all relationships.
   $edition->relationships->add(FEDORA_MODEL_URI, 'hasModel', 'islandora:criticalEditionCModelPage');
   $edition->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOf', $tei_rdf);
@@ -662,8 +637,8 @@ function islandora_critical_edition_advanced_ingest_versionable_object_tei_rdf_p
   if (!isset($edition['CWRC']) && isset($edition['OCR'])) {
     islandora_critical_edition_add_cwrc_datastream($edition);
   }
-  $context['sandbox']['pages'][$page->id] = $edition;
-  $context['results']['objects'][$page->id] = $edition;
+  $context['results']['pages'][] = $edition;
+  $context['results']['objects'][$edition->id] = $edition;
 }
 
 /**
@@ -674,40 +649,35 @@ function islandora_critical_edition_advanced_ingest_versionable_object_tei_rdf_p
  */
 function islandora_critical_edition_advanced_ingest_versionable_object_tei_rdf_tei_datastream_batch_operation(array &$context) {
   module_load_include('inc', 'islandora', 'includes/ingest.form');
-  module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/consolidate_tei');
+  module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/utilities');
   $batch = &batch_get();
   $ingest_objects = &islandora_ingest_form_get_objects($batch['form_state']);
   $tei_rdf = &$ingest_objects['tei-rdf'];
-  $content = new DOMDocument();
-  $content->formatOutput = TRUE;
-  $content->preserveWhiteSpace = TRUE;
-  $content->loadXML(islandora_critical_edition_advanced_get_blank_tei($tei_rdf->label));
-  $content_content_nodes = array();
-  $content_content_nodes['front'] = $content->getElementsByTagName('front')->item(0);
-  $content_content_nodes['body'] = $content->getElementsByTagName('body')->item(0);
-  $content_content_nodes['back'] = $content->getElementsByTagName('back')->item(0);
-  foreach ($context['sandbox']['pages'] as $page) {
-    if ($page['CWRC']) {
-      $new_dom = new DOMDocument();
-      $new_dom->formatOutput = TRUE;
-      $new_dom->preserveWhiteSpace = TRUE;
-      $new_dom->loadXML($page['CWRC']->content);
-      $text_node = $new_dom->getElementsByTagName('text')->item(0);
-      $content_nodes = $text_node->childNodes;
-      foreach ($content_nodes as $content_node) {
-        $content_node = $content->importNode($content_node, TRUE);
-        $children = $content_node->childNodes;
-        foreach ($children as $child) {
-          $content_content_nodes[$content_node->tagName]->appendChild($child);
-        }
-      }
-    }
+  if (!isset($context['sandbox']['progress'])) {
+    $context['sandbox']['progress'] = 0;
+    $context['sandbox']['total'] = count($context['results']['pages']);
+    // Create the template TEI to be populated.
+    $context['sandbox']['content'] = islandora_critical_edition_advanced_get_blank_tei($tei_rdf->label);
   }
-  $datastream = $tei_rdf->constructDatastream('TEI', 'M');
-  $datastream->mimetype = 'text/plain';
-  $datastream->content = $content->saveXML();
-  $datastream->label = "Consolidated TEI";
-  $tei_rdf->ingestDatastream($datastream);
+  $index = $context['sandbox']['progress'];
+  $page = isset($context['results']['pages'][$index]) ? $context['results']['pages'][$index] : array();
+  if (isset($page['CWRC'])) {
+    $context['sandbox']['content'] = islandora_critical_edition_advanced_append_tei_rdf_text_to_tei($context['sandbox']['content'], $page['CWRC']->content);
+  }
+  $context['sandbox']['progress']++;
+  $context['message'] = t('Converting page @page of @total into a TEI ...', array(
+                          '@page' => $context['sandbox']['progress'],
+                          '@total' => $context['sandbox']['total']));
+  if ($context['sandbox']['progress'] != $context['sandbox']['total']) {
+    $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['total'];
+  }
+  else {
+    $datastream = $tei_rdf->constructDatastream('TEI', 'M');
+    $datastream->mimetype = 'application/tei+xml';
+    $datastream->setContentFromString($context['sandbox']['content']);
+    $datastream->label = "Consolidated TEI";
+    $tei_rdf->ingestDatastream($datastream);
+  }
 }
 
 /**
@@ -716,6 +686,13 @@ function islandora_critical_edition_advanced_ingest_versionable_object_tei_rdf_t
 function islandora_critical_edition_advanced_ingest_versionable_object_tei_rdf_batch_finished($success, array $results, array $operations) {
   module_load_include('inc', 'islandora', 'includes/ingest.form');
   $batch = &batch_get();
+  // We have to unset the cached files here due to a bug in core. Basically when
+  // we come back from the batch function drupal_build_form() gets the
+  // $form_state back from the session rather than the database, thus skipping
+  // $form_get_cache which loads all of the required files. We forget the
+  // required files now, so that we can dynamically load the required files
+  // during drupal_rebuild_form().
+  $batch['form_state']['build_info']['files'] = array();
   if ($success) {
     drupal_set_message(t('Succesfully created TEI-RDF Object.'));
     $ingest_objects = &islandora_ingest_form_get_objects($batch['form_state']);
@@ -741,6 +718,11 @@ function islandora_critical_edition_advanced_ingest_versionable_object_tei_rdf_b
 function islandora_critical_edition_advanced_ingest_versionable_object_transcription_batch_operation($page, array &$context) {
   module_load_include('inc', 'islandora_critical_edition', 'includes/utilities');
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/utilities');
+  // Even though this include is not needed by this function it must be included
+  // here the Batch API won't be able to Find the submit handler:
+  // islandora_ingest_form_next_submit() as it doesn't respect form_load_include
+  // and doesn't check load any files required by submit handles.
+  module_load_include('inc', 'islandora', 'includes/ingest.form');
   if (empty($context['sandbox'])) {
     $file = file_save_data('', 'temporary://transcription.txt');
     $context['results']['filename'] = drupal_realpath($file->uri);
@@ -762,6 +744,13 @@ function islandora_critical_edition_advanced_ingest_versionable_object_transcrip
 function islandora_critical_edition_advanced_ingest_versionable_object_transcription_batch_finished($success, array $results, array $operations) {
   module_load_include('inc', 'islandora', 'includes/ingest.form');
   $batch = &batch_get();
+  // We have to unset the cached files here due to a bug in core. Basically when
+  // we come back from the batch function drupal_build_form() gets the
+  // $form_state back from the session rather than the database, thus skipping
+  // $form_get_cache which loads all of the required files. We forget the
+  // required files now, so that we can dynamically load the required files
+  // during drupal_rebuild_form().
+  $batch['form_state']['build_info']['files'] = array();
   if ($success) {
     $ingest_objects = &islandora_ingest_form_get_objects($batch['form_state']);
     $transcription = $ingest_objects['transcription'];

@@ -6,13 +6,6 @@
  *
  */
 ?>
-<div>
-	<div>
-		<?php print $text_pager; ?>
-	</div>
-	<div class="aparatus_title">
-		<h1><?php print $text_header; ?></h1>
-	</div>
-
-<?php print $text_body; ?>
+<div class="apparatus_text_body">
+  <?php print $text_body; ?>
 </div>

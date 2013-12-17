@@ -224,7 +224,7 @@ function islandora_critical_edition_management_menu(AbstractObject $object) {
   $output['manage_critical_edition']['mvd'] = array(
     '#id' => 'mvd',
     '#access' => user_access(ISLANDORA_ADD_DS) && $transcriptions,
-    '#title' => t('Create MVD'),
+    '#title' => t('Create Collation'),
     '#type' => 'fieldset',
     'form' => drupal_get_form('islandora_critical_edition_mvd_form', $object),
     '#group' => 'manage_critical_edition',

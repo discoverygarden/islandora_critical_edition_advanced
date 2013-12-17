@@ -29,9 +29,13 @@ function islandora_critical_edition_mvd_form(array $form, array &$form_state, Ab
 
   $form['mvd'] = array(
     '#type' => 'textfield',
-    '#title' => t('Title of new MVD'),
+    '#title' => t('Title of new Collation'),
     '#size' => 40,
     '#required' => TRUE,
+  );
+  $form['mvd_description'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Description of new Collation'),
   );
 
   $members = islandora_critical_edition_get_members($object->id);
@@ -79,7 +83,7 @@ function islandora_critical_edition_mvd_form(array $form, array &$form_state, Ab
   $form['transcriptions'] = $table_element;
   $form['next'] = array(
     '#type' => 'submit',
-    '#value' => t('Create MVD'),
+    '#value' => t('Create Collation'),
   );
   $form['pid'] = array(
     '#type' => 'hidden',
@@ -124,8 +128,9 @@ function islandora_critical_edition_mvd_form_submit($form, $form_state) {
   $mvd = islandora_critical_edition_advanced_build_mvd($form_state['values']['pid'], $form_state['values']['mvd'], $transcriptions);
   $critical_edition_pid = $form_state['values']['pid'];
   $mvd_title = $form_state['values']['mvd'];
+  $mvd_description = $form_state['values']['mvd_description'];
   $filter = $form_state['values']['filter'];
-  $success = islandora_calliope_create_mvd($critical_edition_pid, $mvd_title, $transcriptions, $filter);
+  $success = islandora_calliope_create_mvd($critical_edition_pid, $mvd_title, $mvd_description, $transcriptions, $filter);
   drupal_set_message(check_plain($success));
 }
 
@@ -183,6 +188,7 @@ function islandora_critical_edition_advanced_mvd_crud($critical_edition_pid, $mv
   );
   $mvds = islandora_calliope_find_mvd($query);
   $mvd = $mvds[0];
+  $mvd_description = isset($mvd['metadata']['description']) ? $mvd['metadata']['description'] : t("No description");
 
   switch ($operation) {
     case 'refresh':
@@ -190,8 +196,8 @@ function islandora_critical_edition_advanced_mvd_crud($critical_edition_pid, $mv
         $resource_ids[] = $transcription['id'];
       }
       $filter = $mvd['metadata']['filter'];
-      islandora_calliope_create_mvd($critical_edition_pid, $mvd_label, $resource_ids, $filter);
-      drupal_goto("islandora/object/$critical_edition_pid");
+      islandora_calliope_create_mvd($critical_edition_pid, $mvd_label, $mvd_description, $resource_ids, $filter);
+      drupal_goto("islandora/object/$critical_edition_pid/edit");
 
       break;
 
