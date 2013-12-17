@@ -535,14 +535,13 @@ function islandora_critical_edition_advanced_source_ajax_container(array $form, 
   $source = isset($values['source']) ? islandora_object_load($values['source']) : NULL;
   // Repopulate the create label when selecting a new Source.
   if ($source) {
-    $args = array('@source' => $source->label, '@user' => $user->name);
     $element = &$form['source_ajax_wrapper'];
     $element['page_range']['first']['#value'] = 1;
     $element['page_range']['last']['#value'] = count(islandora_paged_content_get_pages($source));
     $element = &$form['source_ajax_wrapper']['tei_rdf_ajax_wrapper'];
-    $element['tei_rdf_label']['#value'] = t('@source: TEI-RDF (@user)', $args);
+    $element['tei_rdf_label']['#value'] = $source->label;
     $element = &$form['source_ajax_wrapper'];
-    $element['transcription_label']['#value'] = t('@source: Transcription (@user)', $args);
+    $element['transcription_label']['#value'] = $source->label;
   }
   else {
     $element = &$form['source_ajax_wrapper']['tei_rdf_ajax_wrapper'];

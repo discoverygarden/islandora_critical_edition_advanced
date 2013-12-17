@@ -684,18 +684,18 @@ function islandora_critical_edition_container_versions_table_operations_cell($pi
     return NULL;
   }
   $links = array(
-    'source' => array(
-      'title' => t('View Source Object'),
-      'href' => "islandora/object/{$source_pid}",
+    'edit' => array(
+      'title' => t("Edit Object Metadata"),
+      'href' => "islandora/object/{$pid}/datastream/MODS/edit",
     ),
     'consolidate' => array(
       'title' => t('Consolidate TEI'),
       'href' => "islandora/object/{$pid}/manage/versionable_object",
       'fragment' => 'update-datastreams',
     ),
-    'edit' => array(
-      'title' => t("Edit Object's Metadata"),
-      'href' => "islandora/object/{$pid}/datastream/MODS/edit",
+    'source' => array(
+      'title' => t('View Source Object'),
+      'href' => "islandora/object/{$source_pid}",
     ),
     'delete' => array(
       'title' => t('Delete'),
