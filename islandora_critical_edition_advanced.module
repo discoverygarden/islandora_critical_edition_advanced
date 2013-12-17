@@ -669,6 +669,7 @@ function islandora_critical_edition_advanced_theme($existing, $type, $theme, $pa
       'variables' => array(
         'object' => NULL,
         'title' => '',
+        'actions' => array(),
         'header' => array(),
         'rows' => array(),
         'offset' => 0,

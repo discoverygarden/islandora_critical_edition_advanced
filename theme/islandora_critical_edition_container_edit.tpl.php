@@ -13,11 +13,10 @@
 
 <div class="edition-container">
   <div class ="version_container">
-    <?php print drupal_render($version_actions); ?>
     <?php print drupal_render($versions); ?>
   </div>
   <div class ="collation_container">
     <?php print drupal_render($collation_actions); ?>
-    
+
   </div>
 </div>
