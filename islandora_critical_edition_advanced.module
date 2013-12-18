@@ -207,10 +207,17 @@ function islandora_critical_edition_advanced_menu() {
  *   The object to prepare transformed TEI on.
  */
 function islandora_critical_edition_advanced_prepare_page_tei_consolidated($object) {
+	module_load_include('inc', 'php_lib', 'DOMHelpers');
   // Return page level consolidated TEI.
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/consolidate_tei');
   $transformed_tei = islandora_critical_edition_advanced_display_page_tei($object);
-  echo $transformed_tei;
+
+  $doc = new DOMDocument();
+  $doc->loadHTML($transformed_tei);
+
+  $return['transformed'] = $transformed_tei;
+  $return['pretty_print'] = dom_document_pretty_print($doc, TRUE);
+  return drupal_json_output($return);
 }
 
 /**
@@ -511,7 +518,9 @@ function islandora_critical_edition_advanced_preprocess_islandora_critical_editi
 function islandora_critical_edition_advanced_preprocess_islandora_critical_edition_publish_view(&$variables) {
   global $base_url;
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/utilities');
+  module_load_include('inc', 'php_lib', 'DOMHelpers');
 
+  dom_document_pretty_print_include_files();
 
   $islandora_critical_edition = drupal_get_path('module', 'islandora_critical_edition');
   $module_path = drupal_get_path('module', 'islandora_critical_edition_advanced');
@@ -519,6 +528,7 @@ function islandora_critical_edition_advanced_preprocess_islandora_critical_editi
   drupal_add_css("$module_path/css/theme_override.css");
   drupal_add_js("$module_path/js/jquery-ui.js");
   drupal_add_js("$module_path/js/startup.js");
+  drupal_add_css("$module_path/css/zoom_wrapper.css");
 
   // Include the pagenation script/styles on the advanced detail viewer.
   drupal_add_css("$module_path/js/jqPagination/css/jqpagination.css");
