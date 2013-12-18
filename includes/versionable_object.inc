@@ -18,6 +18,7 @@
 function islandora_versionable_object_management_menu(AbstractObject $object) {
   module_load_include('inc', 'islandora', 'includes/breadcrumb');
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/manage_rdf_tei_attachment.form');
+  module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/update_ocr.form');
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/transcriptions');
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/utilities');
   //module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/update_datastreams.form');
@@ -60,6 +61,15 @@ function islandora_versionable_object_management_menu(AbstractObject $object) {
     '#title' => t('Update Consolidated TEI'),
     '#type' => 'fieldset',
     'form' => drupal_get_form('islandora_critical_edition_advanced_consolidate_tei_form', $tei_rdf),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+  );
+    $output['management_tabs']['persist_ocr'] = array(
+    '#id' => 'persist-ocr',
+    '#access' => user_access(ISLANDORA_ADD_DS) && $tei_rdf,
+    '#title' => t('Update Source OCR'),
+    '#type' => 'fieldset',
+    'form' => drupal_get_form('islandora_critical_edition_advanced_update_ocr_form', $tei_rdf),
     '#collapsible' => TRUE,
     '#collapsed' => TRUE,
   );

@@ -577,6 +577,7 @@ function islandora_critical_edition_container_versions_table_operations_permissi
     'edit' => user_access(ISLANDORA_METADATA_EDIT),
     'delete' => user_access(ISLANDORA_PURGE),
     'source' => user_access(ISLANDORA_VIEW_OBJECTS),
+    'persist' => user_access(ISLANDORA_ADD_DS),
   );
 }
 
@@ -692,6 +693,11 @@ function islandora_critical_edition_container_versions_table_operations_cell($pi
       'title' => t('Consolidate TEI'),
       'href' => "islandora/object/{$pid}/manage/versionable_object",
       'fragment' => 'update-datastreams',
+    ),
+    'persist' => array(
+      'title' => t('Update Source OCR'),
+      'href' => "islandora/object/{$pid}/manage/versionable_object",
+      'fragment' => 'persist-ocr',
     ),
     'source' => array(
       'title' => t('View Source Object'),
