@@ -397,26 +397,7 @@ var CriticalEditionViewer = {
 			    });
 		},
 		build_zoom: function() {
-//			$jq('#viewer_iframe_border').append(
-//					'<div id="zoom_wrapper">'+
-//						'<img onclick="CriticalEditionViewer.Viewer.zoom_plus_click();" style="float:left;cursor:pointer;cursor:hand;" src="' + Drupal.settings.basePath + Drupal.settings.islandora_critical_edition_advanced.module_base+'/img/zoom_plus.png"/>'+
-//						'<a id="zoom" onclick="return false;" class="zoom_image" href="#">0</a>'+
-//						'<img onclick="CriticalEditionViewer.Viewer.zoom_minus_click();"style="float:right;cursor:pointer;cursor:hand;" src="' + Drupal.settings.basePath + Drupal.settings.islandora_critical_edition_advanced.module_base+'/img/zoom_minus.png"/>'+
-//					'</div>');
-//			
-//			//$jq("#zoom_wrapper").css("border","1px solid red");
-//			$jq("#zoom_wrapper").css("margin-right","5px");
-//			$jq("#zoom_wrapper").css("float","right");
-//			$jq("#zoom_wrapper").css("text-align","center");
-//			$jq("#zoom_wrapper").css("position","absolute");
-//			$jq("#zoom_wrapper").css("right","5px");
-//			$jq("#zoom_wrapper").css("top","5px");
-//			$jq("#zoom_wrapper").css("z-index","30");
-//			
-//			$jq("#zoom_wrapper").css("width","150px");
-//			$jq("#zoom_wrapper").css("z-index","30");
 			CriticalEditionViewer.Viewer.zoom_level_update();
-			
 		},
 		destroy_zoom: function() {
 			var img = $jq('#annotations', window.frames[0].document).find('div[class="base_img"]').children(0);
