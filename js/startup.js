@@ -103,6 +103,11 @@ var CriticalEditionViewer = {
 				CriticalEditionViewer.Viewer.toggle_text_image_linking(0);
 			}
 		},
+		show_tei_markup: function() {
+			CriticalEditionViewer.Viewer.remove_translated_tei();
+			$jq('#cwrc_main', window.frames[0].document).append('<div class="show_tei"id="translated_tei" style="width:100%;height:100%;position:absolute;top:0px;z-index:300;background-color:white"></div>');
+			$jq('#translated_tei', window.frames[0].document).append("<code>" + CriticalEditionViewer.Viewer.transformed_data + "</code>");
+		},
 		show_tei_text: function() {
 			CriticalEditionViewer.Viewer.remove_translated_tei();
 			// TODO:
@@ -503,6 +508,9 @@ var CriticalEditionViewer = {
 						break;
 					case "Diplomatic Transcriptions":
 						CriticalEditionViewer.Viewer.show_versionable_transcriptions();
+						break;
+					case "TEI Markup":
+						CriticalEditionViewer.Viewer.show_tei_markup();
 						break;
 				}
 			});
