@@ -27,7 +27,10 @@
 					<img id="img_title" title="Image" class="work_action_img" style="cursor: pointer;" src="<?php print $module_base;?>/img/picture.png" alt="image" />
 				</div>
 				<div style="float:left;" class="action_img">
-					<img id="tei_text_img" title="TEI Text" class="work_action_img" style="cursor: pointer;" src="<?php print $module_base;?>/img/TEI_logo.jpg" alt="image" />
+					<img id="tei_mark_img" title="TEI Text" class="work_action_img" style="cursor: pointer;" src="<?php print $module_base;?>/img/TEI_logo.jpg" alt="image" />
+				</div>
+				<div style="float:left;" class="action_img">
+					<img id="tei_text_img" title="TEI Markup" class="work_action_img" style="cursor: pointer;" src="<?php print $module_base;?>/img/code_tag.png" alt="image" />
 				</div>
 				<div style="float:left;" class="action_img">
 					<img id="img_transcriptions" title="Diplomatic Transcriptions" class="work_action_img img_selected" style="cursor: pointer;" src="<?php print $module_base;?>/img/list_transcriptions.png" alt="image" />
@@ -45,6 +48,13 @@
 				    <a href="#" class="next" data-action="next">&rsaquo;</a>
 				    <a href="#" class="last" data-action="last">&raquo;</a>
 			    </div>
+			    <?php if (!$media_viewer): ?>
+			    <div id="zoom_wrapper">
+					<img onclick="CriticalEditionViewer.Viewer.zoom_plus_click();" style="float:left;cursor:pointer;cursor:hand;" src="<?php print $module_base;?>/img/zoom_plus.png"/>
+					<a id="zoom" onclick="return false;" class="zoom_image" href="#">0</a>
+					<img onclick="CriticalEditionViewer.Viewer.zoom_minus_click();"style="float:right;cursor:pointer;cursor:hand;" src="<?php print $module_base;?>/img/zoom_minus.png"/>
+				</div>
+			    <?php endif; ?>
 			</div>
 	<?php endif; ?>
 	<div id="view_box" style="width:100%;height:100%;overflow:auto;position: relative;">
