@@ -110,7 +110,7 @@ var CriticalEditionViewer = {
 			}
 		},
 		show_pretty_print_transform: function() {
-//			$jq('#cwrc_main', window.frames[0].document).append('<div class="show_tei" id="pretty_translated_tei" style="overflow:auto;width:100%;height:100%;position:relative;top:0px;z-index:300;background-color:white"></div>');
+			$jq('#cwrc_main', window.frames[0].document).append('<div class="show_tei" id="pretty_translated_tei" style="overflow:auto;width:100%;height:100%;position:relative;top:0px;z-index:300;background-color:white"></div>');
 			$jq('#pretty_translated_tei', window.frames[0].document).append(CriticalEditionViewer.Viewer.pretty_transformed_data);
 			CriticalEditionViewer.cwrc_writer.layout.sizePane("east", $jq('#CriticalEditionViewer').width()/2);
 			document.getElementById('viewer_iframe').contentWindow.prettyPrint();
