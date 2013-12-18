@@ -174,7 +174,6 @@ function islandora_critical_edition_preprocess_islandora_critical_edition_contai
     ),
   );
   $variables['edition_actions'] = islandora_critical_edition_container_editor_links($object);
-  $variables['version_actions'] = islandora_critical_edition_container_version_links($object);
   $variables['collation_actions'] = islandora_critical_edition_container_collation_links($object);
 
   $variables['versions'] = array(
@@ -231,7 +230,7 @@ function islandora_critical_edition_preprocess_islandora_critical_edition_contai
 
   $object = $variables['object'];
   $apparatus = islandora_critical_edition_get_apparatus($object);
-  
+
   $message = "<a href ='/islandora/object/$apparatus/manage/apparatus'><button>" . t('Manage Apparatus') . "</button></a>";
   $variables['apparatus_link'] = array('#markup' => "<div class = 'apparatus_link'><strong>$message</strong></div>");
   $variables['view_link'] = "<div class ='reading_view'><a href ='islandora/object/$object'><button>" . t('Go to Reading View') . "</button></a></div>";
@@ -255,6 +254,7 @@ function islandora_critical_edition_preprocess_islandora_critical_edition_contai
   $variables['versions'] = array(
     '#theme' => 'islandora_critical_edition_container_versions_table',
     '#object' => $object,
+    '#show_actions' => TRUE,
   );
   $variables['collations'] = array(
     '#theme' => 'islandora_critical_edition_container_collations_table',
@@ -356,16 +356,15 @@ function theme_islandora_critical_edition_container_table(array &$variables) {
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/utilities');
   // Create local variables.
   extract(array_intersect_key($variables, drupal_map_assoc(array(
-    'title', 'header', 'rows', 'offset', 'limit', 'total', 'pager'))));
+          'title', 'header', 'rows', 'offset', 'limit', 'total', 'pager', 'actions'))));
   // Render the table.
   $element = array(
     '#type' => 'fieldset',
-    '#title' => t('@title (@start-@end of @total)', array(
+    '#title' => '<span>' . t('@title (@start-@end of @total)', array(
       '@title' => $title,
       '@start' => $offset,
       '@end' => min($offset + $limit, $total),
-      '@total' => $total,
-    )),
+      '@total' => $total)) . '</span>' . drupal_render($actions),
     'table' => array(
       '#theme' => 'table',
       '#header' => $header,
@@ -390,7 +389,7 @@ function theme_islandora_critical_edition_container_versions_table(array &$varia
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/utilities');
   // Create local variables.
   extract(array_intersect_key($variables, drupal_map_assoc(array(
-    'object', 'limit', 'pager', 'columns'))));
+          'object', 'limit', 'pager', 'columns', 'show_actions'))));
   // Build Header.
   $headers = array(
     'version_name' => array('data' => t('Version'), 'field' => 'version_name'),
@@ -410,7 +409,6 @@ function theme_islandora_critical_edition_container_versions_table(array &$varia
   $rows = array();
   $versions = islandora_critical_edition_container_versions_table_data($object, tablesort_get_sort($headers), $offset, $limit);
   foreach ($versions as $pid => $version) {
-
     $source = $version['source'];
     $source_pid = $source->id;
     $cells = array(
@@ -440,6 +438,7 @@ function theme_islandora_critical_edition_container_versions_table(array &$varia
   }
   return theme('islandora_critical_edition_container_table', array(
     'title' => t('Versions'),
+    'actions' => $show_actions ? islandora_critical_edition_container_version_links($object) : array(),
     'header' => $headers,
     'rows' => $rows,
     'limit' => $limit,
