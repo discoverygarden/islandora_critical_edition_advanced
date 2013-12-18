@@ -23,7 +23,7 @@
 .small caps{
   font-variant:small-caps;
 }
-.strikethrough{
+.strikethrough, .overwritten {
   text-decoration:line-through;
   color: slategray;
 }
@@ -75,4 +75,10 @@ illegible:after, inaudible:after {
 }
 double:before, .double:after {
   content: '"';
+}
+.line{
+  display: block;
+}
+.add {
+  display: inline;
 }
