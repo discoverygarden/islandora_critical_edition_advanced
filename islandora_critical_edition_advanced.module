@@ -592,42 +592,36 @@ function islandora_critical_edition_advanced_preprocess_islandora_critical_editi
         '#form' => theme('islandora_critical_edition_advanced_critical_aparatus', array('islandora_objects' => $variables['islandora_object'])),
       );
       if ($element == 'appendix' || $element == 'versions' || $element == 'collations' || $element == 'collation_view') {
+        $body = theme("islandora_critical_edition_container_{$element}_table", array(
+                  'object' => $variables['islandora_object'],
+                  'columns' => array(
+                    'version_name' => TRUE,
+                    'object_type' => TRUE,
+                    'genre' => TRUE,
+                    'content' => TRUE,
+                    'context' => TRUE,
+                  )));
+        $markup = $body;
+        if ($element != 'versions') {
+          $pager = theme("islandora_critical_edition_advanced_aparatus_pager", array(
+                     'islandora_object' => $variables['islandora_object'],
+                     'tab_previous' => (isset($construct_keys[$entry]) ? substr($aparatus_datastreams[$construct_keys[$entry]], 0, 16) : "_blank_"),
+                     'tab_next' => (isset($construct_keys[$entry + 2]) ? substr($aparatus_datastreams[$construct_keys[$entry + 2]], 0, 16) : "_blank_")
+                   ));
+          $markup = theme('islandora_critical_edition_advanced_critical_aparatus', array(
+                      'islandora_object' => $variables['islandora_object'],
+                      'text_body' => $body,
+                      'text_header' => $aparatus_datastreams[$element],
+                      'text_pager' => $pager,
+                    ));
+        }
         $form_state['publish_viewer']["{$element}_tab"]['body'] = array(
           '#id' => "{$element}-tab",
           '#group' => "{$element}_viewer",
           '#access' => TRUE,
           '#type' => 'markup',
           '#title' => $aparatus_datastreams[$element],
-          '#markup' => theme(
-              "islandora_critical_edition_advanced_critical_aparatus", array(
-            'islandora_object' => $variables['islandora_object'],
-            'text_body' => theme("islandora_critical_edition_container_{$element}_table", array(
-              "object" => $variables['islandora_object'],
-              'columns' => array(
-                'version_name' => TRUE,
-                'object_type' => TRUE,
-                'genre' => TRUE,
-                'content' => TRUE,
-                'context' => TRUE,
-              ),
-                )
-            ),
-            'text_header' => $aparatus_datastreams[$element],
-            'text_pager' => theme("islandora_critical_edition_advanced_aparatus_pager", array(
-              'islandora_object' => $variables['islandora_object'],
-              'tab_previous' => (isset($all_keys[$entry]) ? substr($aparatus_datastreams[$all_keys[$entry]], 0, 16) : "_blank_"),
-              'tab_next' => (isset($all_keys[$entry + 2]) ? substr($aparatus_datastreams[$all_keys[$entry + 2]], 0, 16) : "_blank_"),
-                )
-            ),
-            'text_header' => $aparatus_datastreams[$element],
-            'text_pager' => theme("islandora_critical_edition_advanced_aparatus_pager", array(
-              'islandora_object' => $variables['islandora_object'],
-              'tab_previous' => (isset($construct_keys[$entry]) ? substr($aparatus_datastreams[$construct_keys[$entry]], 0, 16) : "_blank_"),
-              'tab_next' => (isset($construct_keys[$entry + 2]) ? substr($aparatus_datastreams[$construct_keys[$entry + 2]], 0, 16) : "_blank_"),
-                )
-            ),
-              )
-          ),
+          '#markup' => $markup,
         );
       }
       else {
@@ -638,18 +632,16 @@ function islandora_critical_edition_advanced_preprocess_islandora_critical_editi
           '#type' => 'markup',
           '#title' => $aparatus_datastreams[$element],
           '#markup' => theme(
-              'islandora_critical_edition_advanced_critical_aparatus', array(
-            'islandora_object' => $variables['islandora_object'],
-            'text_body' => (isset($to_construct[$element]) ? $to_construct[$element] : ""),
-            'text_header' => $aparatus_datastreams[$element],
-            'text_pager' => theme("islandora_critical_edition_advanced_aparatus_pager", array(
+            'islandora_critical_edition_advanced_critical_aparatus', array(
               'islandora_object' => $variables['islandora_object'],
-              'tab_previous' => (isset($construct_keys[$entry]) ? substr($aparatus_datastreams[$construct_keys[$entry]], 0, 16) : "_blank_"),
-              'tab_next' => (isset($construct_keys[$entry + 2]) ? substr($aparatus_datastreams[$construct_keys[$entry + 2]], 0, 16) : "_blank_"),
-                )
-            ),
-              )
-          ),
+              'text_body' => (isset($to_construct[$element]) ? $to_construct[$element] : ""),
+              'text_header' => $aparatus_datastreams[$element],
+              'text_pager' => theme("islandora_critical_edition_advanced_aparatus_pager", array(
+                              'islandora_object' => $variables['islandora_object'],
+                              'tab_previous' => (isset($construct_keys[$entry]) ? substr($aparatus_datastreams[$construct_keys[$entry]], 0, 16) : "_blank_"),
+                              'tab_next' => (isset($construct_keys[$entry + 2]) ? substr($aparatus_datastreams[$construct_keys[$entry + 2]], 0, 16) : "_blank_"),
+                            )),
+            )),
         );
       }
     }

@@ -405,13 +405,13 @@ function theme_islandora_critical_edition_container_versions_table(array &$varia
           'object', 'limit', 'pager', 'columns', 'show_actions'))));
   // Build Header.
   $headers = array(
-    'version_name' => array('data' => t('Version'), 'field' => 'version_name'),
-    'object_type' => array('data' => t('Type'), 'field' => 'object_type'),
-    'genre' => array('data' => t('Genre'), 'field' => 'genre'),
-    'content' => array('data' => t('Content')),
-    'context' => array('data' => t('Context')),
-    'operations' => array('data' => t('Operations')),
-    'transcriptions' => array('data' => t('Transcriptions')),
+    'version_name' => array('data' => t('Version'), 'field' => 'version_name', 'align' => 'left'),
+    'object_type' => array('data' => t('Type'), 'field' => 'object_type', 'align' => 'left'),
+    'genre' => array('data' => t('Genre'), 'field' => 'genre', 'align' => 'left'),
+    'content' => array('data' => t('Content'), 'align' => 'left'),
+    'context' => array('data' => t('Context'), 'align' => 'left'),
+    'operations' => array('data' => t('Operations'), 'align' => 'left'),
+    'transcriptions' => array('data' => t('Transcriptions'), 'align' => 'left'),
   );
   // Operations may be hidden if the user doesn't have permission for any.
   $permissions = islandora_critical_edition_container_versions_table_operations_permissions();
