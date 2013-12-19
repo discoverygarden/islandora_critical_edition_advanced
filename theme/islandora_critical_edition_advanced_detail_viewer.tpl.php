@@ -6,33 +6,19 @@
  *
  */
 ?>
-<div id="AudioLayout" class="easyui-layout" style="width:100%;height:100%;">
+<div id="AudioLayout" class="easyui-layout">
 	<?php if (!$media_viewer): ?>
-			<div id="critical-edition-viewer" style="width:100%;height:40px;">
-				<div style="float:left;" class="action_img">
-					<img id="tei_plain_text" title="Transcription" class="work_action_img" style="cursor: pointer;"src="<?php print $module_base;?>/img/text_plain.png" alt="image" />
-				</div>
-				<div style="float:left;" class="action_img">
-					<img id="img_title" title="Image" class="work_action_img" style="cursor: pointer;" src="<?php print $module_base;?>/img/picture.png" alt="image" />
-				</div>
-				<div style="float:left;" class="action_img">
-					<img id="tei_mark_img" title="TEI Text" class="work_action_img" style="cursor: pointer;" src="<?php print $module_base;?>/img/TEI_logo.jpg" alt="image" />
-				</div>
-				<div style="float:left;" class="action_img">
-					<img id="tei_text_img" title="TEI Markup" class="work_action_img" style="cursor: pointer;" src="<?php print $module_base;?>/img/code_tag.png" alt="image" />
-				</div>
-				<div style="float:left;" class="action_img">
-					<img id="img_transcriptions" title="Diplomatic Transcriptions" class="work_action_img img_selected" style="cursor: pointer;" src="<?php print $module_base;?>/img/list_transcriptions.png" alt="image" />
-				</div>
-				<div style="float:left;">
-					<a class="data_anchor" id ="detail_meta" href="#">Metadata | </a>
-				</div>
-				<div class="switch-wrapper" style="height:100%;float:left">
-					<label style="float:left;">Annotations & Entities</label><input class="switch" id="anno_entity_switch">
-				</div>
-				<div class="switch-wrapper" style="height:100%;float:left">
-					<label style="float:left;">Text-Image Linking</label><input class="switch" id="til_switch">
-				</div>
+			<div id="critical-edition-viewer">
+				<ul class="workbench_toolbar_lists action_img">
+					<li class="work_action_img transcription"></li>
+					<li class="work_action_img image"></li>
+					<li class="work_action_img tei-text"></li>
+					<li class="work_action_img tei-markup"></li>
+					<li class="work_action_img diplomatic-transcriptions"></li>
+					<li class="work_action_img detail-meta"></li>
+					<li class="work_action_img anno-entity-switch"></li>
+					<li class="work_action_img til-switch"></li>
+				</ul>
 				<div id="jqpagination" class="pagination img_pager">
 				    <a href="#" class="first" data-action="first">&laquo;</a>
 				    <a href="#" class="previous" data-action="previous">&lsaquo;</a>
