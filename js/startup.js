@@ -567,11 +567,8 @@ var CriticalEditionViewer = {
 			});
 			
 			if($jq("#viewer_iframe").length > 0) {
-				console.log(document.getElementById('viewer_iframe').contentWindow['del_read_only']);
 				$jq("#viewer_iframe").load(function (){
 					CriticalEditionViewer.cwrc_writer = document.getElementById('viewer_iframe').contentWindow['writer'];
-					//CriticalEditionViewer.cwrc_writer.mode=1;
-					console.log(CriticalEditionViewer.cwrc_writer.getDocument());
 					CriticalEditionViewer.cwrc_writer.layout.north.options.resizeable = false;
 					CriticalEditionViewer.cwrc_writer_helper = document.getElementById('viewer_iframe').contentWindow['islandoraCWRCWriter'];
 						
@@ -613,9 +610,6 @@ var CriticalEditionViewer = {
 					    	CriticalEditionViewer.Viewer.get_entities();
 							CriticalEditionViewer.Viewer.build_tree_view();
 							CriticalEditionViewer.Viewer.hide_preloader();
-							
-//							$jq('#translated_tei', window.frames[0].document).remove();
-//							$jq('#pretty_translated_tei', window.frames[0].document).remove();
 							
 							CriticalEditionViewer.Viewer.get_page_transformed_tei(CriticalEditionViewer.cwrc_params.pages[ CriticalEditionViewer.cwrc_params.position]);
 							
