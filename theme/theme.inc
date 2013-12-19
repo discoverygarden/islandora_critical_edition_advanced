@@ -580,6 +580,8 @@ function islandora_critical_edition_container_versions_table_operations_permissi
     'delete' => user_access(ISLANDORA_PURGE),
     'source' => user_access(ISLANDORA_VIEW_OBJECTS),
     'persist' => user_access(ISLANDORA_ADD_DS),
+    'download' => user_access(ISLANDORA_VIEW_OBJECTS),
+    'upload' => user_access(ISLANDORA_ADD_DS),
   );
 }
 
@@ -686,6 +688,9 @@ function islandora_critical_edition_container_versions_table_operations_cell($pi
   if (count(array_filter($permissions)) == 0) {
     return NULL;
   }
+  // Get the TEI-RDF object if it exists.
+  $tei_rdfs = array_keys(islandora_critical_edition_get_members($pid, 'islandora:criticalEditionCModel'));
+  $tei_rdf = $tei_rdfs[0];
   $links = array(
     'edit' => array(
       'title' => t("Edit Object Metadata"),
@@ -694,6 +699,16 @@ function islandora_critical_edition_container_versions_table_operations_cell($pi
     'consolidate' => array(
       'title' => t('Consolidate TEI'),
       'href' => "islandora/object/{$pid}/manage/versionable_object",
+      'fragment' => 'update-datastreams',
+    ),
+    'upload' => array(
+      'title' => t('Upload TEI'),
+      'href' => "islandora/object/{$pid}/manage/versionable_object",
+      'fragment' => 'upload-tei',
+    ),
+    'download' => array(
+      'title' => t('Download TEI'),
+      'href' => "islandora/object/{$tei_rdf}/datastream/TEI/download",
       'fragment' => 'update-datastreams',
     ),
     'persist' => array(

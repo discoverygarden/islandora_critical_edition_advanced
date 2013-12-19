@@ -46,7 +46,7 @@ function islandora_critical_edition_advanced_workbench() {
         '#theme' => 'links__ctools_dropbutton',
         '#links' => array(
           array(
-            'title' => t('Add New Schema'),
+            'title' => t('Add New Schema / Transform'),
             'href' => 'workbench/add/islandora:criticaleditionschemaCModel'
           ),
         ),

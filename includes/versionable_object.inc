@@ -21,7 +21,7 @@ function islandora_versionable_object_management_menu(AbstractObject $object) {
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/update_ocr.form');
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/transcriptions');
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/utilities');
-  //module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/update_datastreams.form');
+  module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/upload_tei.form');
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/consolidate_tei.form');
   drupal_set_breadcrumb(islandora_get_breadcrumbs($object));
   drupal_set_title($object->label);
@@ -64,6 +64,16 @@ function islandora_versionable_object_management_menu(AbstractObject $object) {
     '#collapsible' => TRUE,
     '#collapsed' => TRUE,
   );
+  $output['management_tabs']['upload_tei'] = array(
+    '#id' => 'upload-tei',
+    '#access' => user_access(ISLANDORA_ADD_DS) && $tei_rdf,
+    '#title' => t('Upload TEI'),
+    '#type' => 'fieldset',
+    'form' => drupal_get_form('islandora_critical_edition_advanced_upload_tei_form', $tei_rdf),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+  );
+
     $output['management_tabs']['persist_ocr'] = array(
     '#id' => 'persist-ocr',
     '#access' => user_access(ISLANDORA_ADD_DS) && $tei_rdf,
