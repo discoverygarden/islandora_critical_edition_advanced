@@ -173,12 +173,16 @@ function islandora_critical_edition_preprocess_islandora_critical_edition_contai
         )
     ),
   );
-  $variables['edition_actions'] = islandora_critical_edition_container_editor_links($object);
-  $variables['collation_actions'] = islandora_critical_edition_container_collation_links($object);
-
   $variables['versions'] = array(
     '#theme' => 'islandora_critical_edition_container_versions_table',
     '#object' => $object,
+    '#columns' => array(
+      'version_name' => TRUE,
+      'object_type' => TRUE,
+      'genre' => TRUE,
+      'content' => TRUE,
+      'context' => TRUE,
+    ),
   );
   $variables['collations'] = array(
     '#theme' => 'islandora_critical_edition_container_collations_table',
@@ -209,6 +213,13 @@ function islandora_critical_edition_preprocess_islandora_critical_edition_contai
   $variables['versions'] = array(
     '#theme' => 'islandora_critical_edition_container_versions_table',
     '#object' => $object,
+    '#columns' => array(
+      'version_name' => TRUE,
+      'object_type' => TRUE,
+      'genre' => TRUE,
+      'content' => TRUE,
+      'context' => TRUE,
+    ),
   );
 }
 
@@ -255,6 +266,11 @@ function islandora_critical_edition_preprocess_islandora_critical_edition_contai
     '#theme' => 'islandora_critical_edition_container_versions_table',
     '#object' => $object,
     '#show_actions' => TRUE,
+    '#columns' => array(
+      'version_name' => TRUE,
+      'operations' => TRUE,
+      'transcriptions' => TRUE,
+    ),
   );
   $variables['collations'] = array(
     '#theme' => 'islandora_critical_edition_container_collations_table',
@@ -268,37 +284,33 @@ function islandora_critical_edition_preprocess_islandora_critical_edition_contai
 function islandora_critical_edition_container_editor_links(AbstractObject $object) {
   $permissions = array(
     'edit_metadata' => user_access(ISLANDORA_METADATA_EDIT),
-    'edit_permissions' => function_exists('islandora_xacml_editor_access') && islandora_xacml_editor_access($object),
-    'workbench' => user_access('use islandora_bookmark'),
+    'edit_permissions' => !function_exists('islandora_xacml_editor_access') || (!function_exists('islandora_xacml_editor_access')  && islandora_xacml_editor_access($object)),
   );
-  // The WorkBench is just the default Bookmark list.
-  module_load_include('inc', 'islandora_bookmark', 'includes/api');
-  $in_work_bench = FALSE;
-  $default_list = islandora_bookmark_get_default_list();
-  if ($default_list !== FALSE) {
-    $default_list = Bookmark::getList($default_list);
-    $in_work_bench = in_array($object->id, $default_list->getPids());
-  }
-  $work_bench_action = $in_work_bench ? 'remove' : 'add';
   $links = array(
     'edit_metadata' => array(
-      'title' => t('Edit Edition Metadata'),
-      'href' => "islandora/object/{$object->id}/datastream/MODS/edit",
+      '#theme' => 'link',
+      '#prefix' => '<div class="edit_critical_edition_metadata">',
+      '#suffix' => '</div>',
+      '#text' => t('Edit Edition Metadata'),
+      '#path' => "islandora/object/{$object->id}/datastream/MODS/edit",
+      '#options' => array(
+        'html' => FALSE,
+        'attributes' => array(),
+      ),
     ),
     'edit_permissions' => array(
-      'title' => t('Edit Permissions'),
-      'href' => "islandora/object/{$object->id}/manage/xacml",
-    ),
-    'workbench' => array(
-      'title' => $in_work_bench ? t('Remove from Workbench') : t('Add to Workbench'),
-      'href' => "islandora_critical_edition_advanced_workbench/{$work_bench_action}/{$object->id}",
+      '#theme' => 'link',
+      '#prefix' => '<div class="edit_critical_edition_permissions">',
+      '#suffix' => '</div>',
+      '#text' => t('Edit Permissions'),
+      '#path' => "islandora/object/{$object->id}/manage/xacml",
+      '#options' => array(
+        'html' => FALSE,
+        'attributes' => array(),
+      ),
     ),
   );
-  return array(
-    '#theme' => 'links__ctools_dropbutton',
-    '#class' => array('edition-links'),
-    '#links' => array_intersect_key($links, array_filter($permissions)),
-  );
+  return array_intersect_key($links, array_filter($permissions));
 }
 
 /**
@@ -393,9 +405,12 @@ function theme_islandora_critical_edition_container_versions_table(array &$varia
   // Build Header.
   $headers = array(
     'version_name' => array('data' => t('Version'), 'field' => 'version_name'),
+    'object_type' => array('data' => t('Type'), 'field' => 'object_type'),
+    'genre' => array('data' => t('Genre'), 'field' => 'genre'),
+    'content' => array('data' => t('Content')),
+    'context' => array('data' => t('Context')),
     'operations' => array('data' => t('Operations')),
     'transcriptions' => array('data' => t('Transcriptions')),
-    'descriptions' => array('data' => t('Descriptions')),
   );
   // Operations may be hidden if the user doesn't have permission for any.
   $permissions = islandora_critical_edition_container_versions_table_operations_permissions();
@@ -407,10 +422,11 @@ function theme_islandora_critical_edition_container_versions_table(array &$varia
   $offset = $page * $limit;
   // Build Rows.
   $rows = array();
-  $versions = islandora_critical_edition_container_versions_table_data($object, tablesort_get_sort($headers), $offset, $limit);
+  $sort_field = tablesort_get_order($headers);
+  $sort_field = $sort_field['sql'];
+  $versions = islandora_critical_edition_container_versions_table_data($object, $sort_field, tablesort_get_sort($headers), $offset, $limit);
   foreach ($versions as $pid => $version) {
     $source = $version['source'];
-    $source_pid = $source->id;
     $cells = array(
       'version_name' => array(
         '#markup' => l($version['label'], "islandora/object/{$pid}", array(
@@ -422,12 +438,20 @@ function theme_islandora_critical_edition_container_versions_table(array &$varia
             )
         ),
       ),
-      'operations' => islandora_critical_edition_container_versions_table_operations_cell($pid, $version, $source_pid, $object->id),
-      'transcriptions' => islandora_critical_edition_container_table_transcriptions_cell($pid, $version['transcriptions']),
-      'descriptions' => array(
-        // TODO: should come from the description of the versionable object.
-        '#markup' => islandora_critical_edition_container_versions_table_descriptions_cell($pid),
+      'object_type' => array(
+        '#markup' => $version['object_type'],
       ),
+      'genre' => array(
+        '#markup' => $version['genre'],
+      ),
+      'content' => array(
+        '#markup' => $version['content'],
+      ),
+      'context' => array(
+        '#markup' => $version['context'],
+      ),
+      'operations' => islandora_critical_edition_container_versions_table_operations_cell($pid, $version, $source, $object->id),
+      'transcriptions' => islandora_critical_edition_container_table_transcriptions_cell($pid, $version['transcriptions']),
     );
     // Only include cells which have headers.
     $cells = array_intersect_key($cells, $headers);
@@ -449,26 +473,6 @@ function theme_islandora_critical_edition_container_versions_table(array &$varia
 }
 
 /**
- * Returns DC description of an object.
- *
- * @param unknown $source_id
- *   The pid to retrieve the description for
- *
- * @return string
- *   Returns the description cell.
- */
-function islandora_critical_edition_container_versions_table_descriptions_cell($source_id) {
-  module_load_include('inc', 'islandora', 'includes/dublin_core');
-  $object = islandora_object_load($source_id);
-  if (!$object) {
-    return "";
-  }
-  $dc = new DublinCore($object['DC']->content);
-  $description = $dc->dc->dc['dc:description'];
-  return (isset($description[0]) ? $description[0] : "");
-}
-
-/**
  * Gets all the required data for populating the Versions table.
  *
  * For the versions table in the critical edition container display.
@@ -476,6 +480,8 @@ function islandora_critical_edition_container_versions_table_descriptions_cell($
  * @param AbstractObject $object
  *   The critical edition containter object.
  * @param string $sort
+ *   The column to sort on.
+ * @param string $dir
  *   Either 'DESC' or 'ASC'.
  * @param int $offset
  *   The offset from which to return the version table data.
@@ -486,77 +492,73 @@ function islandora_critical_edition_container_versions_table_descriptions_cell($
  *   An associative array containing relevent data for building the versions
  *   display table.
  */
-function islandora_critical_edition_container_versions_table_data(AbstractObject $object, $sort = 'DESC', $offset = 0, $limit = 25) {
-  // Sort must be uppercase in SPARQL.
-  $sort = strtoupper($sort);
+function islandora_critical_edition_container_versions_table_data(AbstractObject $object, $sort = 'version_name', $dir = 'DESC', $offset = 0, $limit = 25) {
+  // For now hardcode local variables for each field, at a later point they can
+  // be put in the admin form.
+  // Fields are hardcoded for now, but should eventually move to a configurable
+  // setting.
+  $pid_field = 'PID';
+  $label_field = 'fgs_label_s';
+  $source_pid_field = 'source_ms';
+  $source_label_field = 'mods_titleInfo_title_ms';
+  $tei_rdf_pid_field = 'tei_rdf_ms';
+  $tei_rdf_label_field = 'tei_rdf_label_ms';
+  $transcription_pid_field = 'transcription_ms';
+  $transcription_label_field = 'transcription_label_ms';
+  $object_type_field = 'mods_typeOfResource_s';
+  $genre_field = 'mods_genre_s';
+  $content_field = 'mods_abstract_ms';
+  $context_field = 'mods_note_source note_ms';
+  $child_relationship_field = 'RELS_EXT_isMemberOf_uri_ms';
+  $model_field = 'RELS_EXT_hasModel_uri_ms';
+  $query = "$child_relationship_field:\"info:fedora/{$object->id}\"";
+  $query .= ' && ';
+  $query .= "$model_field:\"info:fedora/islandora:versionableObjectCModel\"";
+  // Handle Sorting.
+  $sort_fields = array(
+    'version_name' => $label_field,
+    'object_type' => $object_type_field,
+    'genre' => $genre_field,
+  );
+  $dir = strtolower($dir);
+  $sort = $sort_fields[$sort];
+  $params = array(
+    'sort' => "{$sort} {$dir}",
+  );
+  $url = parse_url(variable_get('islandora_solr_url', 'localhost:8080/solr'));
+  $solr = new Apache_Solr_Service($url['host'], $url['port'], $url['path'] . '/');
+  $solr->setCreateDocuments(0);
   $versions = array();
-  // Get the versions and their sources between offset and limit.
-  $query = <<<EOT
-PREFIX fedora-rels-ext: <info:fedora/fedora-system:def/relations-external#>
-PREFIX fedora-model: <info:fedora/fedora-system:def/model#>
-PREFIX islandora: <http://islandora.ca/ontology/relsext#>
-SELECT DISTINCT ?object ?label ?source FROM <#ri> WHERE {
- ?object fedora-rels-ext:isMemberOf <info:fedora/$object->id> ;
-         fedora-model:hasModel <info:fedora/islandora:versionableObjectCModel> .
- ?x fedora-rels-ext:isMemberOf ?object ;
-    fedora-model:hasModel <info:fedora/islandora:criticalEditionCModel> ;
-    islandora:isCriticalEditionOf ?source .
- OPTIONAL { ?object fedora-model:label  ?label. }
-}
-ORDER BY $sort(?label)
-OFFSET $offset
-LIMIT $limit
-EOT;
-  // Do a query for all transcripts.
-  $results = $object->repository->ri->sparqlQuery($query, $limit);
-  foreach ($results as $result) {
-    $pid = $result['object']['value'];
-    $versions[$pid] = array(
-      'label' => $result['label']['value'],
-      // Unfortunately we can't get the source title as it is stored as literal
-      // value in the resource index so we must get the object.
-      'source' => islandora_object_load($result['source']['value']),
-      'teirdf' => array(),
-      'transcriptions' => array(),
-    );
+  try {
+    $results = $solr->search($query, $offset, $limit, $params);
+    $results = json_decode($results->getRawResponse(), TRUE);
+    foreach ($results['response']['docs'] as $result) {
+      // For now we hide invalid data, until we clean up the site.
+      $has_tei_rdf = isset($result[$tei_rdf_pid_field]);
+      $has_transcription = isset($result[$transcription_pid_field]);
+      if (!$has_tei_rdf || !$has_transcription) {
+        continue;
+      }
+      $pid = $result[$pid_field];
+      $versions[$pid] = array(
+        'label' => $result[$label_field],
+        // Unfortunately we can't get the source title as it is stored as literal
+        // value in the resource index so we must get the object.
+        'source' => reset($result[$source_pid_field]),
+        'object_type' => isset($result[$object_type_field]) ? $result[$object_type_field] : t('undefined'),
+        'genre' => isset($result[$genre_field]) ? $result[$genre_field] : t('undefined'),
+        'content' => isset($result[$content_field]) ? reset($result[$content_field]) : t('undefined'),
+        'context' => isset($result[$context_field]) ? reset($result[$context_field]) : t('undefined'),
+        'teirdf' => array(
+          'pid' => isset($result[$tei_rdf_pid_field]) ? reset($result[$tei_rdf_pid_field]) : NULL,
+          'label' => isset($result[$tei_rdf_label_field]) ? reset( $result[$tei_rdf_label_field]) : NULL,
+        ),
+        'transcriptions' => isset($result[$transcription_pid_field]) ? array_combine($result[$transcription_pid_field], $result[$transcription_label_field]) : array(),
+      );
+    }
   }
-  // Do a query for all transcripts and TEI-RDF objects we require.
-  $query = <<<EOT
-PREFIX fedora-rels-ext: <info:fedora/fedora-system:def/relations-external#>
-PREFIX fedora-model: <info:fedora/fedora-system:def/model#>
-SELECT DISTINCT ?version ?child ?child_label ?content_model FROM <#ri> WHERE {
- ?version fedora-rels-ext:isMemberOf <info:fedora/$object->id> ;
-         fedora-model:hasModel <info:fedora/islandora:versionableObjectCModel> .
- ?child fedora-rels-ext:isMemberOf ?version ;
-        fedora-model:hasModel ?content_model .
- OPTIONAL {
-  ?child  fedora-model:label ?child_label .
- }
- FILTER (?content_model != <info:fedora/fedora-system:FedoraObject-3.0>)
-}
-EOT;
-  // Add the transcription and TEI-RDF objects info to the versions array.
-  $results = $object->repository->ri->sparqlQuery($query, 'unlimited');
-  foreach ($results as $result) {
-    $pid = $result['version']['value'];
-    if (!isset($versions[$pid])) {
-      continue;
-    }
-    $version = &$versions[$pid];
-    $child = $result['child']['value'];
-    $child_label = $result['child_label']['value'];
-    switch ($result['content_model']['value']) {
-      case 'islandora:criticalEditionCModel':
-        $version['teirdf'] = array(
-          'pid' => $child,
-          'label' => $child_label,
-        );
-        break;
-
-      case 'islandora:transcriptionCModel':
-        $version['transcriptions'][$child] = $child_label;
-        break;
-    }
+  catch (Exception $e) {
+    watchdog_exception('islandora_critical_edition_advanced', $e, 'Got an exception while searching for versions.', array(), WATCHDOG_ERROR);
   }
   return $versions;
 }
@@ -577,6 +579,7 @@ function islandora_critical_edition_container_versions_table_operations_permissi
     'edit' => user_access(ISLANDORA_METADATA_EDIT),
     'delete' => user_access(ISLANDORA_PURGE),
     'source' => user_access(ISLANDORA_VIEW_OBJECTS),
+    'persist' => user_access(ISLANDORA_ADD_DS),
   );
 }
 
@@ -692,6 +695,11 @@ function islandora_critical_edition_container_versions_table_operations_cell($pi
       'title' => t('Consolidate TEI'),
       'href' => "islandora/object/{$pid}/manage/versionable_object",
       'fragment' => 'update-datastreams',
+    ),
+    'persist' => array(
+      'title' => t('Update Source OCR'),
+      'href' => "islandora/object/{$pid}/manage/versionable_object",
+      'fragment' => 'persist-ocr',
     ),
     'source' => array(
       'title' => t('View Source Object'),

@@ -605,10 +605,10 @@ function islandora_critical_edition_advanced_preprocess_islandora_critical_editi
               "object" => $variables['islandora_object'],
               'columns' => array(
                 'version_name' => TRUE,
-                'source_name' => TRUE,
-                'transcriptions' => FALSE,
-                'operations' => FALSE,
-                'descriptions' => TRUE,
+                'object_type' => TRUE,
+                'genre' => TRUE,
+                'content' => TRUE,
+                'context' => TRUE,
               ),
                 )
             ),
@@ -699,11 +699,14 @@ function islandora_critical_edition_advanced_theme($existing, $type, $theme, $pa
         'limit' => 25,
         'show_actions' => FALSE,
         'columns' => array(
+          // Default only show the version name.
           'version_name' => TRUE,
-          'source_name' => TRUE,
-          'transcriptions' => TRUE,
-          'operations' => TRUE,
-          'descriptions' => FALSE,
+          'object_type' => FALSE,
+          'genre' => FALSE,
+          'content' => FALSE,
+          'context' => FALSE,
+          'transcriptions' => FALSE,
+          'operations' => FALSE,
         ),
         'pager' => array(
           'element' => 0,
