@@ -3,5 +3,6 @@ description = "Create advanced critical editions of Islandora objects."
 package = Islandora
 dependencies[] = islandora_critical_edition
 dependencies[] = islandora_bookmark
+dependencies[] = islandora_solr
 version = 7.x-dev
 core = 7.x

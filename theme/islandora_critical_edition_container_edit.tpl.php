@@ -8,6 +8,7 @@
 <div id="workbench_toolbar">
   <?php print "$view_link"; ?>
   <?php print drupal_render($apparatus_link); ?>
+  <?php print drupal_render($edition_actions); ?>
   <?php print drupal_render($toggle_workbench_membership_form); ?>
 </div>
 

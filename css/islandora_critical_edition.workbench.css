@@ -11,22 +11,12 @@ div.ctools-dropbutton {
 
 }
 */
-#ctools-button-1 {
+#ctools-button-1, #ctools-button-2 {
   float: left;
   margin-right: 1em;
 }
-
 span.ctools-dropbutton-wrapper {
   position: relative;
   z-index: 100;
-  clear: both;
+  margin-right: 1em;
 }
-#foobar {
-  position: relative;
-  z-index: 5;
-}
-/*div.ctools-dropbutton {
-  /*position: absolute;
-  z-index: 100;
-  top: 0px;
-}*/
