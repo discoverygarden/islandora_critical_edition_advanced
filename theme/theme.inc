@@ -173,9 +173,6 @@ function islandora_critical_edition_preprocess_islandora_critical_edition_contai
         )
     ),
   );
-  $variables['edition_actions'] = islandora_critical_edition_container_editor_links($object);
-  $variables['collation_actions'] = islandora_critical_edition_container_collation_links($object);
-
   $variables['versions'] = array(
     '#theme' => 'islandora_critical_edition_container_versions_table',
     '#object' => $object,
@@ -287,37 +284,33 @@ function islandora_critical_edition_preprocess_islandora_critical_edition_contai
 function islandora_critical_edition_container_editor_links(AbstractObject $object) {
   $permissions = array(
     'edit_metadata' => user_access(ISLANDORA_METADATA_EDIT),
-    'edit_permissions' => function_exists('islandora_xacml_editor_access') && islandora_xacml_editor_access($object),
-    'workbench' => user_access('use islandora_bookmark'),
+    'edit_permissions' => !function_exists('islandora_xacml_editor_access') || (!function_exists('islandora_xacml_editor_access')  && islandora_xacml_editor_access($object)),
   );
-  // The WorkBench is just the default Bookmark list.
-  module_load_include('inc', 'islandora_bookmark', 'includes/api');
-  $in_work_bench = FALSE;
-  $default_list = islandora_bookmark_get_default_list();
-  if ($default_list !== FALSE) {
-    $default_list = Bookmark::getList($default_list);
-    $in_work_bench = in_array($object->id, $default_list->getPids());
-  }
-  $work_bench_action = $in_work_bench ? 'remove' : 'add';
   $links = array(
     'edit_metadata' => array(
-      'title' => t('Edit Edition Metadata'),
-      'href' => "islandora/object/{$object->id}/datastream/MODS/edit",
+      '#theme' => 'link',
+      '#prefix' => '<div class="edit_critical_edition_metadata">',
+      '#suffix' => '</div>',
+      '#text' => t('Edit Edition Metadata'),
+      '#path' => "islandora/object/{$object->id}/datastream/MODS/edit",
+      '#options' => array(
+        'html' => FALSE,
+        'attributes' => array(),
+      ),
     ),
     'edit_permissions' => array(
-      'title' => t('Edit Permissions'),
-      'href' => "islandora/object/{$object->id}/manage/xacml",
-    ),
-    'workbench' => array(
-      'title' => $in_work_bench ? t('Remove from Workbench') : t('Add to Workbench'),
-      'href' => "islandora_critical_edition_advanced_workbench/{$work_bench_action}/{$object->id}",
+      '#theme' => 'link',
+      '#prefix' => '<div class="edit_critical_edition_permissions">',
+      '#suffix' => '</div>',
+      '#text' => t('Edit Permissions'),
+      '#path' => "islandora/object/{$object->id}/manage/xacml",
+      '#options' => array(
+        'html' => FALSE,
+        'attributes' => array(),
+      ),
     ),
   );
-  return array(
-    '#theme' => 'links__ctools_dropbutton',
-    '#class' => array('edition-links'),
-    '#links' => array_intersect_key($links, array_filter($permissions)),
-  );
+  return array_intersect_key($links, array_filter($permissions));
 }
 
 /**

@@ -284,6 +284,7 @@ function islandora_critical_edition_advanced_toggle_workbench_membership_form(ar
     $default_list = Bookmark::getList($default_list);
     $in_work_bench = in_array($object->id, $default_list->getPids());
   }
+  $class = $in_work_bench ? 'remove-from-workbench' : 'add-to-workbench';
   return array(
     'object' => array(
       '#type' => 'value',
@@ -295,6 +296,7 @@ function islandora_critical_edition_advanced_toggle_workbench_membership_form(ar
     ),
     'submit' => array(
       '#type' => 'submit',
+      '#attributes' => array('class' => array($class)),
       '#value' => $in_work_bench ? t('Remove from Workbench') : t('Add to Workbench'),
     ),
   );
