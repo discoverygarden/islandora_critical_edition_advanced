@@ -204,7 +204,6 @@ var CriticalEditionViewer = {
 						if(inner_data == "" || inner_data.indexOf("certainty") != -1) {
 							inner_data = $jq(this).attr("name");
 						}
-						console.log("inner data: " + inner_data.replace("uuid: ", ""));
 							var child_frame = {
 								"attr" : { "id" : $jq(this).attr("name"),
 								  "data-uuid" : inner_data.replace("uuid: ", ""),
@@ -569,10 +568,7 @@ var CriticalEditionViewer = {
 			
 			if($jq("#viewer_iframe").length > 0) {
 				$jq("#viewer_iframe").load(function (){
-					$jq('#cwrc_wrapper', window.frames[0].document).height($jq('#view_box').height());
-					// Set the writer object for access later
 					CriticalEditionViewer.cwrc_writer = document.getElementById('viewer_iframe').contentWindow['writer'];
-					
 					CriticalEditionViewer.cwrc_writer.layout.north.options.resizeable = false;
 					CriticalEditionViewer.cwrc_writer_helper = document.getElementById('viewer_iframe').contentWindow['islandoraCWRCWriter'];
 						
@@ -615,9 +611,6 @@ var CriticalEditionViewer = {
 							CriticalEditionViewer.Viewer.build_tree_view();
 							CriticalEditionViewer.Viewer.hide_preloader();
 							
-//							$jq('#translated_tei', window.frames[0].document).remove();
-//							$jq('#pretty_translated_tei', window.frames[0].document).remove();
-							
 							CriticalEditionViewer.Viewer.get_page_transformed_tei(CriticalEditionViewer.cwrc_params.pages[ CriticalEditionViewer.cwrc_params.position]);
 							
 							$jq(".work_action_img").removeClass("img_selected");
@@ -647,7 +640,8 @@ var CriticalEditionViewer = {
 					CriticalEditionViewer.Viewer.get_entities();
 					CriticalEditionViewer.Viewer.build_tree_view();
 					
-					CriticalEditionViewer.Viewer.show_versionable_transcriptions();
+					window.frames[0].tinymce.activeEditor.getBody().setAttribute('contenteditable', false);
+					
 				});
 			}
 			
