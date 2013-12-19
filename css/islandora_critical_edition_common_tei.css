@@ -1,4 +1,4 @@
-/* 
+`/* 
     Document   : islandora_critical_edition_tei
     Created on : Dec 7, 2013, 12:46:42 PM
     Author     : astanley
@@ -27,13 +27,13 @@
   text-decoration:line-through;
   color: slategray;
 }
-.superscript, superlinear{
+.superscript, .superlinear{
  	position: relative;
   bottom: 0.5em;
   color: red;
   font-size: 0.8em;
 }
-.subscript, sublinear{
+.subscript, .sublinear{
   position: relative;
   top: 0.3em;
   color: blue;
@@ -59,10 +59,10 @@
 }
 
 
-illegible:before, inaudible:before {
+.illegible:before, .inaudible:before {
    content: "<";
 }
-illegible:after, inaudible:after {
+.illegible:after, .inaudible:after {
    content: ">";
 }
 

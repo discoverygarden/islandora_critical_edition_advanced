@@ -25,7 +25,7 @@ function islandora_critical_edition_advanced_upload_tei_form(array $form, array 
   $upload_size = min((int) ini_get('post_max_size'), (int) ini_get('upload_max_filesize'));
   $extensions = array('xml');
   return array(
-    'file' => array(
+    'tei_file' => array(
       '#title' => t('Upload TEI XML'),
       '#type' => 'managed_file',
       '#required' => TRUE,
@@ -53,7 +53,7 @@ function islandora_critical_edition_advanced_upload_tei_form(array $form, array 
  *   The drupal form state.
  */
 function islandora_critical_edition_advanced_upload_tei_form_submit(array $form, array &$form_state) {
-  $file = file_load($form_state['values']['file']);
+  $file = file_load($form_state['values']['tei_file']);
   $path = drupal_realpath($file->uri);
   $object = islandora_object_load($form_state['tei_rdf']);
   if (empty($object['TEI'])) {
