@@ -284,7 +284,7 @@ function islandora_critical_edition_preprocess_islandora_critical_edition_contai
 function islandora_critical_edition_container_editor_links(AbstractObject $object) {
   $permissions = array(
     'edit_metadata' => user_access(ISLANDORA_METADATA_EDIT),
-    'edit_permissions' => !function_exists('islandora_xacml_editor_access') || (!function_exists('islandora_xacml_editor_access')  && islandora_xacml_editor_access($object)),
+    'edit_permissions' => !function_exists('islandora_xacml_editor_access') || islandora_xacml_editor_access($object),
   );
   $links = array(
     'edit_metadata' => array(
