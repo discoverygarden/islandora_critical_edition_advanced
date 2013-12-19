@@ -615,7 +615,10 @@ var CriticalEditionViewer = {
 							CriticalEditionViewer.Viewer.build_tree_view();
 							CriticalEditionViewer.Viewer.hide_preloader();
 							
-							CriticalEditionViewer.Viewer.show_versionable_transcriptions();
+//							$jq('#translated_tei', window.frames[0].document).remove();
+//							$jq('#pretty_translated_tei', window.frames[0].document).remove();
+							
+							CriticalEditionViewer.Viewer.get_page_transformed_tei(CriticalEditionViewer.cwrc_params.pages[ CriticalEditionViewer.cwrc_params.position]);
 							
 							$jq(".work_action_img").removeClass("img_selected");
 							$jq("#img_transcriptions").addClass("img_selected");
