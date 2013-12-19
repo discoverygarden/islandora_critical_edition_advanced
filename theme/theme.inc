@@ -355,6 +355,7 @@ function islandora_critical_edition_container_collation_links(AbstractObject $ob
   $num_transcriptions = islandora_critical_edition_number_of_child_transcriptions($object);
   return array(
     '#theme' => 'links__ctools_dropbutton',
+    '#class' => array('collation-links'),
     '#links' => (user_access('edit mvds') && $num_transcriptions >= 2) ? $links : array(),
   );
 }
