@@ -42,6 +42,15 @@ function islandora_critical_edition_advanced_workbench() {
           ),
         ),
       ),
+      'add_new_schema' => array(
+        '#theme' => 'links__ctools_dropbutton',
+        '#links' => array(
+          array(
+            'title' => t('Add New Schema'),
+            'href' => 'workbench/add/islandora:criticaleditionschemaCModel'
+          ),
+        ),
+      ),
       'add_new_source_object' => array(
         '#prefix' => '<span class="ctools-dropbutton-wrapper">',
         '#suffix' => '</span>',
@@ -84,23 +93,51 @@ function islandora_critical_edition_advanced_workbench_ingest($content_model) {
   global $user;
   module_load_include('inc', 'islandora', 'includes/ingest.form');
   $valid_content_models = array(
-    'islandora:criticalEditionContainerCModel' => 'Critical Edition',
-    'islandora:bookCModel' => 'Text',
-    'islandora:sp-audioCModel' => 'Audio',
-    'islandora:sp_videoCModel' => 'Video',
-    'islandora:collectionCModel' => 'Collection',
+    'islandora:criticalEditionContainerCModel' => array(
+      'label' => 'Critical Edition',
+      'default_collection' => 'islandora:criticalEditionCollection',
+      'select_collection' => TRUE,
+    ),
+    'islandora:bookCModel' => array(
+      'label' => 'Text / Image Object',
+      'default_collection' => 'islandora:sourceCollection',
+      'select_collection' => TRUE,
+    ),
+    'islandora:sp-audioCModel' => array(
+      'label' => 'Audio Object',
+      'default_collection' => 'islandora:sourceCollection',
+      'select_collection' => TRUE,
+    ),
+    'islandora:sp_videoCModel' => array(
+      'label' => 'Video Object',
+      'default_collection' => 'islandora:sourceCollection',
+      'select_collection' => TRUE,
+    ),
+    'islandora:collectionCModel' => array(
+      'label' => 'Collection',
+      'default_collection' => 'islandora:sourceCollection',
+      'select_collection' => TRUE,
+    ),
+    'islandora:criticaleditionschemaCModel' => array(
+      'label' => 'Schema',
+      'default_collection' => 'islandora:tei_schema_collection',
+      'select_collection' => FALSE,
+    ),
   );
   if (!in_array($content_model, array_keys($valid_content_models))) {
     drupal_not_found();
   }
+  $info = $valid_content_models[$content_model];
   $tuque = islandora_get_tuque_connection();
   $object = $tuque->repository->constructObject('islandora');
   $object->owner = $user->name;
-  $object->label = t('New @type Object', array('@type' => $valid_content_models[$content_model]));
+  $object->label = t('New @type', array('@type' => $info['label']));
   $object->models = $content_model;
-  drupal_set_title(t('Add New @type Object', array('@type' => $valid_content_models[$content_model])));
+  $object->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOfCollection', $info['default_collection']);
+  drupal_set_title(t('Add New @type', array('@type' => $info['label'])));
   return drupal_get_form('islandora_ingest_form', array(
-      'require_select_collection_step' => TRUE,
+      'require_select_collection_step' => $info['select_collection'],
+      'parent' => $valid_content_models[$content_model]['default_collection'],
       'models' => array($content_model),
       'objects' => array($object)));
 }
@@ -142,11 +179,14 @@ EOT;
  *   The Drupal form definition.
  */
 function islandora_critical_edition_advanced_select_collection_form(array $form, array &$form_state) {
+  $shared_storage = islandora_ingest_form_get_shared_storage($form_state);
+  $parent = $shared_storage['parent'];
   return array(
     'collection' => array(
       '#type' => 'textfield',
       '#title' => t('Select Collection'),
       '#required' => TRUE,
+      '#default_value' => $parent,
       '#autocomplete_path' => 'workbench/collection_autocomplete',
     ),
   );
@@ -189,6 +229,7 @@ function islandora_critical_edition_advanced_select_collection_form_undo_submit(
   $shared_storage = islandora_ingest_form_get_shared_storage($form_state);
   unset($shared_storage['parent']);
   // Be warned this removes all parent relationships infomation.
+  $object = islandora_ingest_form_get_object($form_state);
   $object->relationships->remove(FEDORA_RELS_EXT_URI, 'isMemberOf');
 }
 
