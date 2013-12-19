@@ -617,6 +617,9 @@ var CriticalEditionViewer = {
 							
 							CriticalEditionViewer.Viewer.show_versionable_transcriptions();
 							
+							$jq(".work_action_img").removeClass("img_selected");
+							$jq("#img_transcriptions").addClass("img_selected");
+							
 							$jq("input[type=checkbox]").switchButton({
 								  checked: false
 							});
