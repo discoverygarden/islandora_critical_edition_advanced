@@ -132,7 +132,7 @@ function islandora_critical_edition_create_transcription_form(array $form, array
 function islandora_critical_edition_create_transcription_form_validate($form, $form_state) {
   $versionable_object_pid = $form_state['values']['versionable_object_pid'];
   $current_transcriptions = islandora_critical_get_related_transcriptions($versionable_object_pid);
-  $page_count = $form_state['values']['page_counts'];
+  $page_count = $form_state['values']['page_count'];
   if (in_array($form_state['values']['transcription'], $current_transcriptions)) {
     form_set_error('transcription', t('A transcription with this name is already associated with this versionable object.'));
   }
