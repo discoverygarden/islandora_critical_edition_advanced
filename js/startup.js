@@ -382,6 +382,7 @@ var CriticalEditionViewer = {
 			})
 		},
 		show_versionable_meta: function() {
+			console.log("show ver meta");
 			$jq("#meta_overlay").animate({
 			      marginTop:0},{
 			      complete: function() {
@@ -543,6 +544,22 @@ var CriticalEditionViewer = {
 					case "TEI Markup":
 						CriticalEditionViewer.Viewer.show_tei_markup();
 						break;
+					case "Show/Hide annotations":
+						if($jq(this).attr("data-value") == 1) {
+							$jq(this).attr("data-value",0);
+						} else {
+							$jq(this).attr("data-value",1);
+						}
+						CriticalEditionViewer.Viewer.toggle_anno_entities($jq(this).attr("data-value"));
+						break;
+					case "Show/Hide Text Image Links":
+						if($jq(this).attr("data-value") == 1) {
+							$jq(this).attr("data-value",0);
+						} else {
+							$jq(this).attr("data-value",1);
+						}
+						CriticalEditionViewer.Viewer.toggle_text_image_linking($jq(this).attr("data-value"));
+						break;
 				}
 			});
 			$sb("#anno_entity_switch").switchButton();
@@ -556,6 +573,7 @@ var CriticalEditionViewer = {
 				} else {
 					$jq(this).attr("value",1);
 				}
+				console.log($jq(this).attr("value"));
 				switch ($jq(this).attr("id")) {
 					case "anno_entity_switch":
 						CriticalEditionViewer.Viewer.toggle_anno_entities($jq(this).attr("value"));
