@@ -598,6 +598,8 @@ var CriticalEditionViewer = {
 					    	
 					    	CriticalEditionViewer.Viewer.show_preloader();
 					    	CriticalEditionViewer.Viewer.toggle_text_image_linking(0);
+					    	CriticalEditionViewer.Viewer.show_plain_image();
+					    	
 					    	$jq('#page_choose', window.frames[0].document).val(page);
 					    	$jq("#page_choose :selected[true]", window.frames[0].document).attr('selected',false);
 					    	$jq("#page_choose option[value="+page+"]", window.frames[0].document).attr('selected',true);
@@ -614,6 +616,10 @@ var CriticalEditionViewer = {
 							CriticalEditionViewer.Viewer.hide_preloader();
 							
 							CriticalEditionViewer.Viewer.show_versionable_transcriptions();
+							
+							$jq("input[type=checkbox]").switchButton({
+								  checked: false
+							});
 					    }
 					});
 					
