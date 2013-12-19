@@ -47,6 +47,9 @@ $('document').ready(function() {
 
 
 var CriticalEditionViewer = {
+	checked_txtimglnk : null,
+	checked_entities : null,
+	checked_annos: null,
 	jtree_checked_items: null,
 	j_data: null,
 	cwrc_writer: null,
@@ -156,46 +159,12 @@ var CriticalEditionViewer = {
 			}
 		},
 		toggle_text_image_linking: function(show) {
-			//$jq("#publish_txtimglnk_list").toggle();
-			//$jq(".jstree-last").toggle();
 			if(show == 1) {
-				$jq(".jstree-last").show();
-//				$jq("#navi").animate({
-//			      marginLeft:0},{
-//			      complete: function() {
-			        //CriticalEditionViewer.cwrc_writer.layout.sizePane("east", ($('#cwrc_wrapper', window.frames[0].document).width()-$("#navi").width()));
+				$jq("#tree_txtimglnk_node").show();
 			        CriticalEditionViewer.cwrc_writer.editor.$('body', window.frames[0].document).addClass('showEntityBrackets');
-//			        if(!$jq('#img_title').hasClass('img_selected')) {
-//			          CriticalEditionViewer.cwrc_writer.layout.open("west");
-//			          CriticalEditionViewer.cwrc_writer.layout.sizePane("west", $jq("#navi").width());
-//			        } else {
-//			          CriticalEditionViewer.cwrc_writer.layout.sizePane("east", ($jq('#cwrc_wrapper', window.frames[0].document).width()-$jq("#navi").width()));
-//			        }
-//			    }, 700);
 			} else {
-				//
-				//CriticalEditionViewer.cwrc_writer.layout.close("west");
-				$jq(".jstree-last").hide();
+				$jq("#tree_txtimglnk_node").hide();
 				CriticalEditionViewer.cwrc_writer.editor.$('body', window.frames[0].document).removeClass('showEntityBrackets');
-				
-				
-//				if($jq('#img_title').hasClass('img_selected')) {
-//				  CriticalEditionViewer.cwrc_writer.layout.sizePane("east", $jq('#cwrc_wrapper', window.frames[0].document).width());
-//				}
-//				
-//				CriticalEditionViewer.cwrc_writer.editor.$('body', window.frames[0].document).toggleClass('showEntityBrackets');
-				
-				
-				
-				
-				//
-//				$jq("#navi").animate({
-//			        marginLeft:-$jq("#navi").width()},{
-//			        complete: function() {
-//			        	
-//			        },
-//			    }, 700);
-				
 			}
 		},
 		get_entities: function() {
@@ -210,43 +179,49 @@ var CriticalEditionViewer = {
 			CriticalEditionViewer.j_data = {"data" : [
 			       						{ 
 			    							"data" : "Annotations", 
+			    							"attr" : { "id" : "tree_annotations_node"},
 			    							"metadata" : { id : "tree_anno_list" },
 			    							"children" : []
 			    						},
 			    						{ 
 			    							"data" : "Entities", 
+			    							"attr" : { "id" : "tree_entities_node"},
 			    							"metadata" : { id : "tree_ent_list" },
 			    							"children" : []
 			    						},
 			    						{ 
 			    							"data" : "Text image link", 
+			    							"attr" : { "id" : "tree_txtimglnk_node"},
 			    							"metadata" : { id : "tree_txtimglnk_list" },
 			    							"children" : []
 			    						}
 			    					]};
 			
 			$jq('.entitiesList li', window.frames[0].document).each(function() {
-				// If a class is found, its an entity entry.
-				if($jq(this).attr("class")) {
+				if($jq(this).attr("name")) {
 					var inner_data = $jq(this).find('div[class="info"]').children().last().children().last().text();
 					if($jq(this).attr("class") == "txtimglnk") {
-						if(inner_data == "") {
+						if(inner_data == "" || inner_data.indexOf("certainty") != -1) {
 							inner_data = $jq(this).attr("name");
 						}
-						if(inner_data.indexOf("ent_") == -1) {
+						console.log("inner data: " + inner_data.replace("uuid: ", ""));
 							var child_frame = {
-								"attr" : { "id" : inner_data }, 
+								"attr" : { "id" : $jq(this).attr("name"),
+								  "data-uuid" : inner_data.replace("uuid: ", ""),
+								  "class" : "tree-txtimgitem-item",
+								}, 
 								"data" : {
 									"title" : $jq(this).children('.entityTitle').first().text(), 
 									"attr" : { "href" : "#" } 
 								}
 							};
 							CriticalEditionViewer.j_data["data"][2]['children'].push(child_frame);
-						}
-						
 					} else {
 						var child_frame = {
-								"attr" : { "id" : $jq(this).attr("name") }, 
+								"attr" : { "id" : $jq(this).attr("name"),
+								  "data-uuid" : inner_data.replace("uuid: ", ""),
+								  "class" : "tree-entity-item",
+								},  
 								"data" : {
 									"title" : $jq(this).children('.entityTitle').first().text(), 
 									"attr" : { "href" : "#" } 
@@ -261,7 +236,7 @@ var CriticalEditionViewer = {
 				if($jq(this).find('div[class="islandora_comment_type_title"]').text() != 'TextImageLink' &&
 						$jq(this).find('div[class="islandora_comment_type_title"]').text() != 'unclassified') {
 					var child_frame = {
-							"attr" : { "id" : "anno_" + $jq(this).find('div[class="islandora_comment_type_title"]').text() }, 
+							"attr" : { "id" : "anno_" + $jq(this).find('div[class="islandora_comment_type_title"]').text()}, 
 							"data" : {
 								"title" : $jq(this).find('div[class="islandora_comment_type_title"]').text(), 
 								"attr" : { "href" : "#" } 
@@ -270,7 +245,8 @@ var CriticalEditionViewer = {
 					};
 					$jq(this).find('div[class="islandora_comment_type_content"]').children().each(function() {
 						child_frame["children"].push({
-							"attr" : { "id" : $jq(this).attr('urn') }, 
+							"attr" : { "id" : $jq(this).attr('urn'),
+								"class" : "tree-anno-item",}, 
 							"data" : {
 								"title" : $jq(this).find('div[class="comment_content"]').text(), 
 								"attr" : { "href" : "#" } 
@@ -291,24 +267,72 @@ var CriticalEditionViewer = {
 			return false;
 		},
 		get_image_annotations: function() {
-			
+			// TODO: method stub as required.
 		},
 		show_selected_anno: function(annos) {
 			for(var i = 0;i<annos.length;i++) {
 				if(annos[i].indexOf("anno_") == -1) {
 					var trimmed_uuid = annos[i].replace("uuid: ", "");
-					//$jq('.svg_' + trimmed_uuid, window.frames[0].document).remove();
+					CriticalEditionViewer.Viewer.annos_click(annos[i]);
+					CriticalEditionViewer.cwrc_writer.delegator.editorCallback('highlightEntity_gainFocus', $jq('.entitiesList', window.frames[0].document).find('li[name="' + trimmed_uuid + '"]'));
 					$jq('#translated_tei', window.frames[0].document).find('span[data-source="' + trimmed_uuid + '"]').css("background-color", "#FFFF00");
 					document.getElementById('viewer_iframe').contentWindow.paint_commentAnnoTargets($jq('#anno_' + trimmed_uuid, window.frames[0].document), 'canvas_0', trimmed_uuid, "TextImageLink");
 				}
 			}
 		},
 		hide_unselected_anno: function() {
-			
 			if(CriticalEditionViewer.jtree_checked_items != null) {
+				$jq('#entities > ul > li', window.frames[0].document).each(function(index, el) {
+                    $jq(this).removeClass('selected').css('background-color', '').find('div[class="info"]').hide();
+                      CriticalEditionViewer.cwrc_writer.highlightEntity($jq(this).closest("li").attr("id"));
+            	}); 
 				for(var x = 0;x < CriticalEditionViewer.jtree_checked_items.length;x++) {
 					$jq('#translated_tei', window.frames[0].document).find('span[data-source="' + CriticalEditionViewer.jtree_checked_items[x].replace("uuid: ", "") + '"]').css("background-color", "");
 					$jq('.svg_' + CriticalEditionViewer.jtree_checked_items[x].replace("uuid: ", ""), window.frames[0].document).remove();
+				}
+			}
+		},
+		show_annos: function(annos) {
+			for(var i = 0;i<annos.length;i++) {
+				document.getElementById('viewer_iframe').contentWindow.paint_commentAnnoTargets($jq('#anno_' + annos[i], window.frames[0].document), 'canvas_0', annos[i], "TextImageLink");
+
+			}
+		},
+		remove_annos : function() {
+			if(CriticalEditionViewer.checked_annos) {
+				for(var x = 0;x < CriticalEditionViewer.checked_annos.length;x++) {
+					$jq('.svg_' + CriticalEditionViewer.checked_annos[x], window.frames[0].document).remove();
+				}
+			}
+		},
+		show_entities: function(annos) {
+			for(var i = 0;i<annos.length;i++) {
+				CriticalEditionViewer.Viewer.annos_click(annos[i]);
+				CriticalEditionViewer.cwrc_writer.delegator.editorCallback('highlightEntity_gainFocus', $jq('.entitiesList', window.frames[0].document).find('li[name="' + annos[i] + '"]'));
+			}
+		},
+		remove_entities : function() {
+			if(CriticalEditionViewer.checked_entities) {
+				var prevHighlight = $jq('#entityHighlight', CriticalEditionViewer.cwrc_writer.editor.getBody());
+				if (prevHighlight.length == 1) {
+					var parent = prevHighlight.parent()[0];
+					prevHighlight.contents().unwrap();
+					parent.normalize();
+				}
+			}
+		},
+		show_txtimglnk: function(annos) {
+			for(var i = 0;i<annos.length;i++) {
+				$jq('#translated_tei', window.frames[0].document).find('span[data-source="' + annos[i] + '"]').css("background-color", "#FFFF00");
+				document.getElementById('viewer_iframe').contentWindow.paint_commentAnnoTargets($jq('#anno_' + annos[i], window.frames[0].document), 'canvas_0', annos[i], "TextImageLink");
+			}
+		},
+		remove_txtimglnk : function() {
+			if(CriticalEditionViewer.checked_txtimglnk) {
+				for(var i = 0;i<CriticalEditionViewer.checked_txtimglnk.length;i++) {
+					var tid_id = CriticalEditionViewer.checked_txtimglnk[i];
+					$jq('#translated_tei', window.frames[0].document).find('span[data-source="' + tid_id + '"]').css("background-color", "");
+					$jq('.svg_' + CriticalEditionViewer.checked_txtimglnk[i], window.frames[0].document).remove();
 				}
 			}
 		},
@@ -318,26 +342,43 @@ var CriticalEditionViewer = {
 				"plugins" : ["themes", "json_data", "ui", "checkbox","sort"],
 			}).bind('loaded.jstree', function(e, data) {
 			    // invoked after jstree has loaded
-				$jq(".jstree-last").hide();
+				$jq("#tree_txtimglnk_node").hide();
 			}).bind("change_state.jstree", function (e, d) {
 				CriticalEditionViewer.Viewer.hide_unselected_anno();
 				var tagName = d.args[0].tagName;
 			    var refreshing = d.inst.data.core.refreshing;
 			    if ((tagName == "A" || tagName == "INS") &&
 			      (refreshing != true && refreshing != "undefined")) {
-			      //if a checkbox or it's text was clicked, 
-			      //and this is not due to a refresh or initial load, run this code . . .
-			      var checked_ids = [];
-			      var unchecked_ids = [];
-			      $jt("#demo3").jstree("get_checked",null,true).each(function () {
-		              checked_ids.push(this.id);
-		          });
-			      $jt("#demo3").jstree("get_unchecked",null,true).each(function () {
-			          unchecked_ids.push(this.id); 
-		          });
-			      CriticalEditionViewer.jtree_checked_items = checked_ids;
-			      CriticalEditionViewer.Viewer.show_selected_anno(checked_ids);
+			    	var checked_annos = [];
+			    	var checked_entities = [];
+			    	var checked_txtimglnk =[];
+			    	$jq('.tree-txtimgitem-item').each(function() {
+			    		var data_tag = $jq(this).attr("data-uuid");
+			    		if($jq(this).hasClass("jstree-checked") && data_tag.indexOf("ent_") == -1) {
+			    			checked_txtimglnk.push(data_tag);
+			    		}
+			    	});
+			    	$jq('.tree-entity-item').each(function() {
+			    		if($jq(this).hasClass("jstree-checked")) {
+			    			checked_entities.push(this.id);
+			    		}
+			    	});
+			    	$jq('.tree-anno-item').each(function() {
+			    		if($jq(this).hasClass("jstree-checked")) {
+			    			checked_annos.push(this.id);
+			    		}
+			    	});
+			      CriticalEditionViewer.Viewer.remove_annos();
+			      CriticalEditionViewer.checked_annos = checked_annos;
+			      CriticalEditionViewer.Viewer.show_annos(checked_annos);
 			      
+			      CriticalEditionViewer.Viewer.remove_entities();
+			      CriticalEditionViewer.checked_entities = checked_entities;
+			      CriticalEditionViewer.Viewer.show_entities(checked_entities);
+			      
+			      CriticalEditionViewer.Viewer.remove_txtimglnk();
+			      CriticalEditionViewer.checked_txtimglnk = checked_txtimglnk;
+			      CriticalEditionViewer.Viewer.show_txtimglnk(checked_txtimglnk);
 			    }
 			})
 		},
@@ -470,16 +511,12 @@ var CriticalEditionViewer = {
 				
 				switch ($jq(this).attr('id')) {
 				case "detail_meta":
-					// Show the preloader while we retrieve the data.
-					//CriticalEditionViewer.Viewer.show_preloader();
 					CriticalEditionViewer.Viewer.show_versionable_meta();
 					break;
 				case "detail_tran":
-					//CriticalEditionViewer.Viewer.show_preloader();
 					CriticalEditionViewer.Viewer.show_versionable_transcription();
 					break;
 				case "detail_perm":
-					//CriticalEditionViewer.Viewer.show_preloader();
 					CriticalEditionViewer.Viewer.show_versionable_permalink();
 					break;
 				}
@@ -522,13 +559,9 @@ var CriticalEditionViewer = {
 				}
 				switch ($jq(this).attr("id")) {
 					case "anno_entity_switch":
-						//$jq("#publish_txtimglnk_list").toggle();
 						CriticalEditionViewer.Viewer.toggle_anno_entities($jq(this).attr("value"));
 						break;
 					case "til_switch":
-//						$jq("#publish_txtimglnk_list").toggle();
-//						$jq("#tree_annos").toggle();
-//						$jq("#tree_entities").toggle();
 						CriticalEditionViewer.Viewer.toggle_text_image_linking($jq(this).attr("value"));
 						break;
 				}
@@ -565,6 +598,8 @@ var CriticalEditionViewer = {
 					    	
 					    	CriticalEditionViewer.Viewer.show_preloader();
 					    	CriticalEditionViewer.Viewer.toggle_text_image_linking(0);
+					    	CriticalEditionViewer.Viewer.show_plain_image();
+					    	
 					    	$jq('#page_choose', window.frames[0].document).val(page);
 					    	$jq("#page_choose :selected[true]", window.frames[0].document).attr('selected',false);
 					    	$jq("#page_choose option[value="+page+"]", window.frames[0].document).attr('selected',true);
@@ -580,7 +615,17 @@ var CriticalEditionViewer = {
 							CriticalEditionViewer.Viewer.build_tree_view();
 							CriticalEditionViewer.Viewer.hide_preloader();
 							
-							CriticalEditionViewer.Viewer.show_versionable_transcriptions();
+//							$jq('#translated_tei', window.frames[0].document).remove();
+//							$jq('#pretty_translated_tei', window.frames[0].document).remove();
+							
+							CriticalEditionViewer.Viewer.get_page_transformed_tei(CriticalEditionViewer.cwrc_params.pages[ CriticalEditionViewer.cwrc_params.position]);
+							
+							$jq(".work_action_img").removeClass("img_selected");
+							$jq("#img_transcriptions").addClass("img_selected");
+							
+							$jq("input[type=checkbox]").switchButton({
+								  checked: false
+							});
 					    }
 					});
 					
