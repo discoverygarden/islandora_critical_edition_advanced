@@ -18,6 +18,6 @@
   </div>
   <div class ="collation_container">
     <?php print drupal_render($collation_actions); ?>
-
+    <?php print drupal_render($collations); ?>
   </div>
 </div>
