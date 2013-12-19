@@ -90,18 +90,22 @@ function islandora_critical_edition_advanced_transform_tei_datastream_to_html($p
   module_load_include('inc', 'islandora', 'includes/authtokens');
   $tomcat_url = str_replace('/fedora', '', variable_get('islandora_base_url', 'http://localhost:8080/fedora'));
   $xml_path = url("islandora/object/{$pid}/datastream/TEI/view", array(
-                'absolute' => TRUE,
-                'query' => array(
-                  'token' => islandora_get_object_token($pid, 'TEI'),
-                ),
-              ));
+    'absolute' => TRUE,
+    'query' => array(
+      'token' => islandora_get_object_token($pid, 'TEI'),
+    ),
+  ));
   $module_path = drupal_get_path('module', 'islandora_critical_edition_advanced');
   drupal_add_css("$module_path/css/islandora_critical_edition_common_tei.css");
+  drupal_add_css("$module_path/css/islandora_critical_edition_reading_tei.css");
   $xslt_path = url("{$module_path}/xml/EMiC_test_XSLT.xsl", array('absolute' => TRUE));
-  $xml = new SimpleXMLElement(file_get_contents("$tomcat_url/saxon/SaxonServlet?source=$xml_path&style=$xslt_path"));
-  $output = '';
-  foreach ($xml->body->children() as $child) {
-    $output .= $child->asXML();
+  $xml = file_get_contents("$tomcat_url/saxon/SaxonServlet?source=$xml_path&style=$xslt_path");
+  $sxml = new SimpleXMLElement(file_get_contents("$tomcat_url/saxon/SaxonServlet?source=$xml_path&style=$xslt_path"));
+  $body = "";
+  if(!empty($sxml->body)) {
+    foreach ($sxml->body->children() as $child) {
+      $body .= $child->asXML();
+    }
   }
-  return $output;
+  return $body ? $body : $xml;
 }

@@ -254,6 +254,7 @@ function islandora_critical_edition_preprocess_islandora_critical_edition_contai
   $variables['versions'] = array(
     '#theme' => 'islandora_critical_edition_container_versions_table',
     '#object' => $object,
+    '#show_actions' => TRUE,
   );
   $variables['collations'] = array(
     '#theme' => 'islandora_critical_edition_container_collations_table',
@@ -388,7 +389,7 @@ function theme_islandora_critical_edition_container_versions_table(array &$varia
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/utilities');
   // Create local variables.
   extract(array_intersect_key($variables, drupal_map_assoc(array(
-    'object', 'limit', 'pager', 'columns'))));
+          'object', 'limit', 'pager', 'columns', 'show_actions'))));
   // Build Header.
   $headers = array(
     'version_name' => array('data' => t('Version'), 'field' => 'version_name'),
@@ -437,7 +438,7 @@ function theme_islandora_critical_edition_container_versions_table(array &$varia
   }
   return theme('islandora_critical_edition_container_table', array(
     'title' => t('Versions'),
-    'actions' => islandora_critical_edition_container_version_links($object),
+    'actions' => $show_actions ? islandora_critical_edition_container_version_links($object) : array(),
     'header' => $headers,
     'rows' => $rows,
     'limit' => $limit,
