@@ -590,7 +590,6 @@ var CriticalEditionViewer = {
 							$jq(this).addClass("img_selected");
 							CriticalEditionViewer.Viewer.check_meta_data_state();
 							CriticalEditionViewer.Viewer.show_tei_document_text();
-						//	console.log(CriticalEditionViewer.tei_document_text);
 							break;
 						case "Image":
 							CriticalEditionViewer.Viewer.remove_tei_document_text();
