@@ -150,10 +150,7 @@ var CriticalEditionViewer = {
 				$jq("#navi").animate({
 				      marginLeft:0},{
 				      complete: function() {
-//				    	  console.log("complete");
-//				    	  console.log($jq("li[title='Image']"));
 				    	  if($jq("li[title='Image']").hasClass("img_selected")) {
-				    		  console.log("image is selected");
 				    		  CriticalEditionViewer.cwrc_writer.layout.sizePane("east", $jq('#CriticalEditionViewer').width()-($jq("#navi").width() + 100));
 				    	  }
 				    	  
@@ -166,7 +163,6 @@ var CriticalEditionViewer = {
 			        marginLeft:-$jq("#navi").width()},{
 			        complete: function() {
 			        	if($jq("li[title='Image']").hasClass("img_selected")) {
-				    		  console.log("image is selected");
 				    		  CriticalEditionViewer.cwrc_writer.layout.sizePane("east", $jq('#CriticalEditionViewer').width());
 				    	  }
 			        },
@@ -397,7 +393,6 @@ var CriticalEditionViewer = {
 			})
 		},
 		show_versionable_meta: function() {
-			console.log("show ver meta");
 			$jq("#meta_overlay").animate({
 			      marginTop:0},{
 			      complete: function() {
@@ -524,18 +519,6 @@ var CriticalEditionViewer = {
 				    }, 700);
 				}
 				CriticalEditionViewer.Viewer.show_versionable_meta();
-//				switch ($jq(this).attr('id')) {
-//				case "detail_meta":
-//					
-//					break;
-//				case "detail_tran":
-//					CriticalEditionViewer.Viewer.show_versionable_transcription();
-//					break;
-//				case "detail_perm":
-//					CriticalEditionViewer.Viewer.show_versionable_permalink();
-//					break;
-//				}
-				
 			});
 			
 			// Set up img click handlers
@@ -601,7 +584,6 @@ var CriticalEditionViewer = {
 				} else {
 					$jq(this).attr("value",1);
 				}
-				console.log($jq(this).attr("value"));
 				switch ($jq(this).attr("id")) {
 					case "anno_entity_switch":
 						CriticalEditionViewer.Viewer.toggle_anno_entities($jq(this).attr("value"));
