@@ -6,31 +6,29 @@
  *
  */
 ?>
-<div id="AudioLayout" class="easyui-layout" style="width:100%;height:100%;">
-	<?php if (!$media_viewer): ?>
+<?php if (!$media_viewer): ?>
 			<div id="critical-edition-viewer">
 				<ul class="workbench_toolbar_lists action_img" style="height: 10px;">
 					<li title="Transcription" class="work_action_img transcription"></li>
-					<li title="Image" class="work_action_img image"></li>
+					<li title="Image" class="work_action_img image img_selected"></li>
 					<li title="TEI Text" class="work_action_img tei-text"></li>
 					<li title="TEI Markup" class="work_action_img tei-markup"></li>
 					<li title="Diplomatic Transcriptions" class="work_action_img diplomatic-transcriptions"></li>
 					<li title="Detail Metadata" class="work_action_img detail-meta data_anchor"></li>
 					<li title="Show/Hide annotations" data-value="0" class="work_action_img anno-entity-switch switch"></li>
 					<li title="Show/Hide Text Image Links" data-value="0" class="work_action_img til-switch switch"></li>
-					<li class="jqpagination">
-						<div id="jqpagination" class="pagination img_pager">
+					
+					<div id="jqpagination" class="pagination img_pager">
 						    <a href="#" class="first" data-action="first">&laquo;</a>
 						    <a href="#" class="previous" data-action="previous">&lsaquo;</a>
 						    <input id="jqpagination_input" type="text" readonly="readonly" data-max-page="0" />
 						    <a href="#" class="next" data-action="next">&rsaquo;</a>
 						    <a href="#" class="last" data-action="last">&raquo;</a>
 				    	</div>
-					</li>
 				</ul>
 				
 			    <?php if (!$media_viewer): ?>
-			    <div id="zoom_wrapper">
+			    <div id="zoom_wrapper" style="display: none;">
 					<img onclick="CriticalEditionViewer.Viewer.zoom_plus_click();" style="float:left;cursor:pointer;cursor:hand;" src="<?php print $module_base;?>/img/zoom_plus.png"/>
 					<a id="zoom" onclick="return false;" class="zoom_image" href="#">0</a>
 					<img onclick="CriticalEditionViewer.Viewer.zoom_minus_click();"style="float:right;cursor:pointer;cursor:hand;" src="<?php print $module_base;?>/img/zoom_minus.png"/>
@@ -38,6 +36,8 @@
 			    <?php endif; ?>
 			</div>
 	<?php endif; ?>
+<div id="AudioLayout" class="easyui-layout" style="width:100%;height:100%;">
+	
 	<div id="view_box" style="width:100%;height:100%;overflow:auto;position: relative;">
 	<?php if ($media_viewer): ?>
 		<?php foreach ($transcription_text as $key => $value):?>
