@@ -8,7 +8,7 @@
 ?>
 <?php if (!$media_viewer): ?>
 			<div id="critical-edition-viewer">
-				<ul class="workbench_toolbar_lists action_img" style="height: 10px;">
+				<ul class="workbench_toolbar_lists action_img">
 					<li title="Transcription" class="work_action_img transcription"></li>
 					<li title="Image" class="work_action_img image img_selected"></li>
 					<li title="TEI Text" class="work_action_img tei-text"></li>

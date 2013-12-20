@@ -80,6 +80,13 @@ var CriticalEditionViewer = {
 	            },
 	          });
 		},
+		check_meta_data_state: function() {
+			CriticalEditionViewer.Viewer.show_versionable_transcription();
+//		  if($jq("li[title='Detail Metadata']").hasClass("img_selected")) {
+//	    	//Hide metadata display.
+//			  
+//	      }
+		},
 		show_preloader: function() {
 			$jq("#loadImg").css('z-index','800');
 			$jq("#loadImg").css('display','inherit');
@@ -183,6 +190,11 @@ var CriticalEditionViewer = {
 			var cover = '<div id="navi" style="position:absolute;overflow:auto;width:34%;height:100%;background-color: #FFFFFF;z-index: 500;top: 0;"></div>';
 			
 			$jq("#view_box").append(cover);
+			
+			var search_box = '<div><input id="search_box" type="text" placeholder="Search..." value=""/></div>'
+			$jq("#navi").append(search_box);
+			
+			
 			
 			var tree_html = '<div id="demo3"></div>';
 			$jq('#navi').append(tree_html);
@@ -347,9 +359,16 @@ var CriticalEditionViewer = {
 			}
 		},
 		build_tree_view: function() {
+			$jq("#search_box").keyup(function () {
+				$jt("#demo3").jstree("search", $jq(this).val());
+			}); 
+			
 			$jt("#demo3").jstree({
 				"json_data" : CriticalEditionViewer.j_data,
-				"plugins" : ["themes", "json_data", "ui", "checkbox","sort"],
+				"search" : {
+					"case_insensitive" : true,
+				},
+				"plugins" : ["themes", "json_data", "ui", "checkbox","sort","search"],
 			}).bind('loaded.jstree', function(e, data) {
 			    // invoked after jstree has loaded
 				$jq("#tree_txtimglnk_node").hide();
@@ -390,7 +409,9 @@ var CriticalEditionViewer = {
 			      CriticalEditionViewer.checked_txtimglnk = checked_txtimglnk;
 			      CriticalEditionViewer.Viewer.show_txtimglnk(checked_txtimglnk);
 			    }
-			})
+			}).bind("search.jstree", function (e, data) {
+				// TODO: something else cool with the selected nodes??
+			});
 		},
 		show_versionable_meta: function() {
 			$jq("#meta_overlay").animate({
@@ -416,6 +437,7 @@ var CriticalEditionViewer = {
 			    }, 700);
 		},
 		show_versionable_transcription: function() {
+			$jq("li[title='Detail Metadata']").removeClass("img_selected");
 			$jq("#meta_overlay").animate({
 			      marginTop:-$jq("#meta_overlay").height()},{
 			      complete: function() {
@@ -508,6 +530,7 @@ var CriticalEditionViewer = {
 					var meta_cover = '<div id="meta_overlay" style="position:absolute;overflow:auto;width:100%;height:100%;background-color: #FFFFFF;z-index: 500;top: 0;"></div>';
 					$jq("#view_box").append(meta_cover);
 					$jq("#meta_overlay").css("margin-top",-$jq("#meta_overlay").height());
+					$jq("li[title='Detail Metadata']").addClass("img_selected");
 				} else {
 					$jq("#meta_overlay").animate({
 				        marginTop:-$jq("#meta_overlay").height()},{
@@ -515,6 +538,7 @@ var CriticalEditionViewer = {
 				          $jq('.data_anchor').css('font-weight', 'normal');
 				          $jq('#detail_tran').css('font-weight', 'bold');
 				          $jq("#meta_overlay").remove();
+				          $jq("li[title='Detail Metadata']").removeClass("img_selected")
 				        },
 				    }, 700);
 				}
@@ -549,23 +573,37 @@ var CriticalEditionViewer = {
 						break;
 					}
 				} else {
-					$jq(".work_action_img").removeClass("img_selected");
-					$jq(this).addClass("img_selected");
+					
 					// Preform the approate action.
 					switch ($jq(this).attr("title")) {
 						case "Transcription":
+							$jq(".work_action_img").removeClass("img_selected");
+							$jq(this).addClass("img_selected");
+							CriticalEditionViewer.Viewer.check_meta_data_state();
 							CriticalEditionViewer.Viewer.show_plain_text();
 							break;
 						case "TEI Text":
+							$jq(".work_action_img").removeClass("img_selected");
+							$jq(this).addClass("img_selected");
+							CriticalEditionViewer.Viewer.check_meta_data_state();
 							CriticalEditionViewer.Viewer.show_tei_text();
 							break;
 						case "Image":
+							$jq(".work_action_img").removeClass("img_selected");
+							$jq(this).addClass("img_selected");
+							CriticalEditionViewer.Viewer.check_meta_data_state();
 							CriticalEditionViewer.Viewer.show_plain_image();
 							break;
 						case "Diplomatic Transcriptions":
+							$jq(".work_action_img").removeClass("img_selected");
+							$jq(this).addClass("img_selected");
+							CriticalEditionViewer.Viewer.check_meta_data_state();
 							CriticalEditionViewer.Viewer.show_versionable_transcriptions();
 							break;
 						case "TEI Markup":
+							$jq(".work_action_img").removeClass("img_selected");
+							$jq(this).addClass("img_selected");
+							CriticalEditionViewer.Viewer.check_meta_data_state();
 							CriticalEditionViewer.Viewer.show_tei_markup();
 							break;
 						
