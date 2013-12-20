@@ -17,12 +17,12 @@
   xmlns:zs="http://www.loc.gov/zing/srw/">
   <xsl:output encoding="UTF-8" indent="yes" method="xml"/>
   <!-- gsearch magik @TODO: see if any of the explicit variables can be replaced by these -->
-  <xsl:param name="REPOSITORYNAME" select="'fedora'"/>
-  <xsl:param name="FEDORASOAP" select="'http://emic.local:8080/fedora/services'"/>
-  <xsl:param name="FEDORAUSER" select="'fedoraAdmin'"/>
-  <xsl:param name="FEDORAPASS" select="'fedoraAdmin'"/>
-  <xsl:param name="TRUSTSTOREPATH" select="'fedora'"/>
-  <xsl:param name="TRUSTSTOREPASS" select="'fedoraAdmin'"/>
+  <xsl:param name="REPOSITORYNAME" select="repositoryName"/>
+  <xsl:param name="FEDORASOAP" select="repositoryName"/>
+  <xsl:param name="FEDORAUSER" select="repositoryName"/>
+  <xsl:param name="FEDORAPASS" select="repositoryName"/>
+  <xsl:param name="TRUSTSTOREPATH" select="repositoryName"/>
+  <xsl:param name="TRUSTSTOREPASS" select="repositoryName"/>
   <!-- These values are accessible in included xslts -->
   <xsl:variable name="PROT">http</xsl:variable>
   <xsl:variable name="HOST">localhost</xsl:variable>
@@ -89,10 +89,6 @@
                 <xsl:with-param name="PID" select="$PID"/>
               </xsl:apply-templates>
             </add>
-            <!-- reindex versionable object if a child of one -->
-            <xsl:call-template name="indexVersionableObjectIfChildOf">
-              <xsl:with-param name="PID" select="$PID"/>
-            </xsl:call-template>
           </xsl:when>
           <xsl:otherwise>
             <xsl:apply-templates mode="unindexFedoraObject" select="/foxml:digitalObject"/>
@@ -144,7 +140,7 @@
                Really, should probably only
                handle the mimetypes supported by the "getDatastreamText" call:
                https://github.com/fcrepo/gsearch/blob/master/FedoraGenericSearch/src/java/dk/defxws/fedoragsearch/server/TransformerToText.java#L185-L200
-          
+
           <xsl:when test="@CONTROL_GROUP='M' and foxml:datastreamVersion[last() and not(starts-with(@MIMETYPE,
             'image'))]">
               TODO: should do something about mime type filtering
@@ -160,10 +156,6 @@
                     -->
         </xsl:choose>
       </xsl:for-each>
-      <!-- Should only apply to Versionable Objects -->
-      <xsl:call-template name="indexVersionableObjectRelatedObjectsAsFields">
-        <xsl:with-param name="PID" select="$PID"/>
-      </xsl:call-template>
       <!-- this is an example of using template modes to have multiple ways of indexing the same stream -->
       <!--
       <xsl:apply-templates select="foxml:datastream[@ID='EAC-CPF']/foxml:datastreamVersion[last()]/foxml:xmlContent//eaccpf:eac-cpf">
@@ -179,7 +171,7 @@
   </xsl:template>
   <!-- These are execptional cases that override the defaults of slurp_all_MODS_to_solr.xslt.
        Basically we want to have Genre and typeOfResource to be index as strings so they can be sorted.
-       
+
        Object Type: mods:mods/mods:typeOfResource
        Genre: mods:mods/mods:genre
     -->
@@ -214,95 +206,6 @@
       </field>
     </xsl:if>
   </xsl:template>
-  <!-- Index Versionable Object: Checks if the object is a child of a Versionable Object and reindexs it. -->
-  <xsl:template name="indexVersionableObjectIfChildOf">
-    <xsl:param name="PID"/>
-    <xsl:variable name="children">
-      <xsl:call-template name="perform_traversal_query">
-        <xsl:with-param name="risearch" select="concat($FEDORA, '/risearch')"/>
-        <xsl:with-param name="lang">sparql</xsl:with-param>
-        <xsl:with-param name="query"> 
-          PREFIX fre: &lt;info:fedora/fedora-system:def/relations-external#&gt; 
-          PREFIX fm: &lt;info:fedora/fedora-system:def/model#&gt; 
-          PREFIX islandora: &lt;http://islandora.ca/ontology/relsext#&gt;
-          SELECT ?obj FROM &lt;#ri&gt; WHERE { 
-            ?obj fm:hasModel &lt;info:fedora/islandora:versionableObjectCModel&gt; .
-            ?sub fre:isMemberOf ?obj . 
-            FILTER(sameTerm(?sub, &lt;info:fedora/<xsl:value-of select="$PID"/>&gt;)) 
-          }
-        </xsl:with-param>
-      </xsl:call-template>
-    </xsl:variable>
-    <xsl:for-each select="xalan:nodeset($children)//sparql:result/sparql:obj">
-      <add commitWithin="5000">
-        <xsl:variable name="xml_url" select="concat(substring-before($FEDORA, '://'), '://',
-          encoder:encode($FEDORAUSER), ':', encoder:encode($FEDORAPASS), '@', substring-after($FEDORA, '://') ,
-          '/objects/', substring-after(@uri, '/'), '/objectXML')"/>
-        <xsl:variable name="object" select="document($xml_url)"/>
-        <xsl:if test="$object">
-          <xsl:apply-templates mode="indexFedoraObject" select="$object/foxml:digitalObject">
-            <xsl:with-param name="PID" select="$object/foxml:digitalObject/@PID"/>
-          </xsl:apply-templates>
-        </xsl:if>
-      </add>
-    </xsl:for-each>
-  </xsl:template>
-  <!-- Index's child objects -->
-  <xsl:template name="indexVersionableObjectRelatedObjectsAsFields">
-    <xsl:param name="PID"/>
-    <xsl:variable name="children">
-      <xsl:call-template name="perform_traversal_query">
-        <xsl:with-param name="risearch" select="concat($FEDORA, '/risearch')"/>
-        <xsl:with-param name="lang">sparql</xsl:with-param>
-        <xsl:with-param name="query">
-            PREFIX fre: &lt;info:fedora/fedora-system:def/relations-external#&gt; 
-            PREFIX fm: &lt;info:fedora/fedora-system:def/model#&gt; 
-            PREFIX islandora: &lt;http://islandora.ca/ontology/relsext#&gt;
-            SELECT ?obj ?label ?model ?source FROM &lt;#ri&gt; WHERE { 
-              ?sub fm:hasModel &lt;info:fedora/islandora:versionableObjectCModel&gt; . 
-              ?obj fre:isMemberOf ?sub ; 
-                   fm:label ?label ;
-                   fm:hasModel ?model ; 
-                   fm:state fm:Active . 
-              OPTIONAL { ?obj islandora:isCriticalEditionOf ?source . }
-              FILTER(sameTerm(?sub, &lt;info:fedora/<xsl:value-of select="$PID" />&gt;) &amp;&amp; 
-                    !sameTerm(?model, &lt;info:fedora/fedora-system:FedoraObject-3.0&gt;))
-            } 
-            ORDER BY ?source
-        </xsl:with-param>
-      </xsl:call-template>
-    </xsl:variable>
-    <xsl:for-each select="xalan:nodeset($children)//sparql:result">
-      <xsl:choose>
-        <xsl:when test="sparql:model[@uri = 'info:fedora/islandora:transcriptionCModel']">
-          <field>
-            <xsl:attribute name="name">transcription_ms</xsl:attribute>
-            <xsl:value-of select="substring-after(sparql:obj/@uri, 'info:fedora/')"/>
-          </field>
-          <field>
-            <xsl:attribute name="name">transcription_label_ms</xsl:attribute>
-            <xsl:value-of select="sparql:label"/>
-          </field>
-        </xsl:when>
-        <xsl:when test="sparql:model[@uri = 'info:fedora/islandora:criticalEditionCModel']">
-          <xsl:if test="sparql:source[not(@bound) or @bound = true]">
-            <field>
-              <xsl:attribute name="name">source_ms</xsl:attribute>
-              <xsl:value-of select="sparql:source"/>
-            </field>
-          </xsl:if>
-          <field>
-            <xsl:attribute name="name">tei_rdf_ms</xsl:attribute>
-            <xsl:value-of select="substring-after(sparql:obj/@uri, 'info:fedora/')"/>
-          </field>
-          <field>
-            <xsl:attribute name="name">tei_rdf_label_ms</xsl:attribute>
-            <xsl:value-of select="sparql:label"/>
-          </field>
-        </xsl:when>
-      </xsl:choose>
-    </xsl:for-each>
-  </xsl:template>
   <!-- Delete the solr doc of an object -->
   <xsl:template match="/foxml:digitalObject" mode="unindexFedoraObject">
     <xsl:comment> name="PID" This is a hack, because the code requires that to be present </xsl:comment>
@@ -311,23 +214,6 @@
         <xsl:value-of select="$PID"/>
       </id>
     </delete>
-    <!-- We must update the versionable object so that it reflects the correct existing transcriptions -->
-    <xsl:variable name="solr_url" select="concat($PROT, '://', $HOST, ':', $PORT, '/solr/select?q=',
-      encoder:encode(concat('transcription_ms:&quot;', $PID, '&quot;')))"/>
-    <xsl:variable name="object" select="document($solr_url)"/>
-    <xsl:for-each select="xalan:nodeset($object)//str[@name='PID']">
-      <add commitWithin="5000">
-        <xsl:variable name="xml_url" select="concat(substring-before($FEDORA, '://'), '://',
-          encoder:encode($FEDORAUSER), ':', encoder:encode($FEDORAPASS), '@', substring-after($FEDORA, '://') ,
-          '/objects/', self::node(), '/objectXML')"/>
-        <xsl:variable name="object" select="document($xml_url)"/>
-        <xsl:if test="$object">
-          <xsl:apply-templates mode="indexFedoraObject" select="$object/foxml:digitalObject">
-            <xsl:with-param name="PID" select="$object/foxml:digitalObject/@PID"/>
-          </xsl:apply-templates>
-        </xsl:if>
-      </add>
-    </xsl:for-each>
   </xsl:template>
   <!-- This prevents text from just being printed to the doc without field elements JUST TRY COMMENTING IT OUT -->
   <xsl:template match="text()"/>

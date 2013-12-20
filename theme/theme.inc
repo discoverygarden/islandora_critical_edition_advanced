@@ -503,10 +503,6 @@ function islandora_critical_edition_container_versions_table_data(AbstractObject
   $label_field = 'fgs_label_s';
   $source_pid_field = 'source_ms';
   $source_label_field = 'mods_titleInfo_title_ms';
-  $tei_rdf_pid_field = 'tei_rdf_ms';
-  $tei_rdf_label_field = 'tei_rdf_label_ms';
-  $transcription_pid_field = 'transcription_ms';
-  $transcription_label_field = 'transcription_label_ms';
   $object_type_field = 'mods_typeOfResource_s';
   $genre_field = 'mods_genre_s';
   $content_field = 'mods_abstract_ms';
@@ -535,32 +531,65 @@ function islandora_critical_edition_container_versions_table_data(AbstractObject
     $results = $solr->search($query, $offset, $limit, $params);
     $results = json_decode($results->getRawResponse(), TRUE);
     foreach ($results['response']['docs'] as $result) {
-      // For now we hide invalid data, until we clean up the site.
-      $has_tei_rdf = isset($result[$tei_rdf_pid_field]);
-      $has_transcription = isset($result[$transcription_pid_field]);
-      if (!$has_tei_rdf || !$has_transcription) {
-        continue;
-      }
       $pid = $result[$pid_field];
       $versions[$pid] = array(
         'label' => $result[$label_field],
-        // Unfortunately we can't get the source title as it is stored as literal
-        // value in the resource index so we must get the object.
-        'source' => reset($result[$source_pid_field]),
+        'source' => '',
         'object_type' => isset($result[$object_type_field]) ? $result[$object_type_field] : t('undefined'),
         'genre' => isset($result[$genre_field]) ? $result[$genre_field] : t('undefined'),
         'content' => isset($result[$content_field]) ? reset($result[$content_field]) : t('undefined'),
         'context' => isset($result[$context_field]) ? reset($result[$context_field]) : t('undefined'),
         'teirdf' => array(
-          'pid' => isset($result[$tei_rdf_pid_field]) ? reset($result[$tei_rdf_pid_field]) : NULL,
-          'label' => isset($result[$tei_rdf_label_field]) ? reset( $result[$tei_rdf_label_field]) : NULL,
+          'pid' => '',
+          'label' => '',
         ),
-        'transcriptions' => isset($result[$transcription_pid_field]) ? array_combine($result[$transcription_pid_field], $result[$transcription_label_field]) : array(),
+        'transcriptions' => array(),
       );
     }
   }
   catch (Exception $e) {
     watchdog_exception('islandora_critical_edition_advanced', $e, 'Got an exception while searching for versions.', array(), WATCHDOG_ERROR);
+  }
+  $versionable_objects;
+
+  // Do a query for all transcripts and TEI-RDF objects we require.
+  $query = <<<EOT
+    PREFIX fedora-rels-ext: <info:fedora/fedora-system:def/relations-external#>
+    PREFIX fedora-model: <info:fedora/fedora-system:def/model#>
+    PREFIX islandora: <http://islandora.ca/ontology/relsext#>
+    SELECT DISTINCT ?version ?child ?child_label ?source ?content_model FROM <#ri> WHERE {
+        ?version fedora-rels-ext:isMemberOf <info:fedora/$object->id> ;
+        fedora-model:hasModel <info:fedora/islandora:versionableObjectCModel> .
+        ?child fedora-rels-ext:isMemberOf ?version ;
+        fedora-model:hasModel ?content_model .
+        OPTIONAL {  ?child fedora-model:label ?child_label . }
+        OPTIONAL { ?child islandora:isCriticalEditionOf ?source . }
+        FILTER (?content_model != <info:fedora/fedora-system:FedoraObject-3.0>)
+    }
+EOT;
+  // Add the transcription and TEI-RDF objects info to the versions array.
+  $results = $object->repository->ri->sparqlQuery($query, 'unlimited');
+  foreach ($results as $result) {
+    $pid = $result['version']['value'];
+    if (!isset($versions[$pid])) {
+      continue;
+    }
+    $version = &$versions[$pid];
+    $child = $result['child']['value'];
+    $child_label = $result['child_label']['value'];
+    switch ($result['content_model']['value']) {
+      case 'islandora:criticalEditionCModel':
+        $version['source'] = $result['source']['value'];
+        $version['teirdf'] = array(
+          'pid' => $child,
+          'label' => $child_label,
+        );
+        break;
+
+      case 'islandora:transcriptionCModel':
+        $version['transcriptions'][$child] = $child_label;
+        break;
+    }
   }
   return $versions;
 }
