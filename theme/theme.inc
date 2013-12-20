@@ -233,6 +233,7 @@ function islandora_critical_edition_preprocess_islandora_critical_edition_contai
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/utilities');
   $module_path = drupal_get_path('module', 'islandora_critical_edition_advanced');
   drupal_add_css("$module_path/css/critical_edition_container.css");
+  drupal_add_js("$module_path/js/select_transcription.js");
   // For now we are using views/ctools to style our drop downs if they are not
   // enabled plain links will be rendered.
   $views_module_path = drupal_get_path('module', 'views');

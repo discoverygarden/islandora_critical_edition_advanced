@@ -47,34 +47,34 @@
   <!-- older gsearches (slurp_all_MODS_to_solr also contains an include that would need to be
      altered if you use these)-->
   <!--
-  <xsl:include href="islandora_transforms/DC_to_solr.xslt"/>
-  <xsl:include href="islandora_transforms/RELS-EXT_to_solr.xslt"/>
-  <xsl:include href="islandora_transforms/RELS-INT_to_solr.xslt"/>
-  <xsl:include href="islandora_transforms/FOXML_properties_to_solr.xslt"/>
-  <xsl:include href="islandora_transforms/datastream_id_to_solr.xslt"/>
-  <xsl:include href="islandora_transforms/slurp_all_MODS_to_solr.xslt"/>
-  <xsl:include href="islandora_transforms/MODS_to_solr.xslt"/>
-  <xsl:include href="islandora_transforms/EACCPF_to_solr.xslt"/>
-  <xsl:include href="islandora_transforms/TEI_to_solr.xslt"/>
-  <xsl:include href="islandora_transforms/text_to_solr.xslt"/>
-  <xsl:include href="islandora_transforms/XML_to_one_solr_field.xslt"/>
-  <xsl:include href="islandora_transforms/XML_text_nodes_to_solr.xslt"/>
-  <xsl:include href="islandora_transforms/library/traverse-graph.xslt"/>
+  <xsl:include href="/usr/local/fedora/tomcat/webapps/fedoragsearch/WEB-INF/classes/fgsconfigFinal/index/FgsIndex/islandora_transforms/DC_to_solr.xslt"/>
+  <xsl:include href="/usr/local/fedora/tomcat/webapps/fedoragsearch/WEB-INF/classes/fgsconfigFinal/index/FgsIndex/islandora_transforms/RELS-EXT_to_solr.xslt"/>
+  <xsl:include href="/usr/local/fedora/tomcat/webapps/fedoragsearch/WEB-INF/classes/fgsconfigFinal/index/FgsIndex/islandora_transforms/RELS-INT_to_solr.xslt"/>
+  <xsl:include href="/usr/local/fedora/tomcat/webapps/fedoragsearch/WEB-INF/classes/fgsconfigFinal/index/FgsIndex/islandora_transforms/FOXML_properties_to_solr.xslt"/>
+  <xsl:include href="/usr/local/fedora/tomcat/webapps/fedoragsearch/WEB-INF/classes/fgsconfigFinal/index/FgsIndex/islandora_transforms/datastream_id_to_solr.xslt"/>
+  <xsl:include href="/usr/local/fedora/tomcat/webapps/fedoragsearch/WEB-INF/classes/fgsconfigFinal/index/FgsIndex/islandora_transforms/slurp_all_MODS_to_solr.xslt"/>
+  <xsl:include href="/usr/local/fedora/tomcat/webapps/fedoragsearch/WEB-INF/classes/fgsconfigFinal/index/FgsIndex/islandora_transforms/MODS_to_solr.xslt"/>
+  <xsl:include href="/usr/local/fedora/tomcat/webapps/fedoragsearch/WEB-INF/classes/fgsconfigFinal/index/FgsIndex/islandora_transforms/EACCPF_to_solr.xslt"/>
+  <xsl:include href="/usr/local/fedora/tomcat/webapps/fedoragsearch/WEB-INF/classes/fgsconfigFinal/index/FgsIndex/islandora_transforms/TEI_to_solr.xslt"/>
+  <xsl:include href="/usr/local/fedora/tomcat/webapps/fedoragsearch/WEB-INF/classes/fgsconfigFinal/index/FgsIndex/islandora_transforms/text_to_solr.xslt"/>
+  <xsl:include href="/usr/local/fedora/tomcat/webapps/fedoragsearch/WEB-INF/classes/fgsconfigFinal/index/FgsIndex/islandora_transforms/XML_to_one_solr_field.xslt"/>
+  <xsl:include href="/usr/local/fedora/tomcat/webapps/fedoragsearch/WEB-INF/classes/fgsconfigFinal/index/FgsIndex/islandora_transforms/XML_text_nodes_to_solr.xslt"/>
+  <xsl:include href="/usr/local/fedora/tomcat/webapps/fedoragsearch/WEB-INF/classes/fgsconfigFinal/index/FgsIndex/islandora_transforms/library/traverse-graph.xslt"/>
     -->
-  <xsl:include href="islandora_transforms/DC_to_solr.xslt"/>
-  <xsl:include href="islandora_transforms/RELS-EXT_to_solr.xslt"/>
-  <xsl:include href="islandora_transforms/RELS-INT_to_solr.xslt"/>
-  <xsl:include href="islandora_transforms/FOXML_properties_to_solr.xslt"/>
-  <xsl:include href="islandora_transforms/datastream_id_to_solr.xslt"/>
-  <!--<xsl:include href="islandora_transforms/MODS_to_solr.xslt"/>-->
-  <xsl:include href="islandora_transforms/slurp_all_MODS_to_solr.xslt"/>
-  <xsl:include href="islandora_transforms/EACCPF_to_solr.xslt"/>
-  <xsl:include href="islandora_transforms/TEI_to_solr.xslt"/>
-  <xsl:include href="islandora_transforms/text_to_solr.xslt"/>
-  <xsl:include href="islandora_transforms/XML_to_one_solr_field.xslt"/>
-  <xsl:include href="islandora_transforms/XML_text_nodes_to_solr.xslt"/>
+  <xsl:include href="/usr/local/fedora/tomcat/webapps/fedoragsearch/WEB-INF/classes/fgsconfigFinal/index/FgsIndex/islandora_transforms/DC_to_solr.xslt"/>
+  <xsl:include href="/usr/local/fedora/tomcat/webapps/fedoragsearch/WEB-INF/classes/fgsconfigFinal/index/FgsIndex/islandora_transforms/RELS-EXT_to_solr.xslt"/>
+  <xsl:include href="/usr/local/fedora/tomcat/webapps/fedoragsearch/WEB-INF/classes/fgsconfigFinal/index/FgsIndex/islandora_transforms/RELS-INT_to_solr.xslt"/>
+  <xsl:include href="/usr/local/fedora/tomcat/webapps/fedoragsearch/WEB-INF/classes/fgsconfigFinal/index/FgsIndex/islandora_transforms/FOXML_properties_to_solr.xslt"/>
+  <xsl:include href="/usr/local/fedora/tomcat/webapps/fedoragsearch/WEB-INF/classes/fgsconfigFinal/index/FgsIndex/islandora_transforms/datastream_id_to_solr.xslt"/>
+  <!--<xsl:include href="/usr/local/fedora/tomcat/webapps/fedoragsearch/WEB-INF/classes/fgsconfigFinal/index/FgsIndex/islandora_transforms/MODS_to_solr.xslt"/>-->
+  <xsl:include href="/usr/local/fedora/tomcat/webapps/fedoragsearch/WEB-INF/classes/fgsconfigFinal/index/FgsIndex/islandora_transforms/slurp_all_MODS_to_solr.xslt"/>
+  <xsl:include href="/usr/local/fedora/tomcat/webapps/fedoragsearch/WEB-INF/classes/fgsconfigFinal/index/FgsIndex/islandora_transforms/EACCPF_to_solr.xslt"/>
+  <xsl:include href="/usr/local/fedora/tomcat/webapps/fedoragsearch/WEB-INF/classes/fgsconfigFinal/index/FgsIndex/islandora_transforms/TEI_to_solr.xslt"/>
+  <xsl:include href="/usr/local/fedora/tomcat/webapps/fedoragsearch/WEB-INF/classes/fgsconfigFinal/index/FgsIndex/islandora_transforms/text_to_solr.xslt"/>
+  <xsl:include href="/usr/local/fedora/tomcat/webapps/fedoragsearch/WEB-INF/classes/fgsconfigFinal/index/FgsIndex/islandora_transforms/XML_to_one_solr_field.xslt"/>
+  <xsl:include href="/usr/local/fedora/tomcat/webapps/fedoragsearch/WEB-INF/classes/fgsconfigFinal/index/FgsIndex/islandora_transforms/XML_text_nodes_to_solr.xslt"/>
   <!--  Used for indexing other objects. -->
-  <xsl:include href="islandora_transforms/library/traverse-graph.xslt"/>
+  <xsl:include href="/usr/local/fedora/tomcat/webapps/fedoragsearch/WEB-INF/classes/fgsconfigFinal/index/FgsIndex/islandora_transforms/library/traverse-graph.xslt"/>
   <!-- Decide which objects to modify the index of -->
   <xsl:template match="/">
     <update>
@@ -109,7 +109,7 @@
       <field name="PID">
         <xsl:value-of select="$PID"/>
       </field>
-      <!-- These templates are in the islandora_transforms -->
+      <!-- These templates are in the /usr/local/fedora/tomcat/webapps/fedoragsearch/WEB-INF/classes/fgsconfigFinal/index/FgsIndex/islandora_transforms -->
       <xsl:apply-templates select="foxml:objectProperties/foxml:property"/>
       <xsl:apply-templates mode="index_object_datastreams" select="/foxml:digitalObject"/>
       <!-- THIS IS SPARTA!!!
