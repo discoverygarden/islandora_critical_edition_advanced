@@ -77,7 +77,7 @@ function islandora_critical_edition_advanced_menu() {
     'page arguments' => array(4),
     'type' => MENU_CALLBACK,
     'access callback' => 'user_access',
-    'access arguments' => array(ISLANDORA_CRITICAL_EDITION_ADVANCED_MODIFY),
+    'access arguments' => array(ISLANDORA_CRITICAL_EDITION_ADVANCED_READ),
     'file' => 'includes/utilities.inc',
   );
 
