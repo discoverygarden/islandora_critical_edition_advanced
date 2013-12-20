@@ -552,25 +552,6 @@ var CriticalEditionViewer = {
 			
 			$jq('#loadImg div').width($jq('#view_box').width());
 			$jq('#loadImg div').height($jq('#view_box').height());
-			$jq('.data_anchor').click(function(e) {
-//				if($jq("#meta_overlay").length == 0) {
-//					var meta_cover = '<div id="meta_overlay" style="position:absolute;overflow:auto;width:100%;height:100%;background-color: #FFFFFF;z-index: 500;top: 0;"></div>';
-//					$jq("#view_box").append(meta_cover);
-//					$jq("#meta_overlay").css("margin-top",-$jq("#meta_overlay").height());
-//					$jq("li[title='Detail Metadata']").addClass("img_selected");
-//				} else {
-//					$jq("#meta_overlay").animate({
-//				        marginTop:-$jq("#meta_overlay").height()},{
-//				        complete: function() {
-//				          $jq('.data_anchor').css('font-weight', 'normal');
-//				          $jq('#detail_tran').css('font-weight', 'bold');
-//				          $jq("#meta_overlay").remove();
-//				          $jq("li[title='Detail Metadata']").removeClass("img_selected")
-//				        },
-//				    }, 700);
-//				}
-//				CriticalEditionViewer.Viewer.show_versionable_meta();
-			});
 			
 			// Set up img click handlers
 			$jq(".work_action_img").click(function() {
