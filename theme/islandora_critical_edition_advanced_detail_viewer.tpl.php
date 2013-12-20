@@ -9,11 +9,11 @@
 <?php if (!$media_viewer): ?>
 			<div id="critical-edition-viewer">
 				<ul class="workbench_toolbar_lists action_img">
+					<li title="Diplomatic Transcriptions" class="work_action_img diplomatic-transcriptions"></li>
 					<li title="Transcription" class="work_action_img transcription"></li>
 					<li title="Image" class="work_action_img image img_selected"></li>
-					<li title="TEI Text" class="work_action_img tei-text"></li>
-					<li title="TEI Markup" class="work_action_img tei-markup"></li>
-					<li title="Diplomatic Transcriptions" class="work_action_img diplomatic-transcriptions"></li>
+					<li title="TEI Text" class="work_action_img tei-markup"></li>
+<!-- 					<li title="TEI Markup" class="work_action_img tei-markup"></li> -->
 					<li title="Detail Metadata" class="work_action_img detail-meta data_anchor"></li>
 					<li title="Show/Hide annotations" data-value="0" class="work_action_img anno-entity-switch switch"></li>
 					<li title="Show/Hide Text Image Links" data-value="0" class="work_action_img til-switch switch"></li>

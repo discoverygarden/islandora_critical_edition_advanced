@@ -88,16 +88,13 @@ var CriticalEditionViewer = {
 			$jq("#loadImg").css('display','inherit');
 		},
 		hide_preloader: function() {
-			//document.getElementById('loadImg').style.display='none';
 			$jq("#loadImg").css('display','none');
 		},
 		remove_translated_tei: function(){
 			$jq('#translated_tei', window.frames[0].document).remove();
-			//CriticalEditionViewer.Viewer.transformed_data = '<div></div>';
 		},
 		remove_pretty_print_tei: function(){
 			$jq('#pretty_translated_tei', window.frames[0].document).remove();
-			//CriticalEditionViewer.Viewer.transformed_data = '<div></div>';
 		},
 		show_plain_image: function() {
 			CriticalEditionViewer.Viewer.remove_pretty_print_tei();
@@ -146,10 +143,8 @@ var CriticalEditionViewer = {
 			CriticalEditionViewer.cwrc_writer.layout.sizePane("east", $jq('#CriticalEditionViewer').width()/2);
 			CriticalEditionViewer.cwrc_writer.editor.$('body', window.frames[0].document).removeClass('showStructBrackets');
 		},
-		toggle_anno_entities: function(show) {
-			
+		toggle_anno_entities: function(show, toggle_text) {
 			if(show == 1) {
-				
 				$jq("#navi").animate({
 				      marginLeft:0},{
 				      complete: function() {
@@ -160,22 +155,55 @@ var CriticalEditionViewer = {
 				        CriticalEditionViewer.cwrc_writer.layout.open("west");
 				      }
 			    }, 700);
+				
 			} else {
-				CriticalEditionViewer.cwrc_writer.layout.close("west");
-				$jq("#navi").animate({
-			        marginLeft:-$jq("#navi").width()},{
-			        complete: function() {
-			        	if($jq("li[title='Image']").hasClass("img_selected")) {
-				    		  CriticalEditionViewer.cwrc_writer.layout.sizePane("east", $jq('#CriticalEditionViewer').width());
-				    	  }
-			        },
-			    }, 700);
+				if(!$jq("li[title='Show/Hide annotations']").hasClass("img_selected") &&
+						!$jq("li[title='Show/Hide Text Image Links']").hasClass("img_selected")) {
+					CriticalEditionViewer.cwrc_writer.layout.close("west");
+					$jq("#navi").animate({
+				        marginLeft:-$jq("#navi").width()},{
+				        complete: function() {
+				        	if($jq("li[title='Image']").hasClass("img_selected")) {
+					    		  CriticalEditionViewer.cwrc_writer.layout.sizePane("east", $jq('#CriticalEditionViewer').width());
+					    	  }
+				        },
+				    }, 700);
+					
+				}
+				
+			}
+			
+			// Show one or the other?
+			switch (toggle_text) {
+			case "Show/Hide annotations":
+				if(show == 1) {
+					$jq("#tree_entities_node").show();
+					$jq("#tree_annotations_node").show();
+				} else {
+					$jq("#tree_entities_node").hide();
+					$jq("#tree_annotations_node").hide();
+				}
+				break;
+			case "Show/Hide Text Image Links":
+				if(show == 1) {
+					$jq("#tree_txtimglnk_node").show();
+				} else {
+					$jq("#tree_txtimglnk_node").hide();
+				}
+				break;
+			}
+			// Or, show everything if both are selected
+			if($jq("li[title='Show/Hide annotations']").hasClass("img_selected") &&
+					$jq("li[title='Show/Hide Text Image Links']").hasClass("img_selected")) {
+				$jq("#tree_txtimglnk_node").show();
+				$jq("#tree_entities_node").show();
+				$jq("#tree_annotations_node").show();
 			}
 		},
 		toggle_text_image_linking: function(show) {
 			if(show == 1) {
 				$jq("#tree_txtimglnk_node").show();
-			        CriticalEditionViewer.cwrc_writer.editor.$('body', window.frames[0].document).addClass('showEntityBrackets');
+			    CriticalEditionViewer.cwrc_writer.editor.$('body', window.frames[0].document).addClass('showEntityBrackets');
 			} else {
 				$jq("#tree_txtimglnk_node").hide();
 				CriticalEditionViewer.cwrc_writer.editor.$('body', window.frames[0].document).removeClass('showEntityBrackets');
@@ -545,26 +573,19 @@ var CriticalEditionViewer = {
 			$jq(".work_action_img").click(function() {
 				
 				if($jq(this).attr("title") == "Show/Hide annotations" || $jq(this).attr("title") == "Show/Hide Text Image Links") {
-					
+					if($jq(this).attr("data-value") == 1) {
+							$jq(this).removeClass("img_selected");
+							$jq(this).attr("data-value",0);
+						} else {
+							$jq(this).addClass("img_selected");
+							$jq(this).attr("data-value",1);
+						}
+					CriticalEditionViewer.Viewer.toggle_anno_entities($jq(this).attr("data-value"), $jq(this).attr("title"));
 					switch ($jq(this).attr("title")) {
 					case "Show/Hide annotations":
-						if($jq(this).attr("data-value") == 1) {
-							$jq(this).removeClass("img_selected");
-							$jq(this).attr("data-value",0);
-						} else {
-							$jq(this).addClass("img_selected");
-							$jq(this).attr("data-value",1);
-						}
-						CriticalEditionViewer.Viewer.toggle_anno_entities($jq(this).attr("data-value"));
+						
 						break;
 					case "Show/Hide Text Image Links":
-						if($jq(this).attr("data-value") == 1) {
-							$jq(this).removeClass("img_selected");
-							$jq(this).attr("data-value",0);
-						} else {
-							$jq(this).addClass("img_selected");
-							$jq(this).attr("data-value",1);
-						}
 						CriticalEditionViewer.Viewer.toggle_text_image_linking($jq(this).attr("data-value"));
 						break;
 					}
@@ -607,26 +628,27 @@ var CriticalEditionViewer = {
 				}
 				
 			});
-			$sb("#anno_entity_switch").switchButton();
-			$sb("#til_switch").switchButton();
-			
-			$jq(".switch").change(function(e) {
-				// Toggling 'checked' property actually shows a 
-				// checkbox, which is not what we want.
-				if($jq(this).attr("value") == 1) {
-					$jq(this).attr("value",0);
-				} else {
-					$jq(this).attr("value",1);
-				}
-				switch ($jq(this).attr("id")) {
-					case "anno_entity_switch":
-						CriticalEditionViewer.Viewer.toggle_anno_entities($jq(this).attr("value"));
-						break;
-					case "til_switch":
-						CriticalEditionViewer.Viewer.toggle_text_image_linking($jq(this).attr("value"));
-						break;
-				}
-			});
+//			$sb("#anno_entity_switch").switchButton();
+//			$sb("#til_switch").switchButton();
+//			
+//			$jq(".switch").change(function(e) {
+//				console.log("in switch change");
+//				// Toggling 'checked' property actually shows a 
+//				// checkbox, which is not what we want.
+//				if($jq(this).attr("value") == 1) {
+//					$jq(this).attr("value",0);
+//				} else {
+//					$jq(this).attr("value",1);
+//				}
+//				switch ($jq(this).attr("id")) {
+//					case "anno_entity_switch":
+//						CriticalEditionViewer.Viewer.toggle_anno_entities($jq(this).attr("value"));
+//						break;
+//					case "til_switch":
+//						CriticalEditionViewer.Viewer.toggle_text_image_linking($jq(this).attr("value"));
+//						break;
+//				}
+//			});
 			
 			if($jq("#viewer_iframe").length > 0) {
 				$jq("#viewer_iframe").load(function (){
