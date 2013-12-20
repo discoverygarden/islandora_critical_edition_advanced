@@ -124,7 +124,8 @@ function islandora_critical_edition_advanced_menu() {
     'title' => 'Prepare Metadata view',
     'page callback' => 'islandora_critical_edition_advanced_prepare_detail_meta_data',
     'type' => MENU_CALLBACK,
-    'access arguments' => TRUE,
+    'access callback' => 'user_access',
+    'access arguments' => array(ISLANDORA_CRITICAL_EDITION_ADVANCED_READ),
   );
 
   $items['islandora/cwrc_viewer/detail_transcription'] = array(
