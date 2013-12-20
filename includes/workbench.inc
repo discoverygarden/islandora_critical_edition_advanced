@@ -296,7 +296,7 @@ function islandora_critical_edition_advanced_toggle_workbench_membership_form(ar
     ),
     'submit' => array(
       '#type' => 'submit',
-      '#attributes' => array('class' => array($class)),
+      '#attributes' => array('class' => array($class), 'title' => 'Add to Workbench'),
       '#value' => $in_work_bench ? t('Remove from Workbench') : t('Add to Workbench'),
     ),
   );

@@ -243,9 +243,9 @@ function islandora_critical_edition_preprocess_islandora_critical_edition_contai
   $object = $variables['object'];
   $apparatus = islandora_critical_edition_get_apparatus($object);
 
-  $message = "<a href ='/islandora/object/$apparatus/manage/apparatus'><button>" . t('Manage Apparatus') . "</button></a>";
+  $message = "<a title = 'Critical Apparatus' href ='/islandora/object/$apparatus/manage/apparatus'><button>" . t('Manage Apparatus') . "</button></a>";
   $variables['apparatus_link'] = array('#markup' => "<div class = 'apparatus_link'><strong>$message</strong></div>");
-  $variables['view_link'] = "<div class ='reading_view'><a href ='islandora/object/$object'><button>" . t('Go to Reading View') . "</button></a></div>";
+  $variables['view_link'] = "<div class ='reading_view'><a title = 'Reading View' href ='islandora/object/$object'><button>" . t('Go to Reading View') . "</button></a></div>";
 
 
   $variables['apparatus'] = array(
@@ -296,7 +296,9 @@ function islandora_critical_edition_container_editor_links(AbstractObject $objec
       '#path' => "islandora/object/{$object->id}/datastream/MODS/edit",
       '#options' => array(
         'html' => FALSE,
-        'attributes' => array(),
+        'attributes' => array(
+          'title' => 'Edit Edition Metadata',
+        ),
       ),
     ),
     'edit_permissions' => array(
@@ -307,7 +309,8 @@ function islandora_critical_edition_container_editor_links(AbstractObject $objec
       '#path' => "islandora/object/{$object->id}/manage/xacml",
       '#options' => array(
         'html' => FALSE,
-        'attributes' => array(),
+        'attributes' => array(
+          'title' => 'Edit Permissions'),
       ),
     ),
   );
