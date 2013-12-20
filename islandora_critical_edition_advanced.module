@@ -519,11 +519,20 @@ function islandora_critical_edition_advanced_preprocess_islandora_critical_editi
   global $base_url;
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/utilities');
   module_load_include('inc', 'php_lib', 'DOMHelpers');
+  $module_path = drupal_get_path('module', 'islandora_critical_edition_advanced');
 
+  drupal_add_js(array(
+  'islandora_critical_edition_advanced' => array(
+    'diplomatic_tei' => url("$module_path/css/islandora_critical_edition_diplomatic_tei.css"))), 'setting');
+
+  drupal_add_js(array(
+  'islandora_critical_edition_advanced' => array(
+    'common_tei_css' => url("$module_path/css/islandora_critical_edition_common_tei.css"))), 'setting');
+  
   dom_document_pretty_print_include_files();
 
   $islandora_critical_edition = drupal_get_path('module', 'islandora_critical_edition');
-  $module_path = drupal_get_path('module', 'islandora_critical_edition_advanced');
+  
   drupal_add_css("$module_path/css/jquery-ui.css");
   drupal_add_css("$module_path/css/theme_override.css");
   drupal_add_js("$module_path/js/jquery-ui.js");

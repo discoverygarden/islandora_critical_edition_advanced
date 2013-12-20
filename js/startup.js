@@ -657,6 +657,21 @@ var CriticalEditionViewer = {
 			
 			if($jq("#viewer_iframe").length > 0) {
 				$jq("#viewer_iframe").load(function (){
+					
+					var common_tei_css_Link = document.createElement("link") 
+					common_tei_css_Link.href = Drupal.settings.islandora_critical_edition_advanced.common_tei_css;  
+					common_tei_css_Link.rel = "stylesheet"; 
+					common_tei_css_Link.type = "text/css"; 
+					
+					var diplomatic_tei_css_Link = document.createElement("link") 
+					diplomatic_tei_css_Link.href = Drupal.settings.islandora_critical_edition_advanced.diplomatic_tei; 
+					diplomatic_tei_css_Link.rel = "stylesheet"; 
+					diplomatic_tei_css_Link.type = "text/css";
+					
+					window.frames[0].document.body.appendChild(common_tei_css_Link);
+					window.frames[0].document.body.appendChild(diplomatic_tei_css_Link);
+					
+					
 					CriticalEditionViewer.cwrc_writer = document.getElementById('viewer_iframe').contentWindow['writer'];
 					CriticalEditionViewer.cwrc_writer.layout.north.options.resizeable = false;
 					CriticalEditionViewer.cwrc_writer_helper = document.getElementById('viewer_iframe').contentWindow['islandoraCWRCWriter'];
