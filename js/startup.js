@@ -47,6 +47,7 @@ $('document').ready(function() {
 
 
 var CriticalEditionViewer = {
+	tei_document_text: null,
 	checked_txtimglnk : null,
 	checked_entities : null,
 	checked_annos: null,
@@ -468,6 +469,16 @@ var CriticalEditionViewer = {
 			      }
 			    }, 700);
 		},
+		show_tei_document_text: function() {
+			if($jq("#tei_doc_text", window.frames[0].document).length == 0) {
+				$jq('#cwrc_main', window.frames[0].document).append('<div class="show_tei" id="tei_doc_text" style="overflow:auto;width:100%;height:100%;position:absolute;top:0px;z-index:300;background-color:white"><textarea style="width: 100%;height:100%" readonly id="tei_text_area"></textarea></div>');
+				$jq('#tei_text_area', window.frames[0].document).val(CriticalEditionViewer.tei_document_text);
+				CriticalEditionViewer.cwrc_writer.layout.sizePane("east", $jq('#CriticalEditionViewer').width()/2);
+			}
+		},
+		remove_tei_document_text:function() {
+			$jq("#tei_doc_text", window.frames[0].document).remove();
+		},
 		show_versionable_permalink: function() {
 			// The current menu path is the permalink...
 			location.reload();
@@ -542,31 +553,23 @@ var CriticalEditionViewer = {
 			$jq('#loadImg div').width($jq('#view_box').width());
 			$jq('#loadImg div').height($jq('#view_box').height());
 			$jq('.data_anchor').click(function(e) {
-				$jq('.data_anchor').css('font-weight', 'normal');
-				if($jq(this).css('font-weight') == 'bold') {
-					$jq(this).css('font-weight', 'normal');
-				} else {
-					$jq(this).css('font-weight', 'bold');
-				}
-				
-				e.preventDefault();
-				if($jq("#meta_overlay").length == 0) {
-					var meta_cover = '<div id="meta_overlay" style="position:absolute;overflow:auto;width:100%;height:100%;background-color: #FFFFFF;z-index: 500;top: 0;"></div>';
-					$jq("#view_box").append(meta_cover);
-					$jq("#meta_overlay").css("margin-top",-$jq("#meta_overlay").height());
-					$jq("li[title='Detail Metadata']").addClass("img_selected");
-				} else {
-					$jq("#meta_overlay").animate({
-				        marginTop:-$jq("#meta_overlay").height()},{
-				        complete: function() {
-				          $jq('.data_anchor').css('font-weight', 'normal');
-				          $jq('#detail_tran').css('font-weight', 'bold');
-				          $jq("#meta_overlay").remove();
-				          $jq("li[title='Detail Metadata']").removeClass("img_selected")
-				        },
-				    }, 700);
-				}
-				CriticalEditionViewer.Viewer.show_versionable_meta();
+//				if($jq("#meta_overlay").length == 0) {
+//					var meta_cover = '<div id="meta_overlay" style="position:absolute;overflow:auto;width:100%;height:100%;background-color: #FFFFFF;z-index: 500;top: 0;"></div>';
+//					$jq("#view_box").append(meta_cover);
+//					$jq("#meta_overlay").css("margin-top",-$jq("#meta_overlay").height());
+//					$jq("li[title='Detail Metadata']").addClass("img_selected");
+//				} else {
+//					$jq("#meta_overlay").animate({
+//				        marginTop:-$jq("#meta_overlay").height()},{
+//				        complete: function() {
+//				          $jq('.data_anchor').css('font-weight', 'normal');
+//				          $jq('#detail_tran').css('font-weight', 'bold');
+//				          $jq("#meta_overlay").remove();
+//				          $jq("li[title='Detail Metadata']").removeClass("img_selected")
+//				        },
+//				    }, 700);
+//				}
+//				CriticalEditionViewer.Viewer.show_versionable_meta();
 			});
 			
 			// Set up img click handlers
@@ -583,9 +586,10 @@ var CriticalEditionViewer = {
 					CriticalEditionViewer.Viewer.toggle_anno_entities($jq(this).attr("data-value"), $jq(this).attr("title"));
 					switch ($jq(this).attr("title")) {
 					case "Show/Hide annotations":
-						
+						CriticalEditionViewer.Viewer.check_meta_data_state();
 						break;
 					case "Show/Hide Text Image Links":
+						CriticalEditionViewer.Viewer.check_meta_data_state();
 						CriticalEditionViewer.Viewer.toggle_text_image_linking($jq(this).attr("data-value"));
 						break;
 					}
@@ -594,61 +598,62 @@ var CriticalEditionViewer = {
 					// Preform the approate action.
 					switch ($jq(this).attr("title")) {
 						case "Transcription":
+							CriticalEditionViewer.Viewer.remove_tei_document_text();
 							$jq(".work_action_img").removeClass("img_selected");
 							$jq(this).addClass("img_selected");
 							CriticalEditionViewer.Viewer.check_meta_data_state();
 							CriticalEditionViewer.Viewer.show_plain_text();
 							break;
-						case "TEI Text":
+						case "TEI Markup":
 							$jq(".work_action_img").removeClass("img_selected");
 							$jq(this).addClass("img_selected");
 							CriticalEditionViewer.Viewer.check_meta_data_state();
-							CriticalEditionViewer.Viewer.show_tei_text();
+							CriticalEditionViewer.Viewer.show_tei_document_text();
+						//	console.log(CriticalEditionViewer.tei_document_text);
 							break;
 						case "Image":
+							CriticalEditionViewer.Viewer.remove_tei_document_text();
 							$jq(".work_action_img").removeClass("img_selected");
 							$jq(this).addClass("img_selected");
 							CriticalEditionViewer.Viewer.check_meta_data_state();
 							CriticalEditionViewer.Viewer.show_plain_image();
 							break;
 						case "Diplomatic Transcriptions":
+							CriticalEditionViewer.Viewer.remove_tei_document_text();
 							$jq(".work_action_img").removeClass("img_selected");
 							$jq(this).addClass("img_selected");
 							CriticalEditionViewer.Viewer.check_meta_data_state();
 							CriticalEditionViewer.Viewer.show_versionable_transcriptions();
 							break;
-						case "TEI Markup":
-							$jq(".work_action_img").removeClass("img_selected");
-							$jq(this).addClass("img_selected");
-							CriticalEditionViewer.Viewer.check_meta_data_state();
-							CriticalEditionViewer.Viewer.show_tei_markup();
+//						case "TEI Markup":
+//							$jq(".work_action_img").removeClass("img_selected");
+//							$jq(this).addClass("img_selected");
+//							CriticalEditionViewer.Viewer.check_meta_data_state();
+//							CriticalEditionViewer.Viewer.show_tei_markup();
+//							break;
+						case "Detail Metadata" :
+							if($jq("#meta_overlay").length == 0) {
+								var meta_cover = '<div id="meta_overlay" style="position:absolute;overflow:auto;width:100%;height:100%;background-color: #FFFFFF;z-index: 500;top: 0;"></div>';
+								$jq("#view_box").append(meta_cover);
+								$jq("#meta_overlay").css("margin-top",-$jq("#meta_overlay").height());
+								$jq("li[title='Detail Metadata']").addClass("img_selected");
+							} else {
+								$jq("#meta_overlay").animate({
+							        marginTop:-$jq("#meta_overlay").height()},{
+							        complete: function() {
+							          $jq('.data_anchor').css('font-weight', 'normal');
+							          $jq('#detail_tran').css('font-weight', 'bold');
+							          $jq("#meta_overlay").remove();
+							          $jq("li[title='Detail Metadata']").removeClass("img_selected")
+							        },
+							    }, 700);
+							}
+							CriticalEditionViewer.Viewer.show_versionable_meta();
 							break;
-						
 					}
 				}
 				
 			});
-//			$sb("#anno_entity_switch").switchButton();
-//			$sb("#til_switch").switchButton();
-//			
-//			$jq(".switch").change(function(e) {
-//				console.log("in switch change");
-//				// Toggling 'checked' property actually shows a 
-//				// checkbox, which is not what we want.
-//				if($jq(this).attr("value") == 1) {
-//					$jq(this).attr("value",0);
-//				} else {
-//					$jq(this).attr("value",1);
-//				}
-//				switch ($jq(this).attr("id")) {
-//					case "anno_entity_switch":
-//						CriticalEditionViewer.Viewer.toggle_anno_entities($jq(this).attr("value"));
-//						break;
-//					case "til_switch":
-//						CriticalEditionViewer.Viewer.toggle_text_image_linking($jq(this).attr("value"));
-//						break;
-//				}
-//			});
 			
 			if($jq("#viewer_iframe").length > 0) {
 				$jq("#viewer_iframe").load(function (){
@@ -665,8 +670,6 @@ var CriticalEditionViewer = {
 					$jq('#page_choose option', window.frames[0].document).each(function() {
 						CriticalEditionViewer.pager_data[$jq(this).attr("value") - 1] = $jq(this).attr("value");
 					});
-					CriticalEditionViewer.Viewer.get_page_transformed_tei(CriticalEditionViewer.cwrc_params.pages[ CriticalEditionViewer.cwrc_params.position]);
-					
 					// Hide the resize bar buttons in the UI-Layout plugin.
 					$jq('.ui-layout-toggler', window.frames[0].document).css("visibility", "hidden");
 					
@@ -700,9 +703,6 @@ var CriticalEditionViewer = {
 							$jq(".work_action_img").removeClass("img_selected");
 							$jq("li[title='Diplomatic Transcriptions']").addClass("img_selected")
 							
-							$jq("input[type=checkbox]").switchButton({
-								  checked: false
-							});
 					    }
 					});
 					
@@ -713,19 +713,20 @@ var CriticalEditionViewer = {
 					
 					$jq('#create_annotation', window.frames[0].document).css("visibility", "hidden");
 					$jq('#create_annotation', window.frames[0].document).css("display", "none");
-					CriticalEditionViewer.Viewer.show_plain_image();
-					//CriticalEditionViewer.Viewer.get_page_transformed_tei(CriticalEditionViewer.cwrc_params.pages[ CriticalEditionViewer.cwrc_params.position]);
 					CriticalEditionViewer.Viewer.build_zoom();
 					
-					
-					CriticalEditionViewer.Viewer.hide_preloader();
-					
-					// Build entity/anno tree off of existing.
-					CriticalEditionViewer.Viewer.get_entities();
+			    	CriticalEditionViewer.Viewer.get_entities();
 					CriticalEditionViewer.Viewer.build_tree_view();
-					
+					CriticalEditionViewer.tei_document_text = CriticalEditionViewer.cwrc_writer.fm.getDocumentContent(false);
+				
+					CriticalEditionViewer.Viewer.get_page_transformed_tei(CriticalEditionViewer.cwrc_params.pages[ CriticalEditionViewer.cwrc_params.position]);
+					CriticalEditionViewer.Viewer.show_plain_image();
+					$jq(".work_action_img").removeClass("img_selected");
+					$jq("li[title='Diplomatic Transcriptions']").addClass("img_selected")
+					CriticalEditionViewer.Viewer.show_versionable_transcriptions();
+					// Disable editing in the editor.
 					window.frames[0].tinymce.activeEditor.getBody().setAttribute('contenteditable', false);
-					
+					CriticalEditionViewer.Viewer.hide_preloader();
 				});
 			}
 			

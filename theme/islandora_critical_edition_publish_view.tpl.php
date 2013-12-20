@@ -12,10 +12,6 @@ var $jq = jQuery.noConflict();
 <script type="text/javascript">
 var $ui = jQuery.noConflict();
 </script>
-<script type="text/javascript" src="<?php print $path; ?>/sites/all/modules/islandora_critical_edition_advanced/js/jQuery-switchButton/jquery.switchButton.js"></script>
-<script type="text/javascript">
-var $sb = jQuery.noConflict();
-</script>
 <script type="text/javascript" src="<?php print $path; ?>/sites/all/modules/islandora_critical_edition_advanced/js/jqPagination/js/jquery.jqpagination.js"></script>
 <script type="text/javascript">
 var $pg = jQuery.noConflict();
