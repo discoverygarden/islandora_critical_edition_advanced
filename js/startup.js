@@ -82,10 +82,6 @@ var CriticalEditionViewer = {
 		},
 		check_meta_data_state: function() {
 			CriticalEditionViewer.Viewer.show_versionable_transcription();
-//		  if($jq("li[title='Detail Metadata']").hasClass("img_selected")) {
-//	    	//Hide metadata display.
-//			  
-//	      }
 		},
 		show_preloader: function() {
 			$jq("#loadImg").css('z-index','800');
