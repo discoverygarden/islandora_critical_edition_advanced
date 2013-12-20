@@ -165,8 +165,8 @@ function islandora_critical_edition_advanced_menu() {
     'page callback' => 'islandora_critical_edition_collation_view',
     'page arguments' => array(2),
     'type' => MENU_CALLBACK,
-    'access callback' => 'islandora_critical_edition_publish_access',
-    'access arguments' => array(2),
+    'access callback' => 'user_access',
+    'access arguments' => array(ISLANDORA_CRITICAL_EDITION_ADVANCED_MODIFY),
     'weight' => 2,
   );
 
