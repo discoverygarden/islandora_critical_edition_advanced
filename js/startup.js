@@ -80,6 +80,9 @@ var CriticalEditionViewer = {
 	            },
 	          });
 		},
+		check_meta_data_state: function() {
+			CriticalEditionViewer.Viewer.show_versionable_transcription();
+		},
 		show_preloader: function() {
 			$jq("#loadImg").css('z-index','800');
 			$jq("#loadImg").css('display','inherit');
@@ -102,6 +105,9 @@ var CriticalEditionViewer = {
 			CriticalEditionViewer.cwrc_writer.layout.close("west");
 			CriticalEditionViewer.cwrc_writer.layout.close("north");
 			CriticalEditionViewer.cwrc_writer.layout.sizePane("east", $jq('#CriticalEditionViewer').width());
+			if($jq("#navi").length > 0) {
+				CriticalEditionViewer.Viewer.toggle_anno_entities(0);
+			}
 		},
 		show_versionable_transcriptions: function() {
 			CriticalEditionViewer.Viewer.remove_pretty_print_tei();
@@ -141,10 +147,16 @@ var CriticalEditionViewer = {
 			CriticalEditionViewer.cwrc_writer.editor.$('body', window.frames[0].document).removeClass('showStructBrackets');
 		},
 		toggle_anno_entities: function(show) {
+			
 			if(show == 1) {
+				
 				$jq("#navi").animate({
 				      marginLeft:0},{
 				      complete: function() {
+				    	  if($jq("li[title='Image']").hasClass("img_selected")) {
+				    		  CriticalEditionViewer.cwrc_writer.layout.sizePane("east", $jq('#CriticalEditionViewer').width()-($jq("#navi").width() + 100));
+				    	  }
+				    	  
 				        CriticalEditionViewer.cwrc_writer.layout.open("west");
 				      }
 			    }, 700);
@@ -153,7 +165,9 @@ var CriticalEditionViewer = {
 				$jq("#navi").animate({
 			        marginLeft:-$jq("#navi").width()},{
 			        complete: function() {
-			        	
+			        	if($jq("li[title='Image']").hasClass("img_selected")) {
+				    		  CriticalEditionViewer.cwrc_writer.layout.sizePane("east", $jq('#CriticalEditionViewer').width());
+				    	  }
 			        },
 			    }, 700);
 			}
@@ -172,6 +186,11 @@ var CriticalEditionViewer = {
 			var cover = '<div id="navi" style="position:absolute;overflow:auto;width:34%;height:100%;background-color: #FFFFFF;z-index: 500;top: 0;"></div>';
 			
 			$jq("#view_box").append(cover);
+			
+			var search_box = '<div><input id="search_box" type="text" placeholder="Search..." value=""/></div>'
+			$jq("#navi").append(search_box);
+			
+			
 			
 			var tree_html = '<div id="demo3"></div>';
 			$jq('#navi').append(tree_html);
@@ -336,9 +355,16 @@ var CriticalEditionViewer = {
 			}
 		},
 		build_tree_view: function() {
+			$jq("#search_box").keyup(function () {
+				$jt("#demo3").jstree("search", $jq(this).val());
+			}); 
+			
 			$jt("#demo3").jstree({
 				"json_data" : CriticalEditionViewer.j_data,
-				"plugins" : ["themes", "json_data", "ui", "checkbox","sort"],
+				"search" : {
+					"case_insensitive" : true,
+				},
+				"plugins" : ["themes", "json_data", "ui", "checkbox","sort","search"],
 			}).bind('loaded.jstree', function(e, data) {
 			    // invoked after jstree has loaded
 				$jq("#tree_txtimglnk_node").hide();
@@ -379,7 +405,9 @@ var CriticalEditionViewer = {
 			      CriticalEditionViewer.checked_txtimglnk = checked_txtimglnk;
 			      CriticalEditionViewer.Viewer.show_txtimglnk(checked_txtimglnk);
 			    }
-			})
+			}).bind("search.jstree", function (e, data) {
+				// TODO: something else cool with the selected nodes??
+			});
 		},
 		show_versionable_meta: function() {
 			$jq("#meta_overlay").animate({
@@ -405,6 +433,7 @@ var CriticalEditionViewer = {
 			    }, 700);
 		},
 		show_versionable_transcription: function() {
+			$jq("li[title='Detail Metadata']").removeClass("img_selected");
 			$jq("#meta_overlay").animate({
 			      marginTop:-$jq("#meta_overlay").height()},{
 			      complete: function() {
@@ -497,6 +526,7 @@ var CriticalEditionViewer = {
 					var meta_cover = '<div id="meta_overlay" style="position:absolute;overflow:auto;width:100%;height:100%;background-color: #FFFFFF;z-index: 500;top: 0;"></div>';
 					$jq("#view_box").append(meta_cover);
 					$jq("#meta_overlay").css("margin-top",-$jq("#meta_overlay").height());
+					$jq("li[title='Detail Metadata']").addClass("img_selected");
 				} else {
 					$jq("#meta_overlay").animate({
 				        marginTop:-$jq("#meta_overlay").height()},{
@@ -504,46 +534,78 @@ var CriticalEditionViewer = {
 				          $jq('.data_anchor').css('font-weight', 'normal');
 				          $jq('#detail_tran').css('font-weight', 'bold');
 				          $jq("#meta_overlay").remove();
+				          $jq("li[title='Detail Metadata']").removeClass("img_selected")
 				        },
 				    }, 700);
 				}
-				
-				switch ($jq(this).attr('id')) {
-				case "detail_meta":
-					CriticalEditionViewer.Viewer.show_versionable_meta();
-					break;
-				case "detail_tran":
-					CriticalEditionViewer.Viewer.show_versionable_transcription();
-					break;
-				case "detail_perm":
-					CriticalEditionViewer.Viewer.show_versionable_permalink();
-					break;
-				}
-				
+				CriticalEditionViewer.Viewer.show_versionable_meta();
 			});
 			
 			// Set up img click handlers
 			$jq(".work_action_img").click(function() {
-				$jq(".work_action_img").removeClass("img_selected");
-				$jq(this).addClass("img_selected");
-				// Preform the approate action.
-				switch ($jq(this).attr("title")) {
-					case "Transcription":
-						CriticalEditionViewer.Viewer.show_plain_text();
+				
+				if($jq(this).attr("title") == "Show/Hide annotations" || $jq(this).attr("title") == "Show/Hide Text Image Links") {
+					
+					switch ($jq(this).attr("title")) {
+					case "Show/Hide annotations":
+						if($jq(this).attr("data-value") == 1) {
+							$jq(this).removeClass("img_selected");
+							$jq(this).attr("data-value",0);
+						} else {
+							$jq(this).addClass("img_selected");
+							$jq(this).attr("data-value",1);
+						}
+						CriticalEditionViewer.Viewer.toggle_anno_entities($jq(this).attr("data-value"));
 						break;
-					case "TEI Text":
-						CriticalEditionViewer.Viewer.show_tei_text();
+					case "Show/Hide Text Image Links":
+						if($jq(this).attr("data-value") == 1) {
+							$jq(this).removeClass("img_selected");
+							$jq(this).attr("data-value",0);
+						} else {
+							$jq(this).addClass("img_selected");
+							$jq(this).attr("data-value",1);
+						}
+						CriticalEditionViewer.Viewer.toggle_text_image_linking($jq(this).attr("data-value"));
 						break;
-					case "Image":
-						CriticalEditionViewer.Viewer.show_plain_image();
-						break;
-					case "Diplomatic Transcriptions":
-						CriticalEditionViewer.Viewer.show_versionable_transcriptions();
-						break;
-					case "TEI Markup":
-						CriticalEditionViewer.Viewer.show_tei_markup();
-						break;
+					}
+				} else {
+					
+					// Preform the approate action.
+					switch ($jq(this).attr("title")) {
+						case "Transcription":
+							$jq(".work_action_img").removeClass("img_selected");
+							$jq(this).addClass("img_selected");
+							CriticalEditionViewer.Viewer.check_meta_data_state();
+							CriticalEditionViewer.Viewer.show_plain_text();
+							break;
+						case "TEI Text":
+							$jq(".work_action_img").removeClass("img_selected");
+							$jq(this).addClass("img_selected");
+							CriticalEditionViewer.Viewer.check_meta_data_state();
+							CriticalEditionViewer.Viewer.show_tei_text();
+							break;
+						case "Image":
+							$jq(".work_action_img").removeClass("img_selected");
+							$jq(this).addClass("img_selected");
+							CriticalEditionViewer.Viewer.check_meta_data_state();
+							CriticalEditionViewer.Viewer.show_plain_image();
+							break;
+						case "Diplomatic Transcriptions":
+							$jq(".work_action_img").removeClass("img_selected");
+							$jq(this).addClass("img_selected");
+							CriticalEditionViewer.Viewer.check_meta_data_state();
+							CriticalEditionViewer.Viewer.show_versionable_transcriptions();
+							break;
+						case "TEI Markup":
+							$jq(".work_action_img").removeClass("img_selected");
+							$jq(this).addClass("img_selected");
+							CriticalEditionViewer.Viewer.check_meta_data_state();
+							CriticalEditionViewer.Viewer.show_tei_markup();
+							break;
+						
+					}
 				}
+				
 			});
 			$sb("#anno_entity_switch").switchButton();
 			$sb("#til_switch").switchButton();
@@ -614,7 +676,7 @@ var CriticalEditionViewer = {
 							CriticalEditionViewer.Viewer.get_page_transformed_tei(CriticalEditionViewer.cwrc_params.pages[ CriticalEditionViewer.cwrc_params.position]);
 							
 							$jq(".work_action_img").removeClass("img_selected");
-							$jq("#img_transcriptions").addClass("img_selected");
+							$jq("li[title='Diplomatic Transcriptions']").addClass("img_selected")
 							
 							$jq("input[type=checkbox]").switchButton({
 								  checked: false
@@ -630,7 +692,7 @@ var CriticalEditionViewer = {
 					$jq('#create_annotation', window.frames[0].document).css("visibility", "hidden");
 					$jq('#create_annotation', window.frames[0].document).css("display", "none");
 					CriticalEditionViewer.Viewer.show_plain_image();
-					
+					//CriticalEditionViewer.Viewer.get_page_transformed_tei(CriticalEditionViewer.cwrc_params.pages[ CriticalEditionViewer.cwrc_params.position]);
 					CriticalEditionViewer.Viewer.build_zoom();
 					
 					
