@@ -483,7 +483,7 @@ function islandora_update_from_tei_rdf_object($tei_rdf_object_pid, $transcriptio
   $batch = array(
     'title' => t('Creating Transcription from TEI-RDF Object'),
     'operations' => array(),
-    'file' => drupal_get_path('module', 'islandora_critical_edition') . '/includes/transcriptions.inc',
+    'file' => drupal_get_path('module', 'islandora_critical_edition_advanced') . '/includes/transcriptions.inc',
     'progress_message' => t('@current of @total pages processed.'),
   );
 

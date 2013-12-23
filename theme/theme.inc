@@ -245,16 +245,7 @@ function islandora_critical_edition_preprocess_islandora_critical_edition_contai
 
   $message = "<a title = 'Critical Apparatus' href ='/islandora/object/$apparatus/manage/apparatus'><button>" . t('Manage Apparatus') . "</button></a>";
   $variables['apparatus_link'] = array('#markup' => "<div class = 'apparatus_link'><strong>$message</strong></div>");
-  $variables['view_link'] = "<div class ='reading_view'><a title = 'Reading View' href ='islandora/object/$object'><button>" . t('Go to Reading View') . "</button></a></div>";
-
-
-  $variables['apparatus'] = array(
-    '#markup' => theme('islandora_critical_edition_publish_view', array(
-      'islandora_object' => $object,
-      'publish_form' => NULL,
-        )
-    ),
-  );
+  $variables['view_link'] = "<div class ='reading_view'><a href ='islandora/object/$object'><button>" . t('Go to Reading View') . "</button></a></div>";
   $variables['edition_actions'] = islandora_critical_edition_container_editor_links($object);
   $variables['version_actions'] = islandora_critical_edition_container_version_links($object);
   $variables['collation_actions'] = islandora_critical_edition_container_collation_links($object);
