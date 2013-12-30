@@ -4,6 +4,7 @@
  * @file
  * Add advanced data modeling options to Islandora Critical Editions.
  */
+
 define('ISLANDORA_CRITICAL_EDITION_ADVANCED_MANAGE_CONTAINER', 'manage critical edition');
 define('ISLANDORA_CRITICAL_EDITION_ADVANCED_CREATE', 'create critical editions');
 define('ISLANDORA_CRITICAL_EDITION_ADVANCED_READ', 'read critical editions');
@@ -208,7 +209,7 @@ function islandora_critical_edition_advanced_menu() {
  *   The object to prepare transformed TEI on.
  */
 function islandora_critical_edition_advanced_prepare_page_tei_consolidated($object) {
-	module_load_include('inc', 'php_lib', 'DOMHelpers');
+  module_load_include('inc', 'php_lib', 'DOMHelpers');
   // Return page level consolidated TEI.
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/consolidate_tei');
   $transformed_tei = islandora_critical_edition_advanced_display_page_tei($object);
@@ -529,11 +530,11 @@ function islandora_critical_edition_advanced_preprocess_islandora_critical_editi
   drupal_add_js(array(
   'islandora_critical_edition_advanced' => array(
     'common_tei_css' => url("$module_path/css/islandora_critical_edition_common_tei.css"))), 'setting');
-  
+
   dom_document_pretty_print_include_files();
 
   $islandora_critical_edition = drupal_get_path('module', 'islandora_critical_edition');
-  
+
   drupal_add_css("$module_path/css/jquery-ui.css");
   drupal_add_css("$module_path/css/theme_override.css");
   drupal_add_js("$module_path/js/jquery-ui.js");
@@ -616,7 +617,7 @@ function islandora_critical_edition_advanced_preprocess_islandora_critical_editi
           $pager = theme("islandora_critical_edition_advanced_aparatus_pager", array(
                      'islandora_object' => $variables['islandora_object'],
                      'tab_previous' => (isset($construct_keys[$entry]) ? substr($aparatus_datastreams[$construct_keys[$entry]], 0, 16) : "_blank_"),
-                     'tab_next' => (isset($construct_keys[$entry + 2]) ? substr($aparatus_datastreams[$construct_keys[$entry + 2]], 0, 16) : "_blank_")
+                     'tab_next' => (isset($construct_keys[$entry + 2]) ? substr($aparatus_datastreams[$construct_keys[$entry + 2]], 0, 16) : "_blank_"),
                    ));
           $markup = theme('islandora_critical_edition_advanced_critical_aparatus', array(
                       'islandora_object' => $variables['islandora_object'],
@@ -1378,7 +1379,7 @@ EOT;
 }
 
 /**
- * Implements hook_form_alter();
+ * Implements hook_form_alter().
  *
  * Prevent the disabling of the default bookmark list.
  */
