@@ -73,6 +73,7 @@ var CriticalEditionViewer = {
 	            success: function(data, status, xhr) {
 	              CriticalEditionViewer.Viewer.transformed_data = data['transformed'];
 	              CriticalEditionViewer.Viewer.pretty_transformed_data = data['pretty_print'];
+	              
 	              CriticalEditionViewer.Viewer.remove_pretty_print_tei();
 	              CriticalEditionViewer.Viewer.show_versionable_transcriptions();
 	            },
@@ -470,7 +471,9 @@ var CriticalEditionViewer = {
 			    }, 700);
 		},
 		show_tei_document_text: function() {
+			$jq("#tei_doc_text", window.frames[0].document).remove();
 			if($jq("#tei_doc_text", window.frames[0].document).length == 0) {
+				CriticalEditionViewer.tei_document_text = CriticalEditionViewer.cwrc_writer.fm.getDocumentContent(false);
 				$jq('#cwrc_main', window.frames[0].document).append('<div class="show_tei" id="tei_doc_text" style="overflow:auto;width:100%;height:100%;position:absolute;top:0px;z-index:300;background-color:white"><textarea style="width: 100%;height:100%" readonly id="tei_text_area"></textarea></div>');
 				$jq('#tei_text_area', window.frames[0].document).val(CriticalEditionViewer.tei_document_text);
 				CriticalEditionViewer.cwrc_writer.layout.sizePane("east", $jq('#CriticalEditionViewer').width()/2);
@@ -694,7 +697,7 @@ var CriticalEditionViewer = {
 							CriticalEditionViewer.Viewer.hide_preloader();
 							
 							CriticalEditionViewer.Viewer.get_page_transformed_tei(CriticalEditionViewer.cwrc_params.pages[ CriticalEditionViewer.cwrc_params.position]);
-							
+							CriticalEditionViewer.Viewer.remove_tei_document_text();
 							$jq(".work_action_img").removeClass("img_selected");
 							$jq("li[title='Diplomatic Transcriptions']").addClass("img_selected")
 							
@@ -713,7 +716,6 @@ var CriticalEditionViewer = {
 			    	CriticalEditionViewer.Viewer.get_entities();
 					CriticalEditionViewer.Viewer.build_tree_view();
 					CriticalEditionViewer.tei_document_text = CriticalEditionViewer.cwrc_writer.fm.getDocumentContent(false);
-				
 					CriticalEditionViewer.Viewer.get_page_transformed_tei(CriticalEditionViewer.cwrc_params.pages[ CriticalEditionViewer.cwrc_params.position]);
 					CriticalEditionViewer.Viewer.show_plain_image();
 					$jq(".work_action_img").removeClass("img_selected");
