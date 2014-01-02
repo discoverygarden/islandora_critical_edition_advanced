@@ -1,5 +1,5 @@
 
-(function($) {
+(function($) { 
 $('document').ready(function() {
 	$jq( '#versions-tab tbody').find('td[class="version_name"]').each(function(e) {
 		$jq(this).children(':first').click(function(e) {
