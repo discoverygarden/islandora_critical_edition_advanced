@@ -580,15 +580,9 @@ function islandora_critical_edition_advanced_preprocess_islandora_critical_editi
       'pid' => $associated_object_keys[$element],
     );
   }
-
   $variables['scroll_list'] = NULL;
   $aparatus_datastreams = islandora_critical_apparatus_get_datastreams();
   $form_state['publish_viewer']['#type'] = 'vertical_tabs';
-
-
-//   drupal_add_js("$module_path/js/jqToolTipsy/tooltipsy/tooltipsy.min.js");
-//   drupal_add_css("$module_path/css/tooltipsy.css");
-//   drupal_add_js("$module_path/js/tooltipsy_startup.js");
 
   $aparatus_datastreams['versions'] = 'Viewer';
   $aparatus_datastreams['collation_view'] = 'Collations';
