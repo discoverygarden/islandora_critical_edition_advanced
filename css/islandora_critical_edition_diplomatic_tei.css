@@ -4,3 +4,25 @@
 .expan, .corr {
   display :none;
 }
+.mod .superlinear,
+.mod .strikethrough,
+.in-line > .superlinear {
+  display :none;
+}
+.unclear {
+  color: green;
+}
+
+div#tei-margin-left {
+  background-color:pink;
+  float: left;
+  width: 20%;
+}
+div#tei-body {
+  margin-left:1em;
+  float:right;
+  width:78%;
+}
+div#tei-header{
+  position: relative;
+}

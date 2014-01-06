@@ -7,9 +7,6 @@
 
 /**
  * Display's the current users work bench.
- *
- * @param AbstractObject $object
- *   The object to add to the work bench.
  */
 function islandora_critical_edition_advanced_workbench() {
   module_load_include('inc', 'islandora_bookmark', 'includes/api');
@@ -38,7 +35,7 @@ function islandora_critical_edition_advanced_workbench() {
         '#links' => array(
           array(
             'title' => t('Add New Critical Edition'),
-            'href' => 'workbench/add/islandora:criticalEditionContainerCModel'
+            'href' => 'workbench/add/islandora:criticalEditionContainerCModel',
           ),
         ),
       ),
@@ -47,7 +44,7 @@ function islandora_critical_edition_advanced_workbench() {
         '#links' => array(
           array(
             'title' => t('Add New Schema / Transform'),
-            'href' => 'workbench/add/islandora:criticaleditionschemaCModel'
+            'href' => 'workbench/add/islandora:criticaleditionschemaCModel',
           ),
         ),
       ),
@@ -58,19 +55,19 @@ function islandora_critical_edition_advanced_workbench() {
         '#links' => array(
           array(
             'title' => t('Add New Text / Image Object'),
-            'href' => 'workbench/add/islandora:bookCModel'
+            'href' => 'workbench/add/islandora:bookCModel',
           ),
           array(
             'title' => t('Add New Audio Object'),
-            'href' => 'workbench/add/islandora:sp-audioCModel'
+            'href' => 'workbench/add/islandora:sp-audioCModel',
           ),
           array(
             'title' => t('Add New Video Object'),
-            'href' => 'workbench/add/islandora:sp_videoCModel'
+            'href' => 'workbench/add/islandora:sp_videoCModel',
           ),
           array(
             'title' => t('Add New Collection'),
-            'href' => 'workbench/add/islandora:collectionCModel'
+            'href' => 'workbench/add/islandora:collectionCModel',
           ),
         ),
       ),
@@ -80,8 +77,7 @@ function islandora_critical_edition_advanced_workbench() {
 }
 
 /**
- * Display an ingest object form of the given type with the first page that
- * allows the user to select the collection the object will belong to.
+ * Display form allowing the user to select collection.
  *
  * @param string $content_model
  *   The PID of the Content Model type to ingest.

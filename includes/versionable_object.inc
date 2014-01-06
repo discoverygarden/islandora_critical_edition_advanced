@@ -74,7 +74,7 @@ function islandora_versionable_object_management_menu(AbstractObject $object) {
     '#collapsed' => TRUE,
   );
 
-    $output['management_tabs']['persist_ocr'] = array(
+  $output['management_tabs']['persist_ocr'] = array(
     '#id' => 'persist-ocr',
     '#access' => user_access(ISLANDORA_ADD_DS) && $tei_rdf,
     '#title' => t('Update Source OCR'),
