@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet exclude-result-prefixes="xs xlink tei rdf" version="2.0" xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:tei="http://www.tei-c.org/ns/1.0" 
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:xlink="http://www.w3.org/1999/xlink" 
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-  <xsl:output doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN"
-    doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" indent="yes" method="xml" version="1.1"/>
+  <xsl:output method="html" omit-xml-declaration="yes"/>
   <!-- Template: Root
        This table generates a html document, where the body is populated tei:text of the incoming TEI document. 
   -->
@@ -118,20 +119,19 @@
   </xsl:template>
   <!-- Template: line -->
   <xsl:template match="tei:line" mode="#all">
-    <xsl:if test="descendant::node()[@place='superlinear']">      
+    <xsl:if test="descendant::*[@place='superlinear']">      
       <div class="above-line">
-        <xsl:apply-templates mode="above-line" select="descendant::node()[@place='superlinear']"/>
+        <xsl:apply-templates mode="above-line" select="descendant::*[@place='superlinear']"/>
       </div>
     </xsl:if>
-    <xsl:if test="descendant::node()[@place != 'superlinear' or @place != 'sublinear']">
-      <div>
-        <xsl:apply-templates mode="line" select="descendant::node()[@place != 'superlinear' or @place != 'sublinear' or
-          not(@place)]"/>
+    <xsl:if test="child::text() or descendant::*[@place != 'sublinear' or @place != 'superlinear' or not(@place) ] ">
+      <div class = "in-line">
+        <xsl:apply-templates mode="in-line" select="child::text() | descendant::*[@place != 'sublinear' or @place != 'superlinear' or not(@place)]"/>
       </div>  
     </xsl:if>
-    <xsl:if test="descendant::node()[@place='sublinear']">
+    <xsl:if test="descendant::*[@place='sublinear']">
       <div class="below-line">
-        <xsl:apply-templates mode="line" select="descendant::node()[@place = 'sublinear']"/>
+        <xsl:apply-templates mode="line" select="descendant::*[@place = 'sublinear']"/>
       </div>  
     </xsl:if>
   </xsl:template>
@@ -142,4 +142,8 @@
       <xsl:apply-templates mode="#current"/>
     </span>
   </xsl:template>
+  <xsl:template match="text()" mode="#all">
+    <xsl:copy-of select="."></xsl:copy-of>
+  </xsl:template>
+
 </xsl:stylesheet>

@@ -49,32 +49,9 @@ function islandora_critical_edition_advanced_versionable_object_tei_local_task(A
     ),
     'tei' => array(
       '#prefix' => '<h1>TEI</h1>',
-      '#markup' => $has_tei ? islandora_critical_edition_advanced_transform_tei_datastream_to_html($tei_rdf->id) : t('No TEI Present, please upload or conslidate the TEI to display.'),
+      '#markup' => $has_tei ? islandora_critical_edition_advanced_transform_tei_datastream_to_html($tei_rdf->id) : t('No TEI Present, please upload or consolidate the TEI to display.'),
     ),
   );
-
-  if ($tei_rdf) {
-    $output['conslidate_form'] = array(
-      '#type' => 'fieldset',
-      '#title' => 'Consolidate TEI',
-      'form' => drupal_get_form('islandora_critical_edition_advanced_consolidate_tei_form', $tei_rdf->id),
-    );
-    $output['conslidate_form']['form']['submit']['#value'] = t('Conslidate TEI');
-    $output['upload_form'] = drupal_get_form('islandora_critical_edition_advanced_upload_tei_form', $tei_rdf->id);
-  }
-  if (isset($tei_rdf['TEI'])) {
-    $output['TEI'] = array(
-      '#prefix' => '<h1>TEI</h1>',
-      '#markup' => islandora_critical_edition_advanced_transform_tei_datastream_to_html($tei_rdf->id),
-    );
-  }
-  else {
-    $output['TEI'] = array(
-      '#prefix' => '<h1>TEI</h1>',
-      '#markup' => t('No TEI Present, please upload or conslidate the TEI to display.'),
-    );
-  }
-  return $output;
 }
 
 /**
@@ -95,17 +72,21 @@ function islandora_critical_edition_advanced_transform_tei_datastream_to_html($p
       'token' => islandora_get_object_token($pid, 'TEI'),
     ),
   ));
+  //$xslt = "EMiC_test_XSLT.xsl";
+  $xslt = "EMiC_tei2html.xsl";
   $module_path = drupal_get_path('module', 'islandora_critical_edition_advanced');
   drupal_add_css("$module_path/css/islandora_critical_edition_common_tei.css");
-  drupal_add_css("$module_path/css/islandora_critical_edition_reading_tei.css");
-  $xslt_path = url("{$module_path}/xml/EMiC_test_XSLT.xsl", array('absolute' => TRUE));
-  $xml = file_get_contents("$tomcat_url/saxon/SaxonServlet?source=$xml_path&style=$xslt_path");
-  $sxml = new SimpleXMLElement(file_get_contents("$tomcat_url/saxon/SaxonServlet?source=$xml_path&style=$xslt_path"));
+  drupal_add_css("$module_path/css/islandora_critical_edition_diplomatic_tei.css");
+  $xslt_path = url("{$module_path}/xml/$xslt", array('absolute' => TRUE));
+
+  $xml = file_get_contents("$tomcat_url/saxon/SaxonServlet?source=$xml_path&style=$xslt_path&clear-stylesheet-cache=yes");
+  $sxml = @new SimpleXMLElement($xml);
   $body = "";
   if(!empty($sxml->body)) {
     foreach ($sxml->body->children() as $child) {
       $body .= $child->asXML();
     }
   }
-  return $body ? $body : $xml;
+  $output = $body ? $body : $xml;
+  return $output;
 }
