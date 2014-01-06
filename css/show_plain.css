@@ -110,3 +110,8 @@ html {
   visibility: hidden !important;
   display: none !important;
 }
+
+.region-sidebar-first {
+  visibility: hidden !important;
+  display: none !important;
+}
