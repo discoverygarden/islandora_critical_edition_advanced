@@ -243,11 +243,10 @@ function islandora_critical_edition_preprocess_islandora_critical_edition_contai
   $object = $variables['object'];
   $apparatus = islandora_critical_edition_get_apparatus($object);
 
-  $message = "<a title = 'Critical Apparatus' href ='/islandora/object/$apparatus/manage/apparatus'><button>" . t('Manage Apparatus') . "</button></a>";
+  $message = "<a title = 'Critical Apparatus' class='hastip' title='Manage Apparatus' href ='/islandora/object/$apparatus/manage/apparatus'><button>" . t('Manage Apparatus') . "</button></a>";
   $variables['apparatus_link'] = array('#markup' => "<div class = 'apparatus_link'><strong>$message</strong></div>");
 
-  $variables['view_link'] = "<div class ='reading_view'><a href ='islandora/object/$object'><button>" . t('Go to Reading View') . "</button></a></div>";
-
+  $variables['view_link'] = "<div class ='reading_view'><a title='Go to Reading View' class='hastip' href ='islandora/object/$object'><button>" . t('Go to Reading View') . "</button></a></div>";
   $variables['edition_actions'] = islandora_critical_edition_container_editor_links($object);
   $variables['version_actions'] = islandora_critical_edition_container_version_links($object);
   $variables['collation_actions'] = islandora_critical_edition_container_collation_links($object);
@@ -291,6 +290,7 @@ function islandora_critical_edition_container_editor_links(AbstractObject $objec
         'html' => FALSE,
         'attributes' => array(
           'title' => 'Edit Edition Metadata',
+          'class' => 'hastip',
         ),
       ),
     ),
@@ -303,7 +303,9 @@ function islandora_critical_edition_container_editor_links(AbstractObject $objec
       '#options' => array(
         'html' => FALSE,
         'attributes' => array(
-          'title' => 'Edit Permissions'),
+          'title' => 'Edit Permissions',
+          'class' => 'hastip',
+        ),
       ),
     ),
   );
@@ -432,6 +434,7 @@ function theme_islandora_critical_edition_container_versions_table(array &$varia
           array(
             'title' => $version['label'],
             'data-pid' => $pid,
+            'class' => "hastip",
           ),
             )
         ),

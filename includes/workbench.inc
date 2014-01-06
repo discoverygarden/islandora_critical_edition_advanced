@@ -284,7 +284,7 @@ function islandora_critical_edition_advanced_toggle_workbench_membership_form(ar
     $default_list = Bookmark::getList($default_list);
     $in_work_bench = in_array($object->id, $default_list->getPids());
   }
-  $class = $in_work_bench ? 'remove-from-workbench' : 'add-to-workbench';
+  $class = $in_work_bench ? 'remove-from-workbench hastip' : 'add-to-workbench hastip';
   return array(
     'object' => array(
       '#type' => 'value',

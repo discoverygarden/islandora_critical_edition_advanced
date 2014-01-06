@@ -64,7 +64,7 @@
     </div>
   </xsl:template>
   <!-- Template: Surface -->
-  <xsl:template match="tei:surface">
+  <xsl:template match="tei:surface"> 
     <div id="tei-surface">
       <div id="tei-header">
         <xsl:apply-templates mode="header" select="descendant::tei:zone[@type = 'pagination']"/>
