@@ -2,6 +2,9 @@
 .full_text_hidden{
   display: none;
 }
-.teaser {
+.teaser_only {
   font-style: oblique;
+}
+.teaser_only:after, .inaudible:after {
+   content: " ...";
 }
