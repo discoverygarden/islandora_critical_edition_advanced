@@ -164,6 +164,8 @@ function islandora_critical_edition_preprocess_islandora_critical_edition_contai
   $views_module_path = drupal_get_path('module', 'views');
   drupal_add_css("$views_module_path/css/views-admin.ctools.css");
   drupal_add_css("$views_module_path/css/views-admin.seven.css");
+  drupal_add_css("$module_path/css/version_display.css");
+  drupal_add_js("$module_path/js/version_display.js");
   $object = $variables['object'];
   $variables['edit_link'] = "<div class='editing_view'><a href ='/islandora/object/$object/critical_edition/edit'><button>" . t('Go to Editing View') . "</button></a></div>";
   $variables['apparatus'] = array(
@@ -368,7 +370,7 @@ function theme_islandora_critical_edition_container_table(array &$variables) {
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/utilities');
   // Create local variables.
   extract(array_intersect_key($variables, drupal_map_assoc(array(
-          'title', 'header', 'rows', 'offset', 'limit', 'total', 'pager', 'actions'))));
+    'title', 'header', 'rows', 'offset', 'limit', 'total', 'pager', 'actions'))));
   // Render the table.
   $element = array(
     '#type' => 'fieldset',
@@ -381,6 +383,7 @@ function theme_islandora_critical_edition_container_table(array &$variables) {
       '#theme' => 'table',
       '#header' => $header,
       '#rows' => $rows,
+      '#attributes' => array('class' => array("versions_table")),
     ),
     'pager' => array(
       '#theme' => 'pager',
@@ -401,12 +404,22 @@ function theme_islandora_critical_edition_container_versions_table(array &$varia
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/utilities');
   // Create local variables.
   extract(array_intersect_key($variables, drupal_map_assoc(array(
-          'object', 'limit', 'pager', 'columns', 'show_actions'))));
+    'object', 'limit', 'pager', 'columns', 'show_actions'))));
   // Build Header.
   $headers = array(
-    'version_name' => array('data' => t('Version'), 'field' => 'version_name', 'align' => 'left'),
-    'object_type' => array('data' => t('Type'), 'field' => 'object_type', 'align' => 'left'),
-    'genre' => array('data' => t('Genre'), 'field' => 'genre', 'align' => 'left'),
+    'version_name' => array(
+      'data' => t('Version'),
+      'field' => 'version_name',
+      'align' =>
+      'left'),
+    'object_type' => array(
+      'data' => t('Type'),
+      'field' => 'object_type',
+      'align' => 'left'),
+    'genre' => array(
+      'data' => t('Genre'),
+      'field' => 'genre',
+      'align' => 'left'),
     'content' => array('data' => t('Content'), 'align' => 'left'),
     'context' => array('data' => t('Context'), 'align' => 'left'),
     'operations' => array('data' => t('Operations'), 'align' => 'left'),
@@ -427,6 +440,9 @@ function theme_islandora_critical_edition_container_versions_table(array &$varia
   $versions = islandora_critical_edition_container_versions_table_data($object, $sort_field, tablesort_get_sort($headers), $offset, $limit);
   foreach ($versions as $pid => $version) {
     $source = $version['source'];
+    $teaser = substr($version['content'], 0, 40);
+    $balance = substr($version['content'], 40, -1);
+    $content = "<span class='teaser'>$teaser</span><span class='full_text full_text_hidden'>$balance</span>";
     $cells = array(
       'version_name' => array(
         '#markup' => l($version['label'], "islandora/object/{$pid}", array(
@@ -445,12 +461,8 @@ function theme_islandora_critical_edition_container_versions_table(array &$varia
       'genre' => array(
         '#markup' => $version['genre'],
       ),
-      'content' => array(
-        '#markup' => $version['content'],
-      ),
-      'context' => array(
-        '#markup' => $version['context'],
-      ),
+      'content' => array('#markup' => $content),
+      'context' => array('#markup' => $version['context']),
       'operations' => islandora_critical_edition_container_versions_table_operations_cell($pid, $version, $source, $object->id),
       'transcriptions' => islandora_critical_edition_container_table_transcriptions_cell($pid, $version['transcriptions']),
     );
@@ -519,9 +531,7 @@ function islandora_critical_edition_container_versions_table_data(AbstractObject
   );
   $dir = strtolower($dir);
   $sort = $sort_fields[$sort];
-  $params = array(
-    'sort' => "{$sort} {$dir}",
-  );
+  $params = array('sort' => "{$sort} {$dir}");
   $url = parse_url(variable_get('islandora_solr_url', 'localhost:8080/solr'));
   $solr = new Apache_Solr_Service($url['host'], $url['port'], $url['path'] . '/');
   $solr->setCreateDocuments(0);
