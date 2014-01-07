@@ -544,10 +544,10 @@ function islandora_critical_edition_container_versions_table_data(AbstractObject
       $versions[$pid] = array(
         'label' => $result[$label_field],
         'source' => '',
-        'object_type' => isset($result[$object_type_field]) ? $result[$object_type_field] : t('undefined'),
-        'genre' => isset($result[$genre_field]) ? $result[$genre_field] : t('undefined'),
-        'content' => isset($result[$content_field]) ? reset($result[$content_field]) : t('undefined'),
-        'context' => isset($result[$context_field]) ? reset($result[$context_field]) : t('undefined'),
+        'object_type' => isset($result[$object_type_field]) ? $result[$object_type_field] : t('Undefined'),
+        'genre' => isset($result[$genre_field]) ? $result[$genre_field] : t('Undefined'),
+        'content' => isset($result[$content_field]) ? reset($result[$content_field]) : t('Undefined'),
+        'context' => isset($result[$context_field]) ? reset($result[$context_field]) : t('Undefined'),
         'teirdf' => array(
           'pid' => '',
           'label' => '',
@@ -954,12 +954,12 @@ function islandora_critical_edition_container_collation_table_operations_permiss
  *   Length of teaser string to be displayed
  */
 function prep_versiontable_string($input, $character_break = 40) {
+  if (strlen($input) < $character_break) {
+    return $input;
+  }
   $last_space = strrpos(substr($input, 0, $character_break + 1), ' ');
   $teaser = substr($input, 0, $last_space);
-  $content = $teaser ? $teaser : $input;
-  if (strlen($input) > $character_break) {
-    $teaser = "<span class='teaser teaser_only'>$teaser</span>";
-    $content = "$teaser<span class='full_text full_text_hidden'>" . substr($input, $last_space, -1) . "</span>";
-  }
+  $teaser = "<span class='teaser teaser_only'>$teaser</span>";
+  $content = "$teaser<span class='full_text full_text_hidden'>" . substr($input, $last_space) . "</span>";
   return $content;
 }
