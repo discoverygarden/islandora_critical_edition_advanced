@@ -3,7 +3,6 @@
  * @file
  * This is the template file for the Critical Edition detail viewer
  * viewer.
- *
  */
 ?>
 <?php if (!$media_viewer): ?>
