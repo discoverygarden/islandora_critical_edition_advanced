@@ -441,13 +441,8 @@ function theme_islandora_critical_edition_container_versions_table(array &$varia
   foreach ($versions as $pid => $version) {
     $character_break = 40;
     $source = $version['source'];
-    $teaser = substr($version['content'], 0, $character_break);
-    $balance = substr($version['content'], $character_break, -1);
-    $content = "<span class='teaser'>$teaser</span><span class='full_text full_text_hidden'>$balance</span>";
-  
-    $teaser = substr($version['context'], 0, $character_break);
-    $balance = substr($version['context'], $character_break, -1);
-    $context = "<span class='teaser'>$teaser</span><span class='full_text full_text_hidden'>$balance</span>";
+    $content = prep_versiontable_string($version['content']);
+    $context = prep_versiontable_string($version['context']);
     $cells = array(
       'version_name' => array(
         '#markup' => l($version['label'], "islandora/object/{$pid}", array(
@@ -948,4 +943,23 @@ function islandora_critical_edition_container_collation_table_operations_permiss
     'table_view' => user_access('view collation tools'),
     'delete' => user_access(ISLANDORA_PURGE),
   );
+}
+
+/**
+ * Wraps strings in span classes.
+ *
+ * @param String $input
+ *   Input string
+ * @param Integer $character_break
+ *   Length of teaser string to be displayed
+ */
+function prep_versiontable_string($input, $character_break = 40) {
+  $last_space = strrpos(substr($input, 0, $character_break + 1), ' ');
+  $teaser = substr($input, 0, $last_space);
+  $content = $teaser ? $teaser : $input;
+  if (strlen($input) > $character_break) {
+    $teaser = "<span class='teaser teaser_only'>$teaser</span>";
+    $content = "$teaser<span class='full_text full_text_hidden'>" . substr($input, $last_space, -1) . "</span>";
+  }
+  return $content;
 }
