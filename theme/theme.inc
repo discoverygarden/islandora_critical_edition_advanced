@@ -439,10 +439,15 @@ function theme_islandora_critical_edition_container_versions_table(array &$varia
   $sort_field = $sort_field['sql'];
   $versions = islandora_critical_edition_container_versions_table_data($object, $sort_field, tablesort_get_sort($headers), $offset, $limit);
   foreach ($versions as $pid => $version) {
+    $character_break = 40;
     $source = $version['source'];
-    $teaser = substr($version['content'], 0, 40);
-    $balance = substr($version['content'], 40, -1);
+    $teaser = substr($version['content'], 0, $character_break);
+    $balance = substr($version['content'], $character_break, -1);
     $content = "<span class='teaser'>$teaser</span><span class='full_text full_text_hidden'>$balance</span>";
+  
+    $teaser = substr($version['context'], 0, $character_break);
+    $balance = substr($version['context'], $character_break, -1);
+    $context = "<span class='teaser'>$teaser</span><span class='full_text full_text_hidden'>$balance</span>";
     $cells = array(
       'version_name' => array(
         '#markup' => l($version['label'], "islandora/object/{$pid}", array(
@@ -462,7 +467,7 @@ function theme_islandora_critical_edition_container_versions_table(array &$varia
         '#markup' => $version['genre'],
       ),
       'content' => array('#markup' => $content),
-      'context' => array('#markup' => $version['context']),
+      'context' => array('#markup' => $context),
       'operations' => islandora_critical_edition_container_versions_table_operations_cell($pid, $version, $source, $object->id),
       'transcriptions' => islandora_critical_edition_container_table_transcriptions_cell($pid, $version['transcriptions']),
     );
