@@ -423,8 +423,14 @@ function theme_islandora_critical_edition_container_versions_table(array &$varia
       'field' => 'genre',
       'class' => array('genre'),
       'align' => 'left'),
-    'content' => array('data' => t('Content'), 'align' => 'left', 'class' => array('content'),),
-    'context' => array('data' => t('Context'), 'align' => 'left',  'class' => array('context'),),
+    'content' => array(
+      'data' => t('Content'),
+      'align' => 'left',
+      'class' => array('content')),
+    'context' => array(
+      'data' => t('Context'),
+      'align' => 'left',
+      'class' => array('context')),
     'operations' => array('data' => t('Operations'), 'align' => 'left'),
     'transcriptions' => array('data' => t('Transcriptions'), 'align' => 'left'),
   );
