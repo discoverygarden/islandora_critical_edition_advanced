@@ -410,18 +410,21 @@ function theme_islandora_critical_edition_container_versions_table(array &$varia
     'version_name' => array(
       'data' => t('Version'),
       'field' => 'version_name',
+      'class' => array('version_name'),
       'align' =>
       'left'),
     'object_type' => array(
       'data' => t('Type'),
       'field' => 'object_type',
+      'class' => array('object_type'),
       'align' => 'left'),
     'genre' => array(
       'data' => t('Genre'),
       'field' => 'genre',
+      'class' => array('genre'),
       'align' => 'left'),
-    'content' => array('data' => t('Content'), 'align' => 'left'),
-    'context' => array('data' => t('Context'), 'align' => 'left'),
+    'content' => array('data' => t('Content'), 'align' => 'left', 'class' => array('content'),),
+    'context' => array('data' => t('Context'), 'align' => 'left',  'class' => array('context'),),
     'operations' => array('data' => t('Operations'), 'align' => 'left'),
     'transcriptions' => array('data' => t('Transcriptions'), 'align' => 'left'),
   );
@@ -953,7 +956,7 @@ function islandora_critical_edition_container_collation_table_operations_permiss
  * @param Integer $character_break
  *   Length of teaser string to be displayed
  */
-function prep_versiontable_string($input, $character_break = 40) {
+function prep_versiontable_string($input, $character_break = 25) {
   if (strlen($input) < $character_break) {
     return $input;
   }

@@ -8,3 +8,15 @@
 .teaser_only:after, .inaudible:after {
    content: " ...";
 }
+.versions_table {
+  table-layout: automatic;
+  width: 100%;
+}
+
+
+td.content, th.content {
+  width:25%;
+}
+td.context, th.context {
+  width:25%;
+}
