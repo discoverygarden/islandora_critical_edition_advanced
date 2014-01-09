@@ -17,11 +17,7 @@
           <xsl:apply-templates select="rdf:RDF"/>
         </div>
         <!-- TODO Decided what to do about have Text and surfaces -->
-        <!-- TODO Remove Debug Headers -->
-        <h1>Text</h1>
         <xsl:apply-templates select="//tei:text"/>
-        <!-- TODO Remove Debug Headers -->
-        <h1>Surface</h1>
         <xsl:apply-templates select="//tei:surface"/>
       </body>
     </html>

@@ -496,6 +496,7 @@ function islandora_critical_edition_advanced_append_tei_rdf_text_to_tei($tei, $t
       ${$tei_rdf_content_node->nodeName}->appendChild($tei_rdf_fragment);
     }
   }
+  $my_doc = $tei_document->saveHTML();
   return $tei_document->saveXML();
 }
 
