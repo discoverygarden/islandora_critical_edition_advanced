@@ -1,28 +1,29 @@
-.del .del{
+div.diplomatic_tei * .del .del{
   display: none;
 }
-.expan, .corr {
+div.diplomatic_tei * .expan,
+div.diplomatic_tei * .corr {
   display :none;
 }
-.mod .superlinear,
-.mod .strikethrough,
-.in-line > .superlinear {
+div.diplomatic_tei * .mod .superlinear,
+div.diplomatic_tei * .mod .strikethrough,
+div.diplomatic_tei * .in-line > .superlinear {
   display :none;
 }
-.unclear {
+div.diplomatic_tei * .unclear {
   color: green;
 }
 
-div#tei-margin-left {
-  background-color:pink;
+div.diplomatic_tei * div#tei-margin-left {
+  background-color:#e7e4e4;
   float: left;
   width: 20%;
 }
-div#tei-body {
+div.diplomatic_tei * div#tei-body {
   margin-left:1em;
   float:right;
   width:78%;
 }
-div#tei-header{
+div.diplomatic_tei * div#tei-header{
   position: relative;
 }
