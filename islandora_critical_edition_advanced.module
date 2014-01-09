@@ -4,7 +4,6 @@
  * @file
  * Add advanced data modeling options to Islandora Critical Editions.
  */
-
 define('ISLANDORA_CRITICAL_EDITION_ADVANCED_MANAGE_CONTAINER', 'manage critical edition');
 define('ISLANDORA_CRITICAL_EDITION_ADVANCED_CREATE', 'create critical editions');
 define('ISLANDORA_CRITICAL_EDITION_ADVANCED_READ', 'read critical editions');
@@ -524,12 +523,12 @@ function islandora_critical_edition_advanced_preprocess_islandora_critical_editi
   $module_path = drupal_get_path('module', 'islandora_critical_edition_advanced');
 
   drupal_add_js(array(
-  'islandora_critical_edition_advanced' => array(
-    'diplomatic_tei' => url("$module_path/css/islandora_critical_edition_diplomatic_tei.css"))), 'setting');
+    'islandora_critical_edition_advanced' => array(
+      'diplomatic_tei' => url("$module_path/css/islandora_critical_edition_diplomatic_tei.css"))), 'setting');
 
   drupal_add_js(array(
-  'islandora_critical_edition_advanced' => array(
-    'common_tei_css' => url("$module_path/css/islandora_critical_edition_common_tei.css"))), 'setting');
+    'islandora_critical_edition_advanced' => array(
+      'common_tei_css' => url("$module_path/css/islandora_critical_edition_common_tei.css"))), 'setting');
 
   dom_document_pretty_print_include_files();
 
@@ -604,27 +603,27 @@ function islandora_critical_edition_advanced_preprocess_islandora_critical_editi
       );
       if ($element == 'appendix' || $element == 'versions' || $element == 'collations' || $element == 'collation_view') {
         $body = theme("islandora_critical_edition_container_{$element}_table", array(
-                  'object' => $variables['islandora_object'],
-                  'columns' => array(
-                    'version_name' => TRUE,
-                    'object_type' => TRUE,
-                    'genre' => TRUE,
-                    'content' => TRUE,
-                    'context' => TRUE,
-                  )));
+          'object' => $variables['islandora_object'],
+          'columns' => array(
+            'version_name' => TRUE,
+            'object_type' => TRUE,
+            'genre' => TRUE,
+            'content' => TRUE,
+            'context' => TRUE,
+        )));
         $markup = $body;
         if ($element != 'versions') {
           $pager = theme("islandora_critical_edition_advanced_aparatus_pager", array(
-                     'islandora_object' => $variables['islandora_object'],
-                     'tab_previous' => (isset($construct_keys[$entry]) ? substr($aparatus_datastreams[$construct_keys[$entry]], 0, 16) : "_blank_"),
-                     'tab_next' => (isset($construct_keys[$entry + 2]) ? substr($aparatus_datastreams[$construct_keys[$entry + 2]], 0, 16) : "_blank_"),
-                   ));
+            'islandora_object' => $variables['islandora_object'],
+            'tab_previous' => (isset($construct_keys[$entry]) ? substr($aparatus_datastreams[$construct_keys[$entry]], 0, 16) : "_blank_"),
+            'tab_next' => (isset($construct_keys[$entry + 2]) ? substr($aparatus_datastreams[$construct_keys[$entry + 2]], 0, 16) : "_blank_"),
+          ));
           $markup = theme('islandora_critical_edition_advanced_critical_aparatus', array(
-                      'islandora_object' => $variables['islandora_object'],
-                      'text_body' => $body,
-                      'text_header' => $aparatus_datastreams[$element],
-                      'text_pager' => $pager,
-                    ));
+            'islandora_object' => $variables['islandora_object'],
+            'text_body' => $body,
+            'text_header' => $aparatus_datastreams[$element],
+            'text_pager' => $pager,
+          ));
         }
         $form_state['publish_viewer']["{$element}_tab"]['body'] = array(
           '#id' => "{$element}-tab",
@@ -643,16 +642,16 @@ function islandora_critical_edition_advanced_preprocess_islandora_critical_editi
           '#type' => 'markup',
           '#title' => $aparatus_datastreams[$element],
           '#markup' => theme(
-            'islandora_critical_edition_advanced_critical_aparatus', array(
+              'islandora_critical_edition_advanced_critical_aparatus', array(
+            'islandora_object' => $variables['islandora_object'],
+            'text_body' => (isset($to_construct[$element]) ? $to_construct[$element] : ""),
+            'text_header' => $aparatus_datastreams[$element],
+            'text_pager' => theme("islandora_critical_edition_advanced_aparatus_pager", array(
               'islandora_object' => $variables['islandora_object'],
-              'text_body' => (isset($to_construct[$element]) ? $to_construct[$element] : ""),
-              'text_header' => $aparatus_datastreams[$element],
-              'text_pager' => theme("islandora_critical_edition_advanced_aparatus_pager", array(
-                              'islandora_object' => $variables['islandora_object'],
-                              'tab_previous' => (isset($construct_keys[$entry]) ? substr($aparatus_datastreams[$construct_keys[$entry]], 0, 16) : "_blank_"),
-                              'tab_next' => (isset($construct_keys[$entry + 2]) ? substr($aparatus_datastreams[$construct_keys[$entry + 2]], 0, 16) : "_blank_"),
-                            )),
+              'tab_previous' => (isset($construct_keys[$entry]) ? substr($aparatus_datastreams[$construct_keys[$entry]], 0, 16) : "_blank_"),
+              'tab_next' => (isset($construct_keys[$entry + 2]) ? substr($aparatus_datastreams[$construct_keys[$entry + 2]], 0, 16) : "_blank_"),
             )),
+          )),
         );
       }
     }
@@ -923,6 +922,15 @@ function islandora_critical_edition_advanced_islandora_criticalEditionContainerC
       'do_function' => array(
         'function' => 'islandora_critical_edition_advanced_add_apparatus',
         'file' => 'includes/critical_apparatus.inc',
+      ),
+    ),
+    'islandora_add_critical_edition_thumbnail' => array(
+      'type' => 'callback',
+      'weight' => 6,
+      'module' => 'islandora_critical_edition_advanced',
+      'do_function' => array(
+        'function' => 'islandora_critical_edition_advanced_add_thumbnail',
+        'file' => 'includes/randomized_thumbnail.inc',
       ),
     ),
   );

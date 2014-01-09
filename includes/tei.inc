@@ -76,6 +76,8 @@ function islandora_critical_edition_advanced_transform_tei_datastream_to_html($p
   $module_path = drupal_get_path('module', 'islandora_critical_edition_advanced');
   drupal_add_css("$module_path/css/islandora_critical_edition_common_tei.css");
   drupal_add_css("$module_path/css/islandora_critical_edition_diplomatic_tei.css");
+  drupal_add_css("$module_path/css/islandora_critical_edition_reading_tei.css");
+  drupal_add_js("$module_path/js/islandora_critical_edition_tei.js");
   $xslt_path = url("{$module_path}/xml/$xslt", array('absolute' => TRUE));
 
   $xml = file_get_contents("$tomcat_url/saxon/SaxonServlet?source=$xml_path&style=$xslt_path&clear-stylesheet-cache=yes");
@@ -87,5 +89,6 @@ function islandora_critical_edition_advanced_transform_tei_datastream_to_html($p
     }
   }
   $output = $body ? $body : $xml;
-  return $output;
+  $button = "<button id='change_view'>Show Diplomatic Transcription</button>";
+  return "$button<div id = 'tei_body' class = 'common_tei reading_tei'>" . $output . "</div>";
 }
