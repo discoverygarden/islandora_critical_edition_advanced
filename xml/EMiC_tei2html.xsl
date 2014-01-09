@@ -25,7 +25,7 @@
   <!-- Template: attributes
        Adds class attribute and data-* attributes from the source tag. -->
   <xsl:template name="attributes">
-    <!-- Attribute's who's values should be CSS classes -->
+    <!-- Attribute's whose values should be CSS classes -->
     <xsl:variable name="attributes-as-classes" select="('rend', 'place')"/>
     <!-- Builds the classes variable -->
     <xsl:variable name="classes">
@@ -120,9 +120,9 @@
         <xsl:apply-templates mode="above-line" select="descendant::*[@place='superlinear']"/>
       </div>
     </xsl:if>
-    <xsl:if test="child::text() or descendant::*[@place != 'sublinear' or @place != 'superlinear' or not(@place) ] ">
+    <xsl:if test="child::text() or descendant::*[(@place != 'sublinear' and @place != 'superlinear') or not(@place) ] ">
       <div class = "in-line">
-        <xsl:apply-templates mode="in-line" select="child::text() | descendant::*[@place != 'sublinear' or @place != 'superlinear' or not(@place)]"/>
+        <xsl:apply-templates mode="in-line" select="child::text() | descendant::*[(@place != 'sublinear' and @place != 'superlinear') or not(@place)]"/>
       </div>  
     </xsl:if>
     <xsl:if test="descendant::*[@place='sublinear']">
@@ -136,6 +136,15 @@
     <span>
       <xsl:call-template name="attributes"/>
       <xsl:apply-templates mode="#current"/>
+    </span>
+  </xsl:template>
+  <xsl:template match="*" mode="in-line">
+    <span>
+      <xsl:call-template name="attributes"/>
+      <xsl:if test="self::node()[(@place != 'sublinear' and @place != 'superlinear') or not(@place)]">
+        <xsl:apply-templates mode="#current"/>
+      </xsl:if>
+      
     </span>
   </xsl:template>
   <xsl:template match="text()" mode="#all">
