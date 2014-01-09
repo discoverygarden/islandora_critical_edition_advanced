@@ -54,7 +54,7 @@ function islandora_critical_edition_advanced_consolidate_tei_form_submit(array $
   $batch = array(
     'title' => t('Consolidating TEI from TEI-RDF Page Objects'),
     'file' => drupal_get_path('module', 'islandora_critical_edition_advanced') . '/includes/consolidate_tei.form.inc',
-    'progress_message' => t('@current of @total pages conslidated.', array('@total' => count($pages))),
+    'progress_message' => t('@current of @total pages consolidated.', array('@total' => count($pages))),
     'finished' => 'islandora_critical_edition_advanced_consolidate_tei_batch_finished',
     'operations' => array(),
   );
@@ -114,7 +114,7 @@ function islandora_critical_edition_advanced_update_tei_datastream_batch_operati
 }
 
 /**
- * Report on the success/failure of the conslidate batch process.
+ * Report on the success/failure of the consolidate batch process.
  *
  * Also update the datastream with the results.
  */

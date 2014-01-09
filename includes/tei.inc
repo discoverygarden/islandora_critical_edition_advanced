@@ -81,11 +81,19 @@ function islandora_critical_edition_advanced_transform_tei_datastream_to_html($p
   $xslt_path = url("{$module_path}/xml/$xslt", array('absolute' => TRUE));
 
   $xml = file_get_contents("$tomcat_url/saxon/SaxonServlet?source=$xml_path&style=$xslt_path&clear-stylesheet-cache=yes");
+  if (!$xml) {
+    drupal_set_message(t('No xml found'));
+    return;
+  }
   $sxml = @new SimpleXMLElement($xml);
   $body = "";
   if (!empty($sxml->body)) {
     foreach ($sxml->body->children() as $child) {
-      $body .= $child->asXML();
+      $contents = (string) $child;
+      // Empty nodes give self-closing divs, which breaks HTML.
+      if ($contents) {
+        $body .= $child->asXML();
+      }
     }
   }
   $output = $body ? $body : $xml;
