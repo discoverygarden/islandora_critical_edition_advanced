@@ -685,10 +685,7 @@ var CriticalEditionViewer = {
 					    	$jq("#page_choose :selected[true]", window.frames[0].document).attr('selected',false);
 					    	$jq("#page_choose option[value="+page+"]", window.frames[0].document).attr('selected',true);
 					    	CriticalEditionViewer.cwrc_params.position = $jq('#page_choose :selected', window.frames[0].document).attr('value');
-					    	document.getElementById('viewer_iframe').contentWindow['PID'] = CriticalEditionViewer.cwrc_params.pages[ CriticalEditionViewer.cwrc_params.position];
-					    	
-					    	CriticalEditionViewer.Viewer.get_page_transformed_tei();
-					    	
+					    	document.getElementById('viewer_iframe').contentWindow['PID'] = CriticalEditionViewer.cwrc_params.pages[ CriticalEditionViewer.cwrc_params.position];	
 					    	CriticalEditionViewer.cwrc_writer_helper.Writer.load_next_anno_page();
 					    	//~~~
 					    	$jq("#navi").remove();

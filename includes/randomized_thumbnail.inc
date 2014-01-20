@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Function to add thumbnail to critical edition.
@@ -13,8 +14,8 @@
 function islandora_critical_edition_advanced_add_thumbnail($form_state) {
   $path = drupal_get_path('module', 'islandora_critical_edition_advanced');
   $fedora_object = $form_state['islandora']['objects'][0];
-  $exclude_list = array(".", "..", ".DS_Store");
-  $image_dir = "$path/thumbnails/";
+  $exclude_list = array(".", "..", ".DS_Store", "scaled");
+  $image_dir = "$path/thumbnails";
   if (!is_dir($image_dir)) {
     return;
   }
@@ -24,10 +25,36 @@ function islandora_critical_edition_advanced_add_thumbnail($form_state) {
     return;
   }
   $range = count($images) - 1;
-  $thumbnail = $image_dir . $images[mt_rand(0, $range)];
+  $image = $images[mt_rand(0, $range)];
+  $thumbnail = "$image_dir/scaled/thumbnail_$image";
+  if (!is_file("$image_dir/scaled/thumbnail_$image")) {
+    $success = islandora_critical_edition_advanced_create_thumbnail("$image_dir", $image);
+    if (!$success) {
+      $thumbnail = "$image_dir/thumbnail_$image";
+    }
+  }
+
   $tn = $fedora_object->constructDatastream('TN');
   $tn->label = 'Thumbnail';
   $tn->mimetype = 'image/jpg';
   $tn->setContentFromFile($thumbnail);
   $fedora_object->ingestDatastream($tn);
+}
+
+/**
+ * Creates and stores thumbnailed image.
+ *
+ * @param String $file_dir
+ *   Directory holding original image
+ * @param String $image
+ *   Filename of image being thumbnailed
+ *
+ * @return Boolean
+ *   Success status
+ */
+function islandora_critical_edition_advanced_create_thumbnail($file_dir, $image) {
+  $imagick = new Imagick("$file_dir/$image");
+  $imagick->thumbnailimage(100, NULL);
+  $imagick->setimagefilename("$file_dir/scaled/thumbnail_$image");
+  return $imagick->writeimage();
 }
