@@ -20,6 +20,9 @@ function islandora_critical_edition_advanced_add_thumbnail($form_state) {
   if (!is_dir($image_dir)) {
     return;
   }
+  if (!is_dir("$image_dir/scaled")) {
+    mkdir("$image_dir/scaled");
+  }
   $images = array_values(array_diff(scandir($image_dir), $exclude_list));
   $count = count($images);
   if ($count == 0) {
@@ -27,8 +30,8 @@ function islandora_critical_edition_advanced_add_thumbnail($form_state) {
   }
   $range = count($images) - 1;
   $image = $images[mt_rand(0, $range)];
-  $thumbnail = "$image_dir/scaled/$thumbnail_size" . "_$image";
-  if (!is_file("$image_dir/scaled/$thumbnail_size" . "_$image")) {
+  $thumbnail = "$image_dir/scaled/{$thumbnail_size}_{$image}";
+  if (!is_file("$image_dir/scaled/{$thumbnail_size}_{$image}")) {
     $success = islandora_critical_edition_advanced_create_thumbnail("$image_dir", $image, $thumbnail_size);
     if (!$success) {
       $thumbnail = "$image_dir/$image";
@@ -56,6 +59,6 @@ function islandora_critical_edition_advanced_add_thumbnail($form_state) {
 function islandora_critical_edition_advanced_create_thumbnail($file_dir, $image, $thumbnail_size) {
   $imagick = new Imagick("$file_dir/$image");
   $imagick->thumbnailimage($thumbnail_size, NULL);
-  $imagick->setimagefilename("$file_dir/scaled/$thumbnail_size" . "_$image");
+  $imagick->setimagefilename("$file_dir/scaled/{$thumbnail_size}_{$image}");
   return $imagick->writeimage();
 }

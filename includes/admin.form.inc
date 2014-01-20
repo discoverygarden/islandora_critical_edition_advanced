@@ -53,7 +53,7 @@ function islandora_critical_edition_admin_settings_form(array $form, array &$for
   );
   $form['critical_edition_thumbnail_size'] = array(
     '#title' => t("Scaled size of Critical Edition thumbnail"),
-    '#description' => t("This will alter the size of new thumbnails only.  Existing thumbnails will retain their current size."),
+    '#description' => t("This will alter the size of new thumbnails only. !break Existing thumbnails will retain their current size.", array("!break" => '<br />')),
     '#type' => 'textfield',
     '#size' => 6,
     '#default_value' => variable_get('critical_edition_thumbnail_size', 150),
@@ -61,9 +61,9 @@ function islandora_critical_edition_admin_settings_form(array $form, array &$for
   $form['apparatus_streams'] = array(
     '#type' => 'textarea',
     '#title' => t('Apparatus Components'),
-    '#description' => t("DSID - Title to populate the Critical Apparatus. ie  EDITORIAL_INTRODUCTION ~ Editorial Introduction <br /> 
-                       DSID's must begin and end with a letter and may contain only letters and underscores </br />
-                       DSID's must be separated from Titles with tildes, and DSID - Title pairs must be separated by commas"),
+    '#description' => t("DSID - Title to populate the Critical Apparatus. ie  EDITORIAL_INTRODUCTION ~ Editorial Introduction !break 
+                       DSID's must begin and end with a letter and may contain only letters and underscores !break
+                       DSID's must be separated from Titles with tildes, and DSID - Title pairs must be separated by commas", array("!break" => '<br />')),
     '#default_value' => $default_stream_text,
   );
   $form['reset'] = array(
