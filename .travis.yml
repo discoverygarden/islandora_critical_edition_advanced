@@ -35,7 +35,7 @@ before_install:
   - ln -s $HOME/islandora_solution_pack_collection sites/all/modules/islandora_solution_pack_collection
   - ln -s $HOME/islandora_solr_search sites/all/modules/islandora_solr_search
   - ln -s $HOME/islandora_ocr sites/all/modules/islandora_ocr
-  - ln -s $HOME/islandora_ocr sites/all/modules/islandora_bookmark
+  - ln -s $HOME/islandora_bookmark sites/all/modules/islandora_bookmark
   - drush dl imagemagick
   - drush vset islandora_ocr_tesseract `which tesseract`
   - drush vset islandora_book_tesseract `which tesseract`
