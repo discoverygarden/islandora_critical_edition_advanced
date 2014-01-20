@@ -51,7 +51,13 @@ function islandora_critical_edition_admin_settings_form(array $form, array &$for
     '#description' => t("Mongo Database instance name"),
     '#default_value' => variable_get('islandora_critical_edition_mongo_db', "test"),
   );
-
+  $form['critical_edition_thumbnail_size'] = array(
+    '#title' => t("Scaled size of Critical Edition thumbnail"),
+    '#description' => t("This will alter the size of new thumbnails only.  Existing thumbnails will retain their current size."),
+    '#type' => 'textfield',
+    '#size' => 6,
+    '#default_value' => variable_get('critical_edition_thumbnail_size', 150),
+  );
   $form['apparatus_streams'] = array(
     '#type' => 'textarea',
     '#title' => t('Apparatus Components'),

@@ -16,6 +16,7 @@ function islandora_critical_edition_advanced_add_thumbnail($form_state) {
   $fedora_object = $form_state['islandora']['objects'][0];
   $exclude_list = array(".", "..", ".DS_Store", "scaled");
   $image_dir = "$path/thumbnails";
+  $thumbnail_size = variable_get('critical_edition_thumbnail_size', 175);
   if (!is_dir($image_dir)) {
     return;
   }
@@ -26,11 +27,11 @@ function islandora_critical_edition_advanced_add_thumbnail($form_state) {
   }
   $range = count($images) - 1;
   $image = $images[mt_rand(0, $range)];
-  $thumbnail = "$image_dir/scaled/thumbnail_$image";
-  if (!is_file("$image_dir/scaled/thumbnail_$image")) {
-    $success = islandora_critical_edition_advanced_create_thumbnail("$image_dir", $image);
+  $thumbnail = "$image_dir/scaled/$thumbnail_size" . "_$image";
+  if (!is_file("$image_dir/scaled/$thumbnail_size" . "_$image")) {
+    $success = islandora_critical_edition_advanced_create_thumbnail("$image_dir", $image, $thumbnail_size);
     if (!$success) {
-      $thumbnail = "$image_dir/thumbnail_$image";
+      $thumbnail = "$image_dir/$image";
     }
   }
 
@@ -52,9 +53,9 @@ function islandora_critical_edition_advanced_add_thumbnail($form_state) {
  * @return Boolean
  *   Success status
  */
-function islandora_critical_edition_advanced_create_thumbnail($file_dir, $image) {
+function islandora_critical_edition_advanced_create_thumbnail($file_dir, $image, $thumbnail_size) {
   $imagick = new Imagick("$file_dir/$image");
-  $imagick->thumbnailimage(100, NULL);
-  $imagick->setimagefilename("$file_dir/scaled/thumbnail_$image");
+  $imagick->thumbnailimage($thumbnail_size, NULL);
+  $imagick->setimagefilename("$file_dir/scaled/$thumbnail_size" . "_$image");
   return $imagick->writeimage();
 }
