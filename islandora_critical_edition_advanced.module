@@ -4,6 +4,7 @@
  * @file
  * Add advanced data modeling options to Islandora Critical Editions.
  */
+
 define('ISLANDORA_CRITICAL_EDITION_ADVANCED_MANAGE_CONTAINER', 'manage critical edition');
 define('ISLANDORA_CRITICAL_EDITION_ADVANCED_CREATE', 'create critical editions');
 define('ISLANDORA_CRITICAL_EDITION_ADVANCED_READ', 'read critical editions');
@@ -610,7 +611,7 @@ function islandora_critical_edition_advanced_preprocess_islandora_critical_editi
             'genre' => TRUE,
             'content' => TRUE,
             'context' => TRUE,
-        )));
+          )));
         $markup = $body;
         if ($element != 'versions') {
           $pager = theme("islandora_critical_edition_advanced_aparatus_pager", array(
@@ -643,15 +644,15 @@ function islandora_critical_edition_advanced_preprocess_islandora_critical_editi
           '#title' => $aparatus_datastreams[$element],
           '#markup' => theme(
               'islandora_critical_edition_advanced_critical_aparatus', array(
-            'islandora_object' => $variables['islandora_object'],
-            'text_body' => (isset($to_construct[$element]) ? $to_construct[$element] : ""),
-            'text_header' => $aparatus_datastreams[$element],
-            'text_pager' => theme("islandora_critical_edition_advanced_aparatus_pager", array(
+                'islandora_object' => $variables['islandora_object'],
+                'text_body' => (isset($to_construct[$element]) ? $to_construct[$element] : ""),
+                'text_header' => $aparatus_datastreams[$element],
+                'text_pager' => theme("islandora_critical_edition_advanced_aparatus_pager", array(
               'islandora_object' => $variables['islandora_object'],
               'tab_previous' => (isset($construct_keys[$entry]) ? substr($aparatus_datastreams[$construct_keys[$entry]], 0, 16) : "_blank_"),
               'tab_next' => (isset($construct_keys[$entry + 2]) ? substr($aparatus_datastreams[$construct_keys[$entry + 2]], 0, 16) : "_blank_"),
             )),
-          )),
+              )),
         );
       }
     }
@@ -1395,7 +1396,7 @@ function islandora_critical_edition_advanced_form_islandora_bookmark_admin_setti
   $form['create_user_default_lists']['#disabled'] = TRUE;
   $form['create_user_default_lists']['#default_value'] = TRUE;
   $form['default_list_name']['#disabled'] = TRUE;
-  $form['default_list_name']['#default_value'] = t('@username\'s Workbench');
+  $form['default_list_name']['#default_value'] = t("@username's Workbench");
 }
 
 /**

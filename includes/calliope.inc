@@ -381,7 +381,7 @@ function islandora_calliope_find_mvd($query) {
  * @param array $newmvd
  *   All paramaters to build new MVD
  *
- * @return Boolean
+ * @return bool
  *   Success indicator
  */
 function islandora_calliope_write_mvd($newmvd) {

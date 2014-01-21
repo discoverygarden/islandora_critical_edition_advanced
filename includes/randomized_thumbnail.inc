@@ -53,7 +53,7 @@ function islandora_critical_edition_advanced_add_thumbnail($form_state) {
  * @param String $image
  *   Filename of image being thumbnailed
  *
- * @return Boolean
+ * @return bool
  *   Success status
  */
 function islandora_critical_edition_advanced_create_thumbnail($file_dir, $image, $thumbnail_size) {
