@@ -4,6 +4,7 @@
  * @file
  * Add advanced data modeling options to Islandora Critical Editions.
  */
+
 define('ISLANDORA_CRITICAL_EDITION_ADVANCED_MANAGE_CONTAINER', 'manage critical edition');
 define('ISLANDORA_CRITICAL_EDITION_ADVANCED_CREATE', 'create critical editions');
 define('ISLANDORA_CRITICAL_EDITION_ADVANCED_READ', 'read critical editions');
@@ -344,13 +345,7 @@ function islandora_critical_edition_advanced_build_version_media_view($reference
 
   if ($variables['content_model'] == 'islandora:sp-audioCModel') {
     if (isset($reference_object['PROXY_MP3'])) {
-      $audio_url = url("islandora/object/{$reference_object->id}/datastream/PROXY_MP3/view", array('absolute' => TRUE));
-      $audio_params = array(
-        "pid" => $reference_object->id,
-        "url" => $audio_url,
-        "mime" => 'audio/mpeg',
-        "width" => "100%",
-      );
+      $audio_params = islandora_critical_edition_advanced_get_audio_params($reference_object);
     }
     // Thumbnail.
     if (isset($reference_object['TN']) && islandora_datastream_access(ISLANDORA_VIEW_OBJECTS, $reference_object['TN'])) {
@@ -378,31 +373,7 @@ function islandora_critical_edition_advanced_build_version_media_view($reference
     }
   }
   if ($variables['content_model'] == 'islandora:sp_videoCModel') {
-    if (stristr($_SERVER['HTTP_USER_AGENT'], 'chrome') !== FALSE) {
-      $viewer_dsid = 'OGG';
-    }
-    else {
-      $viewer_dsid = 'MP4';
-    }
-
-    $video_params = array(
-      'pid' => $reference_object->id,
-    );
-    // Video player.
-    if (isset($reference_object[$viewer_dsid]) && islandora_datastream_access(FEDORA_VIEW_OBJECTS, $reference_object[$viewer_dsid])) {
-      $video_url = url("islandora/object/{$reference_object->id}/datastream/$viewer_dsid/view");
-      $video_params += array(
-        'mime' => 'video/mp4',
-        'url' => $video_url,
-      );
-    }
-    // Thumbnail.
-    if (isset($reference_object['TN']) && islandora_datastream_access(FEDORA_VIEW_OBJECTS, $reference_object['TN'])) {
-      $video_params += array(
-        'tn' => url("islandora/object/{$reference_object->id}/datastream/TN/view", array('absolute' => TRUE)),
-      );
-    }
-
+    $video_params = islandora_critical_edition_advanced_get_video_params($reference_object);
     $viewer = islandora_get_viewer($video_params, 'islandora_video_viewers', $reference_object);
     $variables['params'] = $video_params;
     if ($viewer) {
@@ -610,7 +581,7 @@ function islandora_critical_edition_advanced_preprocess_islandora_critical_editi
             'genre' => TRUE,
             'content' => TRUE,
             'context' => TRUE,
-        )));
+          )));
         $markup = $body;
         if ($element != 'versions') {
           $pager = theme("islandora_critical_edition_advanced_aparatus_pager", array(
@@ -643,15 +614,15 @@ function islandora_critical_edition_advanced_preprocess_islandora_critical_editi
           '#title' => $aparatus_datastreams[$element],
           '#markup' => theme(
               'islandora_critical_edition_advanced_critical_aparatus', array(
-            'islandora_object' => $variables['islandora_object'],
-            'text_body' => (isset($to_construct[$element]) ? $to_construct[$element] : ""),
-            'text_header' => $aparatus_datastreams[$element],
-            'text_pager' => theme("islandora_critical_edition_advanced_aparatus_pager", array(
+                'islandora_object' => $variables['islandora_object'],
+                'text_body' => (isset($to_construct[$element]) ? $to_construct[$element] : ""),
+                'text_header' => $aparatus_datastreams[$element],
+                'text_pager' => theme("islandora_critical_edition_advanced_aparatus_pager", array(
               'islandora_object' => $variables['islandora_object'],
               'tab_previous' => (isset($construct_keys[$entry]) ? substr($aparatus_datastreams[$construct_keys[$entry]], 0, 16) : "_blank_"),
               'tab_next' => (isset($construct_keys[$entry + 2]) ? substr($aparatus_datastreams[$construct_keys[$entry + 2]], 0, 16) : "_blank_"),
             )),
-          )),
+              )),
         );
       }
     }
@@ -1395,7 +1366,7 @@ function islandora_critical_edition_advanced_form_islandora_bookmark_admin_setti
   $form['create_user_default_lists']['#disabled'] = TRUE;
   $form['create_user_default_lists']['#default_value'] = TRUE;
   $form['default_list_name']['#disabled'] = TRUE;
-  $form['default_list_name']['#default_value'] = t('@username\'s Workbench');
+  $form['default_list_name']['#default_value'] = t("@username's Workbench");
 }
 
 /**

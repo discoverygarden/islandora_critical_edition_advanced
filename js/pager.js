@@ -1,6 +1,5 @@
 (function($) {
   $('document').ready(function() {
-	  console.log($(".vertical-tabs-list").length);
 	  if($(".vertical-tabs-list").children().length > 1) {
 	    $('.aparatus_tab_previous').click(function(e) {
 	    	e.preventDefault();

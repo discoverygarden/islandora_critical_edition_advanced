@@ -85,7 +85,7 @@ function islandora_critical_edition_advanced_update_ocr_batch_operation($page) {
 /**
  * Report success.
  *
- * @param boolean $success
+ * @param clear $success
  *   Success of batch job
  * @param array $results
  *   Drupal batch results
