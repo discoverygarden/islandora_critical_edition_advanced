@@ -22,7 +22,7 @@ A small jQuery plugin for zooming images on mouseover or mousedown. See the [pro
 
 ### v1.7.6 - 2013/6/24
 * Fixed misnamed onZoomOut callback
-
+  
 ### v1.7.5 - 2013/6/19
 * Fixed a bug with absolutely or fixed position target elements
 * Set the value of `this` to be zoom-image element for the onZoomIn and onZoomOut callbacks
@@ -33,7 +33,7 @@ A small jQuery plugin for zooming images on mouseover or mousedown. See the [pro
 	$('.example').trigger('zoom.destroy');
 * Added onZoomIn and onZoomOut callbacks
 
-### v1.7.3 - 2013/6/10 
+### v1.7.3 - 2013/6/10
 * Fixing mistake made in previous commit
 
 ### v1.7.2 - 2013/6/6

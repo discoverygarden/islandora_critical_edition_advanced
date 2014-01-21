@@ -1,4 +1,4 @@
-This license agreement refers to jQuery EasyUI software - Commercial License. 
+This license agreement refers to jQuery EasyUI software - Commercial License.
 
 jQuery EasyUI Team grants to you a limited, non-transferable and non-exclusive right to use, royalty-free, copy and modify the software.
 
