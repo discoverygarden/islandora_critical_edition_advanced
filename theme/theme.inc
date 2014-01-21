@@ -67,14 +67,9 @@ function islandora_critical_edition_preprocess_islandora_critical_media_object(a
   $variables['anno_list_pane'] = theme('islandora_anno_list_pane');
   $variables['anno_img_pane'] = theme('islandora_anno_image_pane');
   if ($variables['content_model'] == 'islandora:sp-audioCModel') {
+    $audio_params = islandora_critical_edition_advanced_get_audio_params($reference_object);
     if (isset($reference_object['PROXY_MP3'])) {
-      $audio_url = url("islandora/object/{$reference_object->id}/datastream/PROXY_MP3/view", array('absolute' => TRUE));
-      $audio_params = array(
-        "pid" => $reference_object->id,
-        "url" => $audio_url,
-        "mime" => 'audio/mpeg',
-        "width" => "100%",
-      );
+      $audio_params = islandora_critical_edition_advanced_get_audio_params($reference_object);
     }
     // Thumbnail.
     if (isset($reference_object['TN']) && islandora_datastream_access(ISLANDORA_VIEW_OBJECTS, $reference_object['TN'])) {
@@ -102,32 +97,7 @@ function islandora_critical_edition_preprocess_islandora_critical_media_object(a
     }
   }
   if ($variables['content_model'] == 'islandora:sp_videoCModel') {
-    if (stristr($_SERVER['HTTP_USER_AGENT'], 'chrome') !== FALSE) {
-      $viewer_dsid = 'OGG';
-    }
-    else {
-      $viewer_dsid = 'MP4';
-    }
-
-    $video_params = array(
-      'pid' => $reference_object->id,
-    );
-    // Video player.
-    if (isset($reference_object[$viewer_dsid]) && islandora_datastream_access(FEDORA_VIEW_OBJECTS, $reference_object[$viewer_dsid])) {
-      $video_url = url("islandora/object/{$reference_object->id}/datastream/$viewer_dsid/view");
-      $video_params += array(
-        'mime' => 'video/mp4',
-        'url' => $video_url,
-        'width' => '100%',
-      );
-    }
-    // Thumbnail.
-    if (isset($reference_object['TN']) && islandora_datastream_access(FEDORA_VIEW_OBJECTS, $reference_object['TN'])) {
-      $video_params += array(
-        'tn' => url("islandora/object/{$reference_object->id}/datastream/TN/view", array('absolute' => TRUE)),
-      );
-    }
-
+    $video_params = islandora_critical_edition_advanced_get_video_params($reference_object);
     $viewer = islandora_get_viewer($video_params, 'islandora_video_viewers', $reference_object);
     if ($viewer) {
       $variables['islandora_content'] = $viewer;

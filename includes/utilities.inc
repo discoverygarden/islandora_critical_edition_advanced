@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Utility functions for islandora_critical_editions_advanced.
@@ -79,6 +80,7 @@ function islandora_critical_get_related_transcriptions($versionable_object_pid) 
   }
   return $objects;
 }
+
 /**
  * Gets all Critical Editions to which this object is a member.
  *
@@ -297,7 +299,6 @@ function islandora_critical_edition_associate_tei_rdf_base_form($form, $form_sta
     ),
   );
 }
-
 
 /**
  * Creates a select table for choosing one of the provided objects.
@@ -535,4 +536,62 @@ function islandora_critical_edition_advanced_get_blank_tei($title) {
 EOD;
 
   return $tei;
+}
+
+/**
+ * Get audio params for jwplayer.
+ *
+ * @param AbstractObject $reference_object
+ *   object representing fedora audio object
+ *
+ * @return array
+ *   Associative array containing params.
+ */
+function islandora_critical_edition_advanced_get_audio_params($reference_object) {
+  $audio_url = url("islandora/object/{$reference_object->id}/datastream/PROXY_MP3/view", array('absolute' => TRUE));
+  $audio_params = array(
+    "pid" => $reference_object->id,
+    "url" => $audio_url,
+    "mime" => 'audio/mpeg',
+    "width" => "100%",
+  );
+  return $audio_params;
+}
+
+/**
+ * Get video params for jwplayer.
+ *
+ * @param AbstractObject $reference_object
+ *   object representing fedora audio object
+ *
+ * @return array
+ *   Associative array containing params.
+ */
+function islandora_critical_edition_advanced_get_video_params($reference_object) {
+  if (stristr($_SERVER['HTTP_USER_AGENT'], 'chrome') !== FALSE) {
+    $viewer_dsid = 'OGG';
+  }
+  else {
+    $viewer_dsid = 'MP4';
+  }
+
+  $video_params = array(
+    'pid' => $reference_object->id,
+  );
+  // Video player.
+  if (isset($reference_object[$viewer_dsid]) && islandora_datastream_access(FEDORA_VIEW_OBJECTS, $reference_object[$viewer_dsid])) {
+    $video_url = url("islandora/object/{$reference_object->id}/datastream/$viewer_dsid/view");
+    $video_params += array(
+      'mime' => 'video/mp4',
+      'url' => $video_url,
+      'width' => "100%",
+    );
+  }
+  // Thumbnail.
+  if (isset($reference_object['TN']) && islandora_datastream_access(FEDORA_VIEW_OBJECTS, $reference_object['TN'])) {
+    $video_params += array(
+      'tn' => url("islandora/object/{$reference_object->id}/datastream/TN/view", array('absolute' => TRUE)),
+    );
+  }
+  return $video_params;
 }
