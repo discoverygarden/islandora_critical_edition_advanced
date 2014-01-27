@@ -15,11 +15,11 @@ define('ISLANDORA_CRITICAL_EDITION_ADVANCED_DELETE', 'delete critical editions')
  * Implements hook_menu().
  */
 function islandora_critical_edition_advanced_menu() {
-  $items['admin/islandora/critical_edition'] = array(
-    'title' => 'Islandora Critical Edition',
+  $items['admin/islandora/critical_edition_advanced'] = array(
+    'title' => 'Islandora Critical Edition Advanced',
     'description' => 'Configure the Critical Edition Advanced Solution Pack.',
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('islandora_critical_edition_admin_settings_form'),
+    'page arguments' => array('islandora_critical_edition_advanced_admin_settings_form'),
     'access arguments' => array('administer site configuration'),
     'file' => 'includes/admin.form.inc',
     'type' => MENU_NORMAL_ITEM,
