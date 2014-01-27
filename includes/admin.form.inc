@@ -16,7 +16,7 @@
  * @return array
  *   The Drupal form definition.
  */
-function islandora_critical_edition_admin_settings_form(array $form, array &$form_state) {
+function islandora_critical_edition_advanced_admin_settings_form(array $form, array &$form_state) {
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/utilities');
   module_load_include('inc', 'islandora_critical_edition', 'includes/utilities');
   $default_streams = variable_get('critical_apparatus_streams', FALSE);
@@ -61,7 +61,7 @@ function islandora_critical_edition_admin_settings_form(array $form, array &$for
   $form['apparatus_streams'] = array(
     '#type' => 'textarea',
     '#title' => t('Apparatus Components'),
-    '#description' => t("DSID - Title to populate the Critical Apparatus. ie  EDITORIAL_INTRODUCTION ~ Editorial Introduction !break 
+    '#description' => t("DSID - Title to populate the Critical Apparatus. ie  EDITORIAL_INTRODUCTION ~ Editorial Introduction !break
                        DSID's must begin and end with a letter and may contain only letters and underscores !break
                        DSID's must be separated from Titles with tildes, and DSID - Title pairs must be separated by commas", array("!break" => '<br />')),
     '#default_value' => $default_stream_text,
