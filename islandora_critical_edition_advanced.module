@@ -1099,9 +1099,9 @@ function islandora_critical_edition_advanced_object_management_access($object, $
  */
 function islandora_critical_edition_advanced_islandora_xml_form_builder_form_associations() {
   return array(
-    'critical_edition_form_mods' => array(
+    'advanced_critical_edition_form_mods' => array(
       'content_model' => 'islandora:criticalEditionContainerCModel',
-      'form_name' => 'Islandora Critical Edition Mods Form',
+      'form_name' => 'Advanced Islandora Critical Edition Mods Form',
       'dsid' => 'MODS',
       'title_field' => array('titleInfo', 'title'),
       'transform' => 'mods_to_dc.xsl',
