@@ -172,8 +172,8 @@
   <!-- These are execptional cases that override the defaults of slurp_all_MODS_to_solr.xslt.
        Basically we want to have Genre and typeOfResource to be index as strings so they can be sorted.
 
-       Object Type: mods:mods/mods:typeOfResource
-       Genre: mods:mods/mods:genre
+       Object Type: //mods:mods[1]/mods:typeOfResource
+       Genre: //mods:mods[1]/mods:genre
     -->
   <xsl:template match="mods:typeOfResource | mods:genre" mode="slurping_MODS" priority="2">
     <xsl:param name="prefix"/>
