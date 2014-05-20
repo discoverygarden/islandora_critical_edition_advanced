@@ -992,6 +992,24 @@ function islandora_critical_edition_advanced_islandora_required_objects(Islandor
   $datastream->mimetype = 'image/png';
   $datastream->setContentFromFile("$module_path/images/folder.png", FALSE);
   $critical_edition_collection->ingestDatastream($datastream);
+  // Featured Edition Collections.
+  $featured_critical_edition_collection = $connection->repository->constructObject('islandora:featured_collections');
+  $featured_critical_edition_collection->owner = 'fedoraAdmin';
+  $featured_critical_edition_collection->label = 'Featured Editions';
+  $featured_critical_edition_collection->models = 'islandora:collectionCModel';
+  $featured_critical_edition_collection->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOfCollection', 'islandora:root');
+  // Collection Policy Datastream.
+  $datastream = $featured_critical_edition_collection->constructDatastream('COLLECTION_POLICY', 'M');
+  $datastream->label = 'COLLECTION_POLICY';
+  $datastream->mimetype = 'text/xml';
+  $datastream->setContentFromFile("{$module_path}/xml/islandora_critical_edition_collection_policy.xml", FALSE);
+  $featured_critical_edition_collection->ingestDatastream($datastream);
+  // TN Datastream.
+  $datastream = $featured_critical_edition_collection->constructDatastream('TN', 'M');
+  $datastream->label = 'TN';
+  $datastream->mimetype = 'image/png';
+  $datastream->setContentFromFile("$module_path/images/folder.png", FALSE);
+  $featured_critical_edition_collection->ingestDatastream($datastream);
   return array(
     'islandora_critical_edition_advanced' => array(
       'title' => 'Islandora critical editions - advanced',
@@ -1002,6 +1020,7 @@ function islandora_critical_edition_advanced_islandora_required_objects(Islandor
         $transcription_content_model,
         $source_collection,
         $critical_edition_collection,
+	$featured_critical_edition_collection,
       ),
     ),
   );
