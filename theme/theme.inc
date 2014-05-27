@@ -927,7 +927,7 @@ function islandora_critical_edition_container_collation_table_operations_permiss
 /**
  * Wraps strings in span classes.
  *
- * @param String $input
+ * @param string $input
  *   Input string
  * @param Integer $character_break
  *   Length of teaser string to be displayed
