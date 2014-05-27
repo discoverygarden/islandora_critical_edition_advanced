@@ -21,6 +21,8 @@ before_install:
   - git clone -b 7.x git://github.com/Islandora/islandora_solr_search.git
   - git clone -b 7.x git://github.com/Islandora/islandora_ocr.git
   - git clone -b 7.x git://github.com/Islandora/islandora_bookmark.git
+  - git clone -b 7.x git://github.com/discoverygarden/islandora_solr_metadata.git
+
   - export ISLANDORA_DIR=$HOME/islandora
   - $HOME/islandora/tests/scripts/travis_setup.sh
   - sudo sh $HOME/islandora_solution_pack_book/tests/scripts/adore.sh
@@ -34,6 +36,7 @@ before_install:
   - ln -s $HOME/islandora_solution_pack_entities sites/all/modules/islandora_solution_pack_entities
   - ln -s $HOME/islandora_solution_pack_collection sites/all/modules/islandora_solution_pack_collection
   - ln -s $HOME/islandora_solr_search sites/all/modules/islandora_solr_search
+  - ln -s $HOME/islandora_solr_metadata sites/all/modules/islandora_solr_metadata
   - ln -s $HOME/islandora_ocr sites/all/modules/islandora_ocr
   - ln -s $HOME/islandora_bookmark sites/all/modules/islandora_bookmark
   - drush dl imagemagick
