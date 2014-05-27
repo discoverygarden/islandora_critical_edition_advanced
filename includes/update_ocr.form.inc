@@ -36,6 +36,7 @@ function islandora_critical_edition_advanced_update_ocr_form(array $form, array 
 
 /**
  * Extract text from edited pages and persit that data back to page level OCR.
+ *
  * @param array $form
  *   The Drupal form definition.
  * @param array $form_state

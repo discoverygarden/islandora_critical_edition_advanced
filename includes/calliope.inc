@@ -48,9 +48,9 @@ function islandora_calliope_create_mongo_grid() {
 /**
  * Adds Transcription record to Mongo.
  *
- * @param string $pid
+ * @param String $pid
  *   PID of Transcription Object
- * @param string $critical_edition
+ * @param String $critical_edition
  *   Optional project associated with transcription
  */
 function islandora_calliope_write_file($pid, $critical_edition = '') {
@@ -141,16 +141,16 @@ function islandora_calliope_delete_mvd($id) {
  *
  * @global type $base_url
  *
- * @param string $critical_edition
+ * @param String $critical_edition
  *   MVD's Project
- * @param string $mvd_title
+ * @param String $mvd_title
  *   Title for MVD
  * @param array $resource_ids
  *   Array of transcriptions to build MVD
- * @param string $filter
+ * @param String $filter
  *   Optional Filter
  *
- * @return string
+ * @return String
  *   Status message
  */
 function islandora_calliope_create_mvd($critical_edition, $mvd_title, $mvd_description, $resource_ids = NULL, $filter = "Empty") {
@@ -261,7 +261,7 @@ function islandora_calliope_create_mvd($critical_edition, $mvd_title, $mvd_descr
 /**
  * Returns Mongo file associated with pid.
  *
- * @param string $pid
+ * @param String $pid
  *   PID of Fedora object with associated Mongo file
  *
  * @return MongoGridFSFile
@@ -302,7 +302,7 @@ function islandora_calliope_get_file($pid) {
  *
  * @param AbstractObject $critical_edition_object
  *   Object representing Critical Edition
- * @param string $sort
+ * @param String $sort
  *   Sort type
  * @param int $limit
  *   Size of resultset
