@@ -1109,7 +1109,7 @@ function islandora_critical_edition_advanced_object_management_access($object, $
       break;
   }
 
-  return $access && islandora_object_access_callback(FEDORA_VIEW_OBJECTS, $object);
+  return $access && islandora_object_access_callback(ISLANDORA_VIEW_OBJECTS, $object);
 }
 
 /**
