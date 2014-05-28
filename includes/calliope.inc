@@ -16,7 +16,7 @@ function islandora_calliope_create_mongo_db() {
   $dbport = variable_get('islandora_critical_edition_mongo_port', "27017");
   $dbname = variable_get('islandora_critical_edition_mongo_db', "test");
   try {
-    $mongo = new Mongo("$dbhost:$dbport");
+    $mongo = new MongoClient("$dbhost:$dbport");
     $db = $mongo->selectDB($dbname);
   }
   catch (Exception $e) {
@@ -211,7 +211,7 @@ function islandora_calliope_create_mvd($critical_edition, $mvd_title, $mvd_descr
   // Get back status or response.
   $response = curl_exec($ch);
   $err = curl_errno($ch);
-
+dsm($response);
   $error = curl_error($ch);
   curl_close($ch);
 
