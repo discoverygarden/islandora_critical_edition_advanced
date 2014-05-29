@@ -388,7 +388,7 @@ function islandora_calliope_write_mvd($newmvd) {
   $newobj = array('_revisions' => array($newmvd), 'metadata' => $newmvd);
   $db = islandora_calliope_create_mongo_db();
   $coll = $db->selectCollection('mvds');
-  $inserted = $coll->insert($newobj, array('safe' => TRUE));
+  $inserted = $coll->insert($newobj, array('w' => 1));
   if ($inserted) {
     $success = TRUE;
   }

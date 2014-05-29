@@ -624,7 +624,8 @@ function islandora_critical_edition_advanced_ingest_versionable_object_tei_rdf_p
   foreach ($dsids as $dsid) {
     if (isset($page[$dsid])) {
       $datastream = $edition->constructDatastream($dsid, 'M');
-      $file = file_save_data('', 'temporary://datastream');
+      $unique_id = uniqid();
+      $file = file_save_data('', "temporary://${unique_id}_datastream_$DSID");
       $filename = drupal_realpath($file->uri);
       // Since the file must persist across multiple requests, we must not
       // delete it, until it has successfully been ingested.
@@ -666,8 +667,8 @@ function islandora_critical_edition_advanced_ingest_versionable_object_tei_rdf_t
   }
   $context['sandbox']['progress']++;
   $context['message'] = t('Converting page @page of @total into a TEI ...', array(
-                          '@page' => $context['sandbox']['progress'],
-                          '@total' => $context['sandbox']['total']));
+    '@page' => $context['sandbox']['progress'],
+    '@total' => $context['sandbox']['total']));
   if ($context['sandbox']['progress'] != $context['sandbox']['total']) {
     $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['total'];
   }
