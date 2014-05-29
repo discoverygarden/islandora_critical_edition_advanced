@@ -1154,7 +1154,8 @@ function islandora_critical_edition_advanced_islandora_xml_form_builder_forms() 
 function islandora_critical_edition_advanced_form_islandora_delete_object_form_alter(array &$form, array &$form_state) {
   if (isset($_GET['q'])) {
     $url = $_GET['q'];
-    $critical_edition_pid = end(explode('/', $url));
+    $exploded = explode('/', $url);
+    $critical_edition_pid = end($exploded);
   }
   $url = $_GET['q'];
   module_load_include('inc', 'islandora_critical_edition_advanced', 'includes/utilities');
