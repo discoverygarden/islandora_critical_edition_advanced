@@ -624,6 +624,8 @@ function islandora_critical_edition_advanced_ingest_versionable_object_tei_rdf_p
   foreach ($dsids as $dsid) {
     if (isset($page[$dsid])) {
       $datastream = $edition->constructDatastream($dsid, 'M');
+      $unique_id = uniqid();
+      $file = file_save_data('', "temporary://$unique_id_datastream_$DSID");
       $file = file_save_data('', 'temporary://datastream');
       $filename = drupal_realpath($file->uri);
       // Since the file must persist across multiple requests, we must not
