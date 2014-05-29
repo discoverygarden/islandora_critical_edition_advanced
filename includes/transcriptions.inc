@@ -193,7 +193,7 @@ function islandora_critical_edition_create_transcription_form_submit(array $form
   }
 
   if ($content_source == 'none') {
-    $transcription_datastream->setContentFromString(t('No transcription entered.'));
+    $transcription_datastream->setContentFromstring(t('No transcription entered.'));
   }
 
   $transcription->ingestDatastream($transcription_datastream);
@@ -375,7 +375,7 @@ function islandora_critical_transcription_edit_form_submit($form, $form_state) {
       $transcription_datastream = $transcription_object->constructDatastream($datastream_id, $control_group);
       $transcription_datastream->mimetype = 'text/plain';
       $transcription_datastream->label = 'Transcription';
-      $transcription_datastream->setContentFromString($content);
+      $transcription_datastream->setContentFromstring($content);
       $success = $transcription_object->ingestDatastream($transcription_datastream);
     }
   }
@@ -393,7 +393,7 @@ function islandora_critical_transcription_edit_form_submit($form, $form_state) {
  *
  * @param AbstractObject $tei_rdf_object
  *   Object representing TEI-RDF object
- * @param String $versionable_object_pid
+ * @param string $versionable_object_pid
  *   PID of Versionable Object
  * @param AbstractObject $transcription
  *   Object representing Transcription Object
@@ -437,7 +437,7 @@ function add_derived_transcription($tei_rdf_object, $versionable_object_pid, $tr
  *
  * @param AbstractObject $object
  *   Object representing page
- * @param String $filename
+ * @param string $filename
  *   Temp file to hold data
  */
 function islandora_critical_edition_build_text_file($object, $filename) {
@@ -455,7 +455,7 @@ function islandora_critical_edition_build_text_file($object, $filename) {
  *   Uningested object representing transcription
  * @param IslandoraFedoraDatastream $transcription_datastream
  *   Transcription datastream
- * @param String $filename
+ * @param string $filename
  *   file to be added
  */
 function islandora_transcription_file_add($transcription, $transcription_datastream, $filename) {
@@ -469,9 +469,9 @@ function islandora_transcription_file_add($transcription, $transcription_datastr
 /**
  * Populates transcription with current text from TEI-RDF object.
  *
- * @param String $tei_rdf_object_pid
+ * @param string $tei_rdf_object_pid
  *   PID of RDF-TEI Object
- * @param String $transcription_pid
+ * @param string $transcription_pid
  *   PID of Transcription Object being updated
  */
 function islandora_update_from_tei_rdf_object($tei_rdf_object_pid, $transcription_pid) {
@@ -507,7 +507,7 @@ function islandora_update_from_tei_rdf_object($tei_rdf_object_pid, $transcriptio
  *
  * @param AbstractObject $transcription
  *   Transcription Object
- * @param String $filename
+ * @param string $filename
  *   file to be added
  */
 function islandora_transcription_file_update($transcription, $filename) {
@@ -520,7 +520,7 @@ function islandora_transcription_file_update($transcription, $filename) {
  *
  * @param AbstractObject $versionable_object
  *   object representing enclising Versionable Object
- * @param String $label
+ * @param string $label
  *   Label for new Transcription
  *
  * @return AbsgtractObject
@@ -537,7 +537,7 @@ function islandora_critical_edition_advanced_build_transcription($versionable_ob
  *
  * @param AbstractObject $versionable_object
  *   object representing enclising Versionable Object
- * @param String $label
+ * @param string $label
  *   Label for new Transcription
  *
  * @return AbsgtractObject

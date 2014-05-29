@@ -1020,7 +1020,7 @@ function islandora_critical_edition_advanced_islandora_required_objects(Islandor
         $transcription_content_model,
         $source_collection,
         $critical_edition_collection,
-	$featured_critical_edition_collection,
+        $featured_critical_edition_collection,
       ),
     ),
   );
@@ -1031,7 +1031,7 @@ function islandora_critical_edition_advanced_islandora_required_objects(Islandor
  *
  * @param AbstractObject $object
  *   Object to be examined
- * @param String $context
+ * @param string $context
  *   Determines origin of function call
  *
  * @return bool
@@ -1110,7 +1110,7 @@ function islandora_critical_edition_advanced_object_management_access($object, $
       break;
   }
 
-  return $access && islandora_object_access_callback(FEDORA_VIEW_OBJECTS, $object);
+  return $access && islandora_object_access_callback(ISLANDORA_VIEW_OBJECTS, $object);
 }
 
 /**
@@ -1118,9 +1118,9 @@ function islandora_critical_edition_advanced_object_management_access($object, $
  */
 function islandora_critical_edition_advanced_islandora_xml_form_builder_form_associations() {
   return array(
-    'critical_edition_form_mods' => array(
+    'advanced_critical_edition_form_mods' => array(
       'content_model' => 'islandora:criticalEditionContainerCModel',
-      'form_name' => 'Islandora Critical Edition Mods Form',
+      'form_name' => 'Islandora Critical Edition Advanced Mods Form',
       'dsid' => 'MODS',
       'title_field' => array('titleInfo', 'title'),
       'transform' => 'mods_to_dc.xsl',

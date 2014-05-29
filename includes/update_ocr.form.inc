@@ -35,7 +35,7 @@ function islandora_critical_edition_advanced_update_ocr_form(array $form, array 
 }
 
 /**
- * Consolidate TEI-RDF Page objects into a TEI Datastream on the TEI-RDF object.
+ * Extract text from edited pages and persit that data back to page level OCR.
  *
  * @param array $form
  *   The Drupal form definition.
@@ -47,9 +47,9 @@ function islandora_critical_edition_advanced_update_ocr_form_submit(array $form,
   $tei_rdf = islandora_object_load($form_state['tei_rdf']);
   $pages = islandora_paged_content_get_pages($tei_rdf);
   $batch = array(
-    'title' => t('Consolidating TEI from TEI-RDF Page Objects'),
+    'title' => t('Extracting text from TEI-RDF Page Objects'),
     'file' => drupal_get_path('module', 'islandora_critical_edition_advanced') . '/includes/update_ocr.form.inc',
-    'progress_message' => t('@current of @total pages updated.', array('@total' => count($pages))),
+    'progress_message' => t('@current of @total pages harvested.', array('@total' => count($pages))),
     'finished' => 'islandora_critical_edition_advanced_update_ocr_batch_finished',
     'operations' => array(),
   );
@@ -72,14 +72,17 @@ function islandora_critical_edition_advanced_update_ocr_batch_operation($page) {
   $page = islandora_object_load($page);
   $rels = $page->relationships->get(ISLANDORA_RELS_EXT_URI, 'isEditionOf');
   $reference_object = islandora_object_load($rels[0]['object']['value']);
-  $content = $page['CWRC']->content;
-  $sxml = simplexml_load_string($content);
-  $body = $sxml->text->body->asXML();
-  $body = preg_replace("/<[lb|ab].*?\/>/", "\n", $body);
-  $body = preg_replace("/<\/line>/", "\n", $body);
-  $body = preg_replace("/<\/ab>/", "\n", $body);
-  $body = preg_replace("/<\/p>/", "\n", $body);
-  $reference_object['OCR']->content = strip_tags($body);
+  $cwrc = $page['CWRC']->content;
+  $sxml = simplexml_load_string($cwrc);
+  $content = $sxml->text->body;
+  if ($content) {
+    $body = $content->asXML();
+    $body = preg_replace("/<[lb|ab].*?\/>/", "\n", $body);
+    $body = preg_replace("/<\/line>/", "\n", $body);
+    $body = preg_replace("/<\/ab>/", "\n", $body);
+    $body = preg_replace("/<\/p>/", "\n", $body);
+    $reference_object['OCR']->content = strip_tags($body);
+  }
 }
 
 /**

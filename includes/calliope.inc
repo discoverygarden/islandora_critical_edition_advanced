@@ -16,7 +16,7 @@ function islandora_calliope_create_mongo_db() {
   $dbport = variable_get('islandora_critical_edition_mongo_port', "27017");
   $dbname = variable_get('islandora_critical_edition_mongo_db', "test");
   try {
-    $mongo = new Mongo("$dbhost:$dbport");
+    $mongo = new MongoClient("$dbhost:$dbport");
     $db = $mongo->selectDB($dbname);
   }
   catch (Exception $e) {
@@ -48,9 +48,9 @@ function islandora_calliope_create_mongo_grid() {
 /**
  * Adds Transcription record to Mongo.
  *
- * @param String $pid
+ * @param string $pid
  *   PID of Transcription Object
- * @param String $critical_edition
+ * @param string $critical_edition
  *   Optional project associated with transcription
  */
 function islandora_calliope_write_file($pid, $critical_edition = '') {
@@ -83,7 +83,7 @@ function islandora_calliope_write_file($pid, $critical_edition = '') {
     $storedfile = $grid->storeFile($real_path, array('metadata' => $metadata));
     $id = $storedfile->{'$id'};
     $grid->update(
-        array('_id' => new MongoId($id)), array('$set' => array('_resourceid' => $pid, 'filename' => $transcription_object->label)), array('safe' => TRUE));
+        array('_id' => new MongoId($id)), array('$set' => array('_resourceid' => $pid, 'filename' => $transcription_object->label)), array('w' => 1));
     unlink($filename);
   }
   catch (Exception $e) {
@@ -141,16 +141,16 @@ function islandora_calliope_delete_mvd($id) {
  *
  * @global type $base_url
  *
- * @param String $critical_edition
+ * @param string $critical_edition
  *   MVD's Project
- * @param String $mvd_title
+ * @param string $mvd_title
  *   Title for MVD
  * @param array $resource_ids
  *   Array of transcriptions to build MVD
- * @param String $filter
+ * @param string $filter
  *   Optional Filter
  *
- * @return String
+ * @return string
  *   Status message
  */
 function islandora_calliope_create_mvd($critical_edition, $mvd_title, $mvd_description, $resource_ids = NULL, $filter = "Empty") {
@@ -211,7 +211,6 @@ function islandora_calliope_create_mvd($critical_edition, $mvd_title, $mvd_descr
   // Get back status or response.
   $response = curl_exec($ch);
   $err = curl_errno($ch);
-
   $error = curl_error($ch);
   curl_close($ch);
 
@@ -261,7 +260,7 @@ function islandora_calliope_create_mvd($critical_edition, $mvd_title, $mvd_descr
 /**
  * Returns Mongo file associated with pid.
  *
- * @param String $pid
+ * @param string $pid
  *   PID of Fedora object with associated Mongo file
  *
  * @return MongoGridFSFile
@@ -302,7 +301,7 @@ function islandora_calliope_get_file($pid) {
  *
  * @param AbstractObject $critical_edition_object
  *   Object representing Critical Edition
- * @param String $sort
+ * @param string $sort
  *   Sort type
  * @param int $limit
  *   Size of resultset

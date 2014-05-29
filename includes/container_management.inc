@@ -134,7 +134,7 @@ function islandora_get_versionable_objects() {
 /**
  * Gets all versionable objects assicated with critical edition.
  *
- * @param String $critical_edition_pid
+ * @param string $critical_edition_pid
  *   PID of critical edition
  *
  * @return array

@@ -8,9 +8,9 @@
 /**
  * Returns associated objects.
  *
- * @param String $object_pid
+ * @param string $object_pid
  *   PID of object
- * @param String $content_model
+ * @param string $content_model
  *   Optional Content Model to restrict results.
  *
  * @return array
@@ -51,7 +51,7 @@ function islandora_critical_edition_get_members($object_pid, $content_model = NU
 /**
  * Gets all transcriptions related to this object.
  *
- * @param String $versionable_object_pid
+ * @param string $versionable_object_pid
  *   PID of object
  *
  * @return array
@@ -84,7 +84,7 @@ function islandora_critical_get_related_transcriptions($versionable_object_pid) 
 /**
  * Gets all Critical Editions to which this object is a member.
  *
- * @param String $versionable_object_pid
+ * @param string $versionable_object_pid
  *   PID of object
  *
  * @return array
@@ -185,7 +185,7 @@ function islandora_critical_edition_get_associated_objects_query($content_model,
  *
  * @param AbstrctObject $object
  *   Object representing containing object
- * @param String $content_model
+ * @param string $content_model
  *   PID of content model to limit search results
  *
  * @return int
@@ -504,10 +504,10 @@ function islandora_critical_edition_advanced_append_tei_rdf_text_to_tei($tei, $t
 /**
  * Returns empty TEI form.
  *
- * @param String $title
+ * @param string $title
  *   Title for TEI
  *
- * @return String
+ * @return string
  *   Blank TEI
  */
 function islandora_critical_edition_advanced_get_blank_tei($title) {

@@ -27,3 +27,33 @@ div.diplomatic_tei * div#tei-body {
 div.diplomatic_tei * div#tei-header{
   position: relative;
 }
+div.diplomatic_tei * .add,
+div.diplomatic_tei * add{
+  color:green;
+  text-decoration: underline;
+}
+div.diplomatic_tei * .del,
+div.diplomatic_tei * del{
+  text-decoration: line-through;
+  color: #990000;
+}
+div.diplomatic_tei * .add .add,
+div.diplomatic_tei * add add{
+  color:green;
+}
+div.diplomatic_tei * .add .del,
+div.diplomatic_tei * add del{
+  color:#990000;
+  text-decoration: underline;
+}
+div.diplomatic_tei * .del .add,
+div.diplomatic_tei * del add{
+  text-decoration: underline;
+  color: green;
+}
+div.diplomatic_tei * .del .del,
+div.diplomatic_tei * del del{
+  text-decoration: line-through;
+  color: blue;
+  font-size: large;
+}

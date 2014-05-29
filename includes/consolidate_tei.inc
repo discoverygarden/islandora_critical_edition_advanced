@@ -12,10 +12,10 @@
  *
  * @param AbstractObject $object
  *   Object representing fedora page object
- * @param String $dsid
+ * @param string $dsid
  *   Datastream ID of object
  *
- * @return String
+ * @return string
  *   transformed xml
  */
 function islandora_critical_edition_advanced_display_page_tei($object, $dsid = 'CWRC') {

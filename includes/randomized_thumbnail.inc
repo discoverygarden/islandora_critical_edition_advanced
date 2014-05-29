@@ -48,9 +48,9 @@ function islandora_critical_edition_advanced_add_thumbnail($form_state) {
 /**
  * Creates and stores thumbnailed image.
  *
- * @param String $file_dir
+ * @param string $file_dir
  *   Directory holding original image
- * @param String $image
+ * @param string $image
  *   Filename of image being thumbnailed
  *
  * @return bool

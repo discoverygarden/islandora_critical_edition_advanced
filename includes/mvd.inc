@@ -137,9 +137,9 @@ function islandora_critical_edition_mvd_form_submit($form, $form_state) {
 /**
  * Builds MVD object in repository.
  *
- * @param String $critical_edition
+ * @param string $critical_edition
  *   PID of critical edition
- * @param String $title
+ * @param string $title
  *   Title for MVD
  * @param array $transcriptions
  *   Transcriptions to be included in MVD
@@ -173,9 +173,9 @@ function islandora_critical_edition_advanced_build_mvd($critical_edition, $title
 /**
  * Handles all crud operations for MVDs.
  *
- * @param String $critical_edition_pid
+ * @param string $critical_edition_pid
  *   PID of Critical Edition
- * @param String $mvd_label
+ * @param string $mvd_label
  *   Identifier for MVD
  * @param string $operation
  *   action to perform
