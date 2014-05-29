@@ -211,7 +211,6 @@ function islandora_calliope_create_mvd($critical_edition, $mvd_title, $mvd_descr
   // Get back status or response.
   $response = curl_exec($ch);
   $err = curl_errno($ch);
-dsm($response);
   $error = curl_error($ch);
   curl_close($ch);
 
