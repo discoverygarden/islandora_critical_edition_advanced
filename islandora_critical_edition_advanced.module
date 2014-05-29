@@ -49,7 +49,7 @@ function islandora_critical_edition_advanced_menu() {
     'page arguments' => array('critical_apparatus_form', 2),
     'type' => MENU_LOCAL_TASK,
     'access callback' => 'islandora_critical_edition_advanced_object_management_access',
-    'access arguments' => array(2, 'manage_apparatus'),
+    'access arguments' => array(2, ISLANDORA_CRITICAL_EDITION_ADVANCED_MANAGE_CONTAINER),
     'file' => 'includes/critical_apparatus.inc',
   );
   $items['islandora/object/%islandora_object/manage/versionable_object'] = array(
@@ -1042,7 +1042,6 @@ function islandora_critical_edition_advanced_object_management_access($object, $
   if (is_null($object)) {
     return FALSE;
   }
-
   $content_models = $object->models;
   $access = FALSE;
 
@@ -1061,25 +1060,25 @@ function islandora_critical_edition_advanced_object_management_access($object, $
       break;
 
     case 'manage_versionable_object':
-      if (in_array('islandora:versionableObjectCModel', $content_models)) {
+      if (in_array('islandora:versionableObjectCModel', $content_models) && user_access(ISLANDORA_CRITICAL_EDITION_ADVANCED_MANAGE_CONTAINER)) {
         $access = TRUE;
       }
       break;
 
     case 'edit_transcription':
-      if (in_array('islandora:transcriptionCModel', $content_models)) {
+      if (in_array('islandora:transcriptionCModel', $content_models) && user_access(ISLANDORA_CRITICAL_EDITION_ADVANCED_MODIFY)) {
         $access = TRUE;
       }
       break;
 
     case 'manage_apparatus':
-      if (in_array('islandora:criticalApparatusCModel', $content_models)) {
+      if (in_array('islandora:criticalApparatusCModel', $content_models) && user_access(ISLANDORA_CRITICAL_EDITION_ADVANCED_MANAGE_CONTAINER)) {
         $access = TRUE;
       }
       break;
 
     case 'display_consolidated_tei':
-      if (in_array('islandora:versionableObjectCModel', $content_models)) {
+      if (in_array('islandora:versionableObjectCModel', $content_models) && user_access(ISLANDORA_CRITICAL_EDITION_ADVANCED_READ)) {
         $tei_rdfs = array_keys(islandora_critical_edition_get_members($object->id, 'islandora:criticalEditionCModel'));
         if (!empty($tei_rdfs)) {
           $access = TRUE;
@@ -1088,7 +1087,7 @@ function islandora_critical_edition_advanced_object_management_access($object, $
       break;
 
     case 'view_critical_edition':
-      if (in_array('islandora:criticalEditionContainerCModel', $content_models)) {
+      if (in_array('islandora:criticalEditionContainerCModel', $content_models) && user_access(ISLANDORA_CRITICAL_EDITION_ADVANCED_READ)) {
         $access = TRUE;
       }
       break;
@@ -1098,13 +1097,13 @@ function islandora_critical_edition_advanced_object_management_access($object, $
       $members = islandora_critical_edition_get_members($object->id);
       $transcription = array_search('islandora:transcriptionCModel', $members);
       $transcription_object = islandora_object_load($transcription);
-      if ($transcription_object && in_array('islandora:versionableObjectCModel', $content_models)) {
+      if ($transcription_object && in_array('islandora:versionableObjectCModel', $content_models) && user_access(ISLANDORA_CRITICAL_EDITION_ADVANCED_READ)) {
         $access = TRUE;
       }
       break;
 
     case 'manage_apparatus':
-      if (in_array('islandora:criticalApparatusCModel', $content_models)) {
+      if (in_array('islandora:criticalApparatusCModel', $content_models) && user_access(ISLANDORA_CRITICAL_EDITION_ADVANCED_MANAGE_CONTAINER)) {
         $access = TRUE;
       }
       break;
