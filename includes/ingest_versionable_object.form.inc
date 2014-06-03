@@ -141,7 +141,7 @@ function islandora_critical_edition_advanced_versionable_object_form(array $form
       'source' => array(
         '#type' => 'textfield',
         '#title' => t('Select Source Object'),
-        '#size' => 30,
+        '#size' => 60,
         '#maxlength' => 60,
         '#required' => TRUE,
         '#autocomplete_path' => 'islandora/critical_edition_advanced_source/autocomplete',
@@ -624,7 +624,8 @@ function islandora_critical_edition_advanced_ingest_versionable_object_tei_rdf_p
   foreach ($dsids as $dsid) {
     if (isset($page[$dsid])) {
       $datastream = $edition->constructDatastream($dsid, 'M');
-      $file = file_save_data('', 'temporary://datastream');
+      $unique_id = uniqid();
+      $file = file_save_data('', "temporary://$unique_id_datastream_$DSID");
       $filename = drupal_realpath($file->uri);
       // Since the file must persist across multiple requests, we must not
       // delete it, until it has successfully been ingested.
@@ -724,7 +725,7 @@ function islandora_critical_edition_advanced_ingest_versionable_object_transcrip
   // and doesn't check load any files required by submit handles.
   module_load_include('inc', 'islandora', 'includes/ingest.form');
   if (empty($context['sandbox'])) {
-    $file = file_save_data('', 'temporary://transcription.txt');
+    $file = file_save_data('', 'temporary://' . uniqid() . 'transcription.txt');
     $context['results']['filename'] = drupal_realpath($file->uri);
   }
   $page = islandora_object_load($page);
