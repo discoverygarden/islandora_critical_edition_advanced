@@ -115,3 +115,15 @@ html {
   visibility: hidden !important;
   display: none !important;
 }
+
+.ui-layout-resizer-west, .ui-layout-west {
+  display: none !important;
+}
+
+.shared-canvas-logo {
+  display: none !important;
+}
+
+#page {
+  width: auto !important;
+}

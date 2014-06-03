@@ -61,7 +61,7 @@
 						<img class="loader-overlay" src="<?php print $module_base;?>/img/engine.png" alt="" />
 					</div>
 				</div>
-		  	<iframe id="viewer_iframe" border=0 name=iframe style="width: 100%;height:100%;" src="/islandora/critical_edition/viewer/trimed/<?php print $islandora_object;?>"></iframe>
+		  	<iframe id="viewer_iframe" border=0 name=iframe style="width: 100%;height:98%;" src="/islandora/critical_edition/viewer/trimed/<?php print $islandora_object;?>"></iframe>
 		  </div>
 	<?php endif;?>
 	</div>
