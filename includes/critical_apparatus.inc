@@ -24,7 +24,7 @@ function critical_apparatus_form($form, $form_state, $apparatus) {
   drupal_set_breadcrumb(islandora_get_breadcrumbs($apparatus));
   drupal_set_title($apparatus->label);
   $datastreams = variable_get('critical_apparatus_streams', islandora_critical_apparatus_get_datastreams());
-  $chosen = isset($form_state['values']['datastream']) ? $form_state['values']['datastream'] : 'title_page';
+  $chosen = isset($form_state['values']['datastream']) ? $form_state['values']['datastream'] : 'epigraph';
   $content = t('Enter text for @datastream', array('@datastream' => $datastreams[$chosen]));
   if ($apparatus[$chosen]) {
     $content = $apparatus[$chosen]->content;
