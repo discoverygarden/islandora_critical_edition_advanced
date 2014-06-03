@@ -18,8 +18,9 @@ $('document').ready(function() {
 		        title: dialog_title,
 		        modal: true,
 		        resizable: true,
-		        height: 600,
-		        width: 1000,
+		        height: 'auto',
+                position: 'top',
+		        width: 1200,
 		        open: function(e) {
 		          // Kick of the logic to fill this.
 		          $jq.ajax({
@@ -42,7 +43,7 @@ $('document').ready(function() {
 		});
 	  });
 });
-	
+
 })(jQuery);
 
 
@@ -73,7 +74,7 @@ var CriticalEditionViewer = {
 	            success: function(data, status, xhr) {
 	              CriticalEditionViewer.Viewer.transformed_data = data['transformed'];
 	              CriticalEditionViewer.Viewer.pretty_transformed_data = data['pretty_print'];
-	              
+
 	              CriticalEditionViewer.Viewer.remove_pretty_print_tei();
 	              CriticalEditionViewer.Viewer.show_versionable_transcriptions();
 	            },
@@ -116,6 +117,9 @@ var CriticalEditionViewer = {
 				CriticalEditionViewer.cwrc_writer.layout.sizePane("east", $jq('#CriticalEditionViewer').width()/2);
 				CriticalEditionViewer.Viewer.toggle_text_image_linking(0);
 			}
+            if($jq("#navi").length > 0) {
+                CriticalEditionViewer.Viewer.toggle_anno_entities(0);
+            }
 		},
 		show_pretty_print_transform: function() {
 			$jq('#cwrc_main', window.frames[0].document).append('<div class="show_tei" id="pretty_translated_tei" style="overflow:auto;width:100%;height:100%;position:relative;top:0px;z-index:300;background-color:white"></div>');
@@ -133,7 +137,7 @@ var CriticalEditionViewer = {
 			CriticalEditionViewer.Viewer.remove_translated_tei();
 			// TODO:
 			if($jq('navi')) {
-				
+
 			}
 			CriticalEditionViewer.cwrc_writer.layout.sizePane("east", $jq('#CriticalEditionViewer').width()/2);
 			CriticalEditionViewer.cwrc_writer.editor.$('body', window.frames[0].document).addClass('showStructBrackets');
@@ -144,6 +148,9 @@ var CriticalEditionViewer = {
 			// TODO:
 			CriticalEditionViewer.cwrc_writer.layout.sizePane("east", $jq('#CriticalEditionViewer').width()/2);
 			CriticalEditionViewer.cwrc_writer.editor.$('body', window.frames[0].document).removeClass('showStructBrackets');
+            if($jq("#navi").length > 0) {
+                CriticalEditionViewer.Viewer.toggle_anno_entities(0);
+            }
 		},
 		toggle_anno_entities: function(show, toggle_text) {
 			if(show == 1) {
@@ -153,11 +160,11 @@ var CriticalEditionViewer = {
 				    	  if($jq("li[title='Image']").hasClass("img_selected")) {
 				    		  CriticalEditionViewer.cwrc_writer.layout.sizePane("east", $jq('#CriticalEditionViewer').width()-($jq("#navi").width() + 100));
 				    	  }
-				    	  
+
 				        CriticalEditionViewer.cwrc_writer.layout.open("west");
 				      }
 			    }, 700);
-				
+
 			} else {
 				if(!$jq("li[title='Show/Hide annotations']").hasClass("img_selected") &&
 						!$jq("li[title='Show/Hide Text Image Links']").hasClass("img_selected")) {
@@ -170,11 +177,11 @@ var CriticalEditionViewer = {
 					    	  }
 				        },
 				    }, 700);
-					
+
 				}
-				
+
 			}
-			
+
 			// Show one or the other?
 			switch (toggle_text) {
 			case "Show/Hide annotations":
@@ -214,38 +221,38 @@ var CriticalEditionViewer = {
 		get_entities: function() {
 			// Append to block_4_hidden.
 			var cover = '<div id="navi" style="position:absolute;overflow:auto;width:34%;height:100%;background-color: #FFFFFF;z-index: 500;top: 0;"></div>';
-			
+
 			$jq("#view_box").append(cover);
-			
+
 			var search_box = '<div><input id="search_box" type="text" placeholder="Search..." value=""/></div>'
 			$jq("#navi").append(search_box);
-			
-			
-			
+
+
+
 			var tree_html = '<div id="demo3"></div>';
 			$jq('#navi').append(tree_html);
-			
+
 			CriticalEditionViewer.j_data = {"data" : [
-			       						{ 
-			    							"data" : "Annotations", 
+			       						{
+			    							"data" : "Annotations",
 			    							"attr" : { "id" : "tree_annotations_node"},
 			    							"metadata" : { id : "tree_anno_list" },
 			    							"children" : []
 			    						},
-			    						{ 
-			    							"data" : "Entities", 
+			    						{
+			    							"data" : "Entities",
 			    							"attr" : { "id" : "tree_entities_node"},
 			    							"metadata" : { id : "tree_ent_list" },
 			    							"children" : []
 			    						},
-			    						{ 
-			    							"data" : "Text image link", 
+			    						{
+			    							"data" : "Text image link",
 			    							"attr" : { "id" : "tree_txtimglnk_node"},
 			    							"metadata" : { id : "tree_txtimglnk_list" },
 			    							"children" : []
 			    						}
 			    					]};
-			
+
 			$jq('.entitiesList li', window.frames[0].document).each(function() {
 				if($jq(this).attr("name")) {
 					var inner_data = $jq(this).find('div[class="info"]').children().last().children().last().text();
@@ -257,10 +264,10 @@ var CriticalEditionViewer = {
 								"attr" : { "id" : $jq(this).attr("name"),
 								  "data-uuid" : inner_data.replace("uuid: ", ""),
 								  "class" : "tree-txtimgitem-item",
-								}, 
+								},
 								"data" : {
-									"title" : $jq(this).children('.entityTitle').first().text(), 
-									"attr" : { "href" : "#" } 
+									"title" : $jq(this).children('.entityTitle').first().text(),
+									"attr" : { "href" : "#" }
 								}
 							};
 							CriticalEditionViewer.j_data["data"][2]['children'].push(child_frame);
@@ -269,10 +276,10 @@ var CriticalEditionViewer = {
 								"attr" : { "id" : $jq(this).attr("name"),
 								  "data-uuid" : inner_data.replace("uuid: ", ""),
 								  "class" : "tree-entity-item",
-								},  
+								},
 								"data" : {
-									"title" : $jq(this).children('.entityTitle').first().text(), 
-									"attr" : { "href" : "#" } 
+									"title" : $jq(this).children('.entityTitle').first().text(),
+									"attr" : { "href" : "#" }
 								}
 							};
 						CriticalEditionViewer.j_data["data"][1]['children'].push(child_frame);
@@ -284,20 +291,20 @@ var CriticalEditionViewer = {
 				if($jq(this).find('div[class="islandora_comment_type_title"]').text() != 'TextImageLink' &&
 						$jq(this).find('div[class="islandora_comment_type_title"]').text() != 'unclassified') {
 					var child_frame = {
-							"attr" : { "id" : "anno_" + $jq(this).find('div[class="islandora_comment_type_title"]').text()}, 
+							"attr" : { "id" : "anno_" + $jq(this).find('div[class="islandora_comment_type_title"]').text()},
 							"data" : {
-								"title" : $jq(this).find('div[class="islandora_comment_type_title"]').text(), 
-								"attr" : { "href" : "#" } 
+								"title" : $jq(this).find('div[class="islandora_comment_type_title"]').text(),
+								"attr" : { "href" : "#" }
 							},
 							"children" : [],
 					};
 					$jq(this).find('div[class="islandora_comment_type_content"]').children().each(function() {
 						child_frame["children"].push({
 							"attr" : { "id" : $jq(this).attr('urn'),
-								"class" : "tree-anno-item",}, 
+								"class" : "tree-anno-item",},
 							"data" : {
-								"title" : $jq(this).find('div[class="comment_content"]').text(), 
-								"attr" : { "href" : "#" } 
+								"title" : $jq(this).find('div[class="comment_content"]').text(),
+								"attr" : { "href" : "#" }
 							},
 						});
 					});
@@ -333,7 +340,7 @@ var CriticalEditionViewer = {
 				$jq('#entities > ul > li', window.frames[0].document).each(function(index, el) {
                     $jq(this).removeClass('selected').css('background-color', '').find('div[class="info"]').hide();
                       CriticalEditionViewer.cwrc_writer.highlightEntity($jq(this).closest("li").attr("id"));
-            	}); 
+            	});
 				for(var x = 0;x < CriticalEditionViewer.jtree_checked_items.length;x++) {
 					$jq('#translated_tei', window.frames[0].document).find('span[data-source="' + CriticalEditionViewer.jtree_checked_items[x].replace("uuid: ", "") + '"]').css("background-color", "");
 					$jq('.svg_' + CriticalEditionViewer.jtree_checked_items[x].replace("uuid: ", ""), window.frames[0].document).remove();
@@ -387,8 +394,8 @@ var CriticalEditionViewer = {
 		build_tree_view: function() {
 			$jq("#search_box").keyup(function () {
 				$jt("#demo3").jstree("search", $jq(this).val());
-			}); 
-			
+			});
+
 			$jt("#demo3").jstree({
 				"json_data" : CriticalEditionViewer.j_data,
 				"search" : {
@@ -426,11 +433,11 @@ var CriticalEditionViewer = {
 			      CriticalEditionViewer.Viewer.remove_annos();
 			      CriticalEditionViewer.checked_annos = checked_annos;
 			      CriticalEditionViewer.Viewer.show_annos(checked_annos);
-			      
+
 			      CriticalEditionViewer.Viewer.remove_entities();
 			      CriticalEditionViewer.checked_entities = checked_entities;
 			      CriticalEditionViewer.Viewer.show_entities(checked_entities);
-			      
+
 			      CriticalEditionViewer.Viewer.remove_txtimglnk();
 			      CriticalEditionViewer.checked_txtimglnk = checked_txtimglnk;
 			      CriticalEditionViewer.Viewer.show_txtimglnk(checked_txtimglnk);
@@ -478,6 +485,9 @@ var CriticalEditionViewer = {
 				$jq('#tei_text_area', window.frames[0].document).val(CriticalEditionViewer.tei_document_text);
 				CriticalEditionViewer.cwrc_writer.layout.sizePane("east", $jq('#CriticalEditionViewer').width()/2);
 			}
+            if($jq("#navi").length > 0) {
+                CriticalEditionViewer.Viewer.toggle_anno_entities(0);
+            }
 		},
 		remove_tei_document_text:function() {
 			$jq("#tei_doc_text", window.frames[0].document).remove();
@@ -495,7 +505,7 @@ var CriticalEditionViewer = {
 				CriticalEditionViewer.current_zoom = CriticalEditionViewer.current_zoom - 5;
 				CriticalEditionViewer.Viewer.zoom_level_update();
 			}
-			
+
 		},
 		zoom_level_update: function() {
 			$jq('#zoom').text(CriticalEditionViewer.current_zoom);
@@ -515,7 +525,7 @@ var CriticalEditionViewer = {
 			$zm(img).trigger('zoom.destroy');
 		},
 		add_transcription_pager: function() {
-			var pager = 
+			var pager =
 				'<div id="tr_pagination" class="pagination img_pager">' +
 				    '<a href="#" class="first" data-action="first">&laquo;</a>'+
 				    '<a href="#" class="previous" data-action="previous">&lsaquo;</a>'+
@@ -535,30 +545,30 @@ var CriticalEditionViewer = {
 			});
 		},
 		build: function(json_html) {
-			
-			
+
+
 			if($jq('#CriticalEditionViewer').length > 0) {
 				$jq('#CriticalEditionViewer').empty();
 			}
 			$jq('#CriticalEditionViewer').css("height", "80%")
 			$jq('#CriticalEditionViewer').append(json_html);
-			
+
 			// Hide all transcriptions, showing only the first.
 			$jq(".versionable_transcription_text").toggle();
 			if($jq("#versionable_transcription_0").length > 0) {
 				$jq("#versionable_transcription_0").toggle();
-				
+
 				// Now, set up the pager for the transcriptions.
 				CriticalEditionViewer.Viewer.add_transcription_pager();
 			}
-			
-			
+
+
 			$jq('#loadImg div').width($jq('#view_box').width());
 			$jq('#loadImg div').height($jq('#view_box').height());
-			
+
 			// Set up img click handlers
 			$jq(".work_action_img").click(function() {
-				
+
 				if($jq(this).attr("title") == "Show/Hide annotations" || $jq(this).attr("title") == "Show/Hide Text Image Links") {
 					if($jq(this).attr("data-value") == 1) {
 							$jq(this).removeClass("img_selected");
@@ -578,7 +588,7 @@ var CriticalEditionViewer = {
 						break;
 					}
 				} else {
-					
+
 					// Preform the approate action.
 					switch ($jq(this).attr("title")) {
 						case "Transcription":
@@ -635,81 +645,81 @@ var CriticalEditionViewer = {
 							break;
 					}
 				}
-				
+
 			});
-			
+
 			if($jq("#viewer_iframe").length > 0) {
 				$jq("#viewer_iframe").load(function (){
-					
-					var common_tei_css_Link = document.createElement("link") 
-					common_tei_css_Link.href = Drupal.settings.islandora_critical_edition_advanced.common_tei_css;  
-					common_tei_css_Link.rel = "stylesheet"; 
-					common_tei_css_Link.type = "text/css"; 
-					
-					var diplomatic_tei_css_Link = document.createElement("link") 
-					diplomatic_tei_css_Link.href = Drupal.settings.islandora_critical_edition_advanced.diplomatic_tei; 
-					diplomatic_tei_css_Link.rel = "stylesheet"; 
+
+					var common_tei_css_Link = document.createElement("link")
+					common_tei_css_Link.href = Drupal.settings.islandora_critical_edition_advanced.common_tei_css;
+					common_tei_css_Link.rel = "stylesheet";
+					common_tei_css_Link.type = "text/css";
+
+					var diplomatic_tei_css_Link = document.createElement("link")
+					diplomatic_tei_css_Link.href = Drupal.settings.islandora_critical_edition_advanced.diplomatic_tei;
+					diplomatic_tei_css_Link.rel = "stylesheet";
 					diplomatic_tei_css_Link.type = "text/css";
-					
+
 					window.frames[0].document.body.appendChild(common_tei_css_Link);
 					window.frames[0].document.body.appendChild(diplomatic_tei_css_Link);
-					
-					
+
+
 					CriticalEditionViewer.cwrc_writer = document.getElementById('viewer_iframe').contentWindow['writer'];
 					CriticalEditionViewer.cwrc_writer.layout.north.options.resizeable = false;
 					CriticalEditionViewer.cwrc_writer_helper = document.getElementById('viewer_iframe').contentWindow['islandoraCWRCWriter'];
-						
+
 					CriticalEditionViewer.cwrc_writer.editor.$('body', window.frames[0].document).removeClass('showEntityBrackets');
-					
+
 					CriticalEditionViewer.cwrc_params = document.getElementById('viewer_iframe').contentWindow['cwrc_params'];
-					
+
 					CriticalEditionViewer.cwrc_writer.pager_data = $jq('#page_choose', window.frames[0].document);
-					
+
 					$jq('#page_choose option', window.frames[0].document).each(function() {
 						CriticalEditionViewer.pager_data[$jq(this).attr("value") - 1] = $jq(this).attr("value");
 					});
 					// Hide the resize bar buttons in the UI-Layout plugin.
 					$jq('.ui-layout-toggler', window.frames[0].document).css("visibility", "hidden");
-					
+
 					$pg('.pagination').jqPagination({
 						max_page: CriticalEditionViewer.pager_data.length,
 					    paged: function(page) {
 					    	CriticalEditionViewer.Viewer.remove_translated_tei();
 					    	CriticalEditionViewer.Viewer.remove_pretty_print_tei();
-					    	
+
 					    	CriticalEditionViewer.Viewer.show_preloader();
 					    	CriticalEditionViewer.Viewer.toggle_text_image_linking(0);
 					    	CriticalEditionViewer.Viewer.show_plain_image();
-					    	
+
 					    	$jq('#page_choose', window.frames[0].document).val(page);
 					    	$jq("#page_choose :selected[true]", window.frames[0].document).attr('selected',false);
 					    	$jq("#page_choose option[value="+page+"]", window.frames[0].document).attr('selected',true);
 					    	CriticalEditionViewer.cwrc_params.position = $jq('#page_choose :selected', window.frames[0].document).attr('value');
-					    	document.getElementById('viewer_iframe').contentWindow['PID'] = CriticalEditionViewer.cwrc_params.pages[ CriticalEditionViewer.cwrc_params.position];	
+					    	document.getElementById('viewer_iframe').contentWindow['PID'] = CriticalEditionViewer.cwrc_params.pages[ CriticalEditionViewer.cwrc_params.position];
 					    	CriticalEditionViewer.cwrc_writer_helper.Writer.load_next_anno_page();
 					    	//~~~
 					    	$jq("#navi").remove();
 					    	CriticalEditionViewer.Viewer.get_entities();
 							CriticalEditionViewer.Viewer.build_tree_view();
 							CriticalEditionViewer.Viewer.hide_preloader();
-							
+
 							CriticalEditionViewer.Viewer.get_page_transformed_tei(CriticalEditionViewer.cwrc_params.pages[ CriticalEditionViewer.cwrc_params.position]);
 							CriticalEditionViewer.Viewer.remove_tei_document_text();
 							$jq(".work_action_img").removeClass("img_selected");
 							$jq("li[title='Diplomatic Transcriptions']").addClass("img_selected")
-							
+
 					    }
 					});
-					
+
 					$jq('#editor_toolbargroup', window.frames[0].document).css("visibility", "hidden");
 					$jq('#editor_toolbargroup', window.frames[0].document).css("display", "none");
-					
+
 					$jq('#editor_toolbargroup', window.frames[0].document).hide();
-					
+
 					$jq('#create_annotation', window.frames[0].document).css("visibility", "hidden");
 					$jq('#create_annotation', window.frames[0].document).css("display", "none");
 					CriticalEditionViewer.Viewer.build_zoom();
-					
+
 			    	CriticalEditionViewer.Viewer.get_entities();
 					CriticalEditionViewer.Viewer.build_tree_view();
 					CriticalEditionViewer.tei_document_text = CriticalEditionViewer.cwrc_writer.fm.getDocumentContent(false);
@@ -723,7 +733,7 @@ var CriticalEditionViewer = {
 					CriticalEditionViewer.Viewer.hide_preloader();
 				});
 			}
-			
+
 			if($jq('#MediaPlayer').length > 0) {
 				jwplayer("mediaplayer").setup({
 				    file: $jq('#MediaPlayer').attr('data-url'),
