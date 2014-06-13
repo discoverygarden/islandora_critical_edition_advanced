@@ -401,7 +401,11 @@ function theme_islandora_critical_edition_container_versions_table(array &$varia
       'data' => t('Context'),
       'align' => 'left',
       'class' => array('context')),
-    'operations' => array('data' => t('Operations'), 'align' => 'left'),
+    'operations' => array(
+      'data' => t('Operations'),
+      'align' => 'left',
+      'class' => 'version_operations',
+    ),
     'transcriptions' => array('data' => t('Transcriptions'), 'align' => 'left'),
   );
   // Operations may be hidden if the user doesn't have permission for any.
@@ -493,8 +497,8 @@ function islandora_critical_edition_container_versions_table_data(AbstractObject
   $label_field = 'fgs_label_s';
   $source_pid_field = 'source_ms';
   $source_label_field = 'mods_titleInfo_title_ms';
-  $object_type_field = 'mods_typeOfResource_s';
-  $genre_field = 'mods_genre_s';
+  $object_type_field = 'mods_typeOfResource_ms';
+  $genre_field = 'mods_genre_ms';
   $content_field = 'mods_abstract_ms';
   $context_field = 'mods_note_source note_ms';
   $child_relationship_field = 'RELS_EXT_isMemberOf_uri_ms';
@@ -523,8 +527,8 @@ function islandora_critical_edition_container_versions_table_data(AbstractObject
       $versions[$pid] = array(
         'label' => $result[$label_field],
         'source' => '',
-        'object_type' => isset($result[$object_type_field]) ? $result[$object_type_field] : t('Undefined'),
-        'genre' => isset($result[$genre_field]) ? $result[$genre_field] : t('Undefined'),
+        'object_type' => isset($result[$object_type_field][0]) ? $result[$object_type_field][0] : t('Undefined'),
+        'genre' => isset($result[$genre_field][0]) ? $result[$genre_field][0] : t('Undefined'),
         'content' => isset($result[$content_field]) ? reset($result[$content_field]) : t('Undefined'),
         'context' => isset($result[$context_field]) ? reset($result[$context_field]) : t('Undefined'),
         'teirdf' => array(
@@ -768,9 +772,9 @@ function theme_islandora_critical_edition_container_collations_table(array &$var
   // Build Header.
   $headers = array(
     'collation_name' => array('data' => t('Collation Name'), 'field' => 'collation_name'),
-    'transcriptions' => array('data' => t('Transcriptions')),
-    'collation_filter' => array('data' => t('Filter')),
-    'operations' => array('data' => t('Operations')),
+    'transcriptions' => array('data' => t('Transcriptions'), 'class' => array('collation_transcription')),
+    'collation_filter' => array('data' => t('Filter'), 'class' => array('collation_filter')),
+    'operations' => array('data' => t('Operations'), 'class' => 'collation_operations'),
   );
   // Operations may be hidden if the user doesn't have permission for any.
   $permissions = islandora_critical_edition_container_collation_table_operations_permissions();
