@@ -401,7 +401,11 @@ function theme_islandora_critical_edition_container_versions_table(array &$varia
       'data' => t('Context'),
       'align' => 'left',
       'class' => array('context')),
-    'operations' => array('data' => t('Operations'), 'align' => 'left'),
+    'operations' => array(
+      'data' => t('Operations'),
+      'align' => 'left',
+      'class' => 'version_operations',
+    ),
     'transcriptions' => array('data' => t('Transcriptions'), 'align' => 'left'),
   );
   // Operations may be hidden if the user doesn't have permission for any.
@@ -768,9 +772,9 @@ function theme_islandora_critical_edition_container_collations_table(array &$var
   // Build Header.
   $headers = array(
     'collation_name' => array('data' => t('Collation Name'), 'field' => 'collation_name'),
-    'transcriptions' => array('data' => t('Transcriptions')),
-    'collation_filter' => array('data' => t('Filter')),
-    'operations' => array('data' => t('Operations')),
+    'transcriptions' => array('data' => t('Transcriptions'), 'class' => array('collation_transcription')),
+    'collation_filter' => array('data' => t('Filter'), 'class' => array('collation_filter')),
+    'operations' => array('data' => t('Operations'), 'class' => 'collation_operations'),
   );
   // Operations may be hidden if the user doesn't have permission for any.
   $permissions = islandora_critical_edition_container_collation_table_operations_permissions();

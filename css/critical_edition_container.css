@@ -61,7 +61,18 @@ div.operation-links {
   left: 0px;
   width: 180px;
 }
-
+.versions_table {
+ width: 100%;
+}
+.collation_filter {
+width: 10%;
+}
+.collation_operations {
+  width:20%;
+}
+.version_operations {
+  width:14% !important;
+}
 #zoom_image {
-	
+
 }
