@@ -554,7 +554,7 @@ function islandora_critical_edition_advanced_preprocess_islandora_critical_editi
   $aparatus_datastreams = islandora_critical_apparatus_get_datastreams();
   $form_state['publish_viewer']['#type'] = 'vertical_tabs';
 
-  $aparatus_datastreams['versions'] = 'Viewer';
+  $aparatus_datastreams['versions'] = 'Versions';
   $aparatus_datastreams['collation_view'] = 'Collations';
   // Build the aparatus content.
   $all_keys = array_keys($aparatus_datastreams);

@@ -48,7 +48,7 @@ div.edition-links {
   right: 0px;
 }
 select.transcription-select {
-  max-width: 200px;
+  width: 75%;
   margin-top: 4px;
 }
 div.transcription-links, div.operation-links {
@@ -61,7 +61,18 @@ div.operation-links {
   left: 0px;
   width: 180px;
 }
-
-#zoom_image {
+.versions_table {
+ width: 100%;
+}
+.collation_filter {
+width: 10%;
+}
+.collation_operations {
+  width:20%;
+}
+.version_operations {
+  width:14% !important;
+}
+szoom_image {
 	
 }
