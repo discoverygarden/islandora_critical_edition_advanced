@@ -49,7 +49,7 @@ function islandora_critical_edition_advanced_menu() {
     'page arguments' => array('critical_apparatus_form', 2),
     'type' => MENU_LOCAL_TASK,
     'access callback' => 'islandora_critical_edition_advanced_object_management_access',
-    'access arguments' => array(2, ISLANDORA_CRITICAL_EDITION_ADVANCED_MANAGE_CONTAINER),
+    'access arguments' => array(2, 'manage_apparatus'),
     'file' => 'includes/critical_apparatus.inc',
   );
   $items['islandora/object/%islandora_object/manage/versionable_object'] = array(
