@@ -492,6 +492,7 @@ function islandora_critical_edition_container_versions_table_data(AbstractObject
   $pid_field = 'PID';
   $label_field = 'fgs_label_s';
   $source_pid_field = 'source_ms';
+  $version_label_field = 'mods_titleInfo_alternative_title_ms';
   $source_label_field = 'mods_titleInfo_title_ms';
   $object_type_field = 'mods_typeOfResource_ms';
   $genre_field = 'mods_genre_ms';
@@ -521,7 +522,7 @@ function islandora_critical_edition_container_versions_table_data(AbstractObject
     foreach ($results['response']['docs'] as $result) {
       $pid = $result[$pid_field];
       $versions[$pid] = array(
-        'label' => $result[$label_field],
+        'label' => $result[$version_label_field][0],
         'source' => '',
         'object_type' => isset($result[$object_type_field][0]) ? $result[$object_type_field][0] : t('Undefined'),
         'genre' => isset($result[$genre_field][0]) ? $result[$genre_field][0] : t('Undefined'),
