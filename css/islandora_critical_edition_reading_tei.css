@@ -1,14 +1,14 @@
-div.reading_tei * .del > .del, 
-div.reading_tei * .abbr, 
-div.reading_tei * .strikethrough, 
-div.reading_tei * .superlinear,
-div.reading_tei * .sublinear,
-div.reading_tei * .overwritten,
-div.reading_tei * div.zone[data-type="left_margin"],
-div.reading_tei * div.zone[data-type="right_margin"],
-div.reading_tei * div.zone[data-type="pagination"],
-div.reading_tei * .metamark,
-div.reading_tei * .sic {
+div.reading_tei .del, 
+div.reading_tei .abbr, 
+div.reading_tei .strikethrough, 
+div.reading_tei .superlinear,
+div.reading_tei .sublinear,
+div.reading_tei .overwritten,
+div.reading_tei div.zone[data-type="left_margin"],
+div.reading_tei div.zone[data-type="right_margin"],
+div.reading_tei div.zone[data-type="pagination"],
+div.reading_tei .metamark,
+div.reading_tei .sic {
   display: none;
 }
 

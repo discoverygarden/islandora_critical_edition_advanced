@@ -112,7 +112,7 @@ var CriticalEditionViewer = {
 		show_versionable_transcriptions: function() {
 			CriticalEditionViewer.Viewer.remove_pretty_print_tei();
 			if($jq('#translated_tei', window.frames[0].document).length == 0) {
-				$jq('#cwrc_main', window.frames[0].document).append('<div class="show_tei" id="translated_tei" style="overflow:auto;width:100%;height:100%;position:absolute;top:0px;z-index:300;background-color:white"></div>');
+				$jq('#cwrc_main', window.frames[0].document).append('<div class="show_tei reading_tei" id="translated_tei" style="overflow:auto;width:100%;height:100%;position:absolute;top:0px;z-index:300;background-color:white"></div>');
 				$jq('#translated_tei', window.frames[0].document).append(CriticalEditionViewer.Viewer.transformed_data);
 				CriticalEditionViewer.cwrc_writer.layout.sizePane("east", $jq('#CriticalEditionViewer').width()/2);
 				CriticalEditionViewer.Viewer.toggle_text_image_linking(0);
@@ -598,12 +598,12 @@ var CriticalEditionViewer = {
 							CriticalEditionViewer.Viewer.check_meta_data_state();
 							CriticalEditionViewer.Viewer.show_plain_text();
 							break;
-						case "TEI Markup":
-							$jq(".work_action_img").removeClass("img_selected");
-							$jq(this).addClass("img_selected");
-							CriticalEditionViewer.Viewer.check_meta_data_state();
-							CriticalEditionViewer.Viewer.show_tei_document_text();
-							break;
+						// case "TEI Markup":
+						// 	$jq(".work_action_img").removeClass("img_selected");
+						// 	$jq(this).addClass("img_selected");
+						// 	CriticalEditionViewer.Viewer.check_meta_data_state();
+						// 	CriticalEditionViewer.Viewer.show_tei_document_text();
+						// 	break;
 						case "Image":
 							CriticalEditionViewer.Viewer.remove_tei_document_text();
 							$jq(".work_action_img").removeClass("img_selected");
@@ -618,12 +618,12 @@ var CriticalEditionViewer = {
 							CriticalEditionViewer.Viewer.check_meta_data_state();
 							CriticalEditionViewer.Viewer.show_versionable_transcriptions();
 							break;
-//						case "TEI Markup":
-//							$jq(".work_action_img").removeClass("img_selected");
-//							$jq(this).addClass("img_selected");
-//							CriticalEditionViewer.Viewer.check_meta_data_state();
-//							CriticalEditionViewer.Viewer.show_tei_markup();
-//							break;
+						case "TEI Markup":
+							$jq(".work_action_img").removeClass("img_selected");
+							$jq(this).addClass("img_selected");
+							CriticalEditionViewer.Viewer.check_meta_data_state();
+							CriticalEditionViewer.Viewer.show_tei_markup();
+							break;
 						case "Detail Metadata" :
 							if($jq("#meta_overlay").length == 0) {
 								var meta_cover = '<div id="meta_overlay" style="position:absolute;overflow:auto;width:100%;height:100%;background-color: #FFFFFF;z-index: 500;top: 0;"></div>';
@@ -661,9 +661,14 @@ var CriticalEditionViewer = {
 					diplomatic_tei_css_Link.rel = "stylesheet";
 					diplomatic_tei_css_Link.type = "text/css";
 
-					window.frames[0].document.body.appendChild(common_tei_css_Link);
-					window.frames[0].document.body.appendChild(diplomatic_tei_css_Link);
+					var reading_tei_css_Link = document.createElement("link")
+					reading_tei_css_Link.href = Drupal.settings.islandora_critical_edition_advanced.reading_tei;
+					reading_tei_css_Link.rel = "stylesheet";
+					reading_tei_css_Link.type = "text/css";
 
+					window.frames[0].document.body.appendChild(common_tei_css_Link);
+				        //window.frames[0].document.body.appendChild(diplomatic_tei_css_Link);
+					window.frames[0].document.body.appendChild(reading_tei_css_Link);
 
 					CriticalEditionViewer.cwrc_writer = document.getElementById('viewer_iframe').contentWindow['writer'];
 					CriticalEditionViewer.cwrc_writer.layout.north.options.resizeable = false;

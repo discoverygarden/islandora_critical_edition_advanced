@@ -215,8 +215,11 @@ function islandora_critical_edition_advanced_prepare_page_tei_consolidated($obje
   $transformed_tei = islandora_critical_edition_advanced_display_page_tei($object);
 
   $doc = new DOMDocument();
-  $doc->loadHTML($transformed_tei);
-
+  $doc->loadXML($object['CWRC']->content);
+  $nodes = $doc->getElementsByTagNameNS('http://www.w3.org/1999/02/22-rdf-syntax-ns#', 'RDF');
+  foreach ($nodes as $element) {
+    $element->parentNode->removeChild($element);
+  }
   $return['transformed'] = $transformed_tei;
   $return['pretty_print'] = dom_document_pretty_print($doc, TRUE);
   return drupal_json_output($return);
@@ -496,6 +499,10 @@ function islandora_critical_edition_advanced_preprocess_islandora_critical_editi
   drupal_add_js(array(
     'islandora_critical_edition_advanced' => array(
       'diplomatic_tei' => url("$module_path/css/islandora_critical_edition_diplomatic_tei.css"))), 'setting');
+
+  drupal_add_js(array(
+    'islandora_critical_edition_advanced' => array(
+      'reading_tei' => url("$module_path/css/islandora_critical_edition_reading_tei.css"))), 'setting');
 
   drupal_add_js(array(
     'islandora_critical_edition_advanced' => array(
